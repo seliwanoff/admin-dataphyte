@@ -1,13 +1,76 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* src/index.css */
+@font-face {
+  font-family: "PolySans"; /* Match this with the config name */
+  src: url("/src/assets/font/PolySansTrial-Neutral.otf") format("truetype"); /* Adjust path and file type */
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Satoshi"; /* Match this with the config name */
+  src: url("/src/assets/font/Satoshi-Regular.otf") format("truetype"); /* Adjust path and file type */
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Inter"; /* Match this with the config name */
+  src: url("/src/assets/font/Inter-Regular.otf") format("truetype"); /* Adjust path and file type */
+  font-weight: normal;
+  font-style: normal;
+}
+.input {
+  @apply shadow-custom border-[#D0D5DD] border py-[10px] px-[14px] h-11 rounded-md flex justify-center outline-none;
+}
+.label {
+  @apply font-Satoshi text-[14px] font-medium leading-[20px] text-[#344054];
+}
+.loginbuton {
+  @apply h-11 py-[10px] px-[14px] rounded-[24px] bg-primary text-white font-bold leading-[24px] text-[16px] justify-center items-center font-Satoshi;
+}
+.loginbutongoogle {
+  @apply h-11 py-[10px] px-[14px] rounded-[24px]  text-[#344054] font-bold leading-[24px] text-[16px] justify-center flex gap-3 items-center font-Satoshi border border-[#D0D5DD];
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.sidebarnav {
+  @apply h-10 flex  rounded-md py-[16px] px-[24px] gap-4 items-center text-[#fff] font-polySans font-normal text-[16px] leading-6 bg-primary;
+}
+
+.inactivesidebarnav {
+  @apply h-10 flex  rounded-md py-[16px] px-[15px] gap-4 items-center text-[#344054] font-polySans font-normal text-[16px] leading-6;
+}
+.eachtabcard {
+  @apply h-10 flex justify-center items-center  py-[16px] px-[24px] font-polySans font-normal text-[14px] leading-6 overflow-hidden cursor-pointer;
+}
+.btndate {
+  @apply h-10 border border-[#D0D5DD] justify-center items-center flex gap-3 rounded-md cursor-pointer bg-white px-[14px] py-[10px] shadow-newcustom;
+}
+.cards {
+  @apply bg-white  rounded-lg p-4 flex flex-col gap-[10px]  flex-grow;
+}
+.column {
+  @apply font-Satoshi font-medium text-[14px] text-[#4f4f4f] leading-[18.9px] w-full text-left;
+}
+.thead {
+  @apply bg-[#fbfbfb] h-[40px];
+}
+.tbody {
+  @apply w-full;
+}
+.row {
+  @apply py-4 border-b border-b-[#F2F2F2] font-normal text-xs font-polySans;
+}
+svg {
+  width: 100% !important;
+}
+
+#nprogress .bar {
+  background: #7f55da;
+  height: 4px;
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #7f55da, 0 0 5px #7f55da;
 }
