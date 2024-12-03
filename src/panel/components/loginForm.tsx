@@ -1,13 +1,40 @@
 import { useState } from "react";
 import InputElement from "./inputEl";
 import LoginButton from "./loginButton";
-import GoogleButton from "./googleButton";
-import google from "../../assets/images/Login/google.png";
+//import GoogleButton from "./googleButton";
+//import google from "../../assets/images/Login/google.png";
 import LogoTop from "./logoTop";
+import { login } from "../../slices/AuthSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../../redux/store";
+import { showNotification } from "../../components/SuccessComponent/sucess";
+import { useNavigate } from "react-router-dom";
 
 const LoginFrom = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigates = useNavigate();
+
+  const dispatch = useDispatch<AppDispatch>();
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    if (password !== "" && email !== "") setIsLoading(true);
+
+    try {
+      await dispatch(login({ email, password })).unwrap();
+      showNotification("Success!", "Login successful", "success");
+      navigates("/dashboard");
+
+      console.log("Login successful");
+    } catch (error) {
+      showNotification("Error!", "Login failed: " + error, "danger");
+
+      console.error("Login failed:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="">
       <LogoTop />
@@ -30,6 +57,7 @@ const LoginFrom = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 name="email"
+                required={true}
                 //className="additional-styles"
               />
               <InputElement
@@ -39,22 +67,25 @@ const LoginFrom = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 name="email"
-                //className="additional-styles"
+                required={true}
               />
             </div>
             <div className="flex flex-col gap-[20px]">
               <LoginButton
-                onClick={() => console.log("Login button clicked")}
+                onClick={handleSubmit}
                 type="button"
-                // className="additional-styles"
+                disable={isLoading}
               >
-                Login
+                {isLoading ? "Login in..." : "Login"}
               </LoginButton>
+              {/**
 
               <GoogleButton>
                 <img src={google} alt="" className="h-6" />
                 <span>Login with google</span>
               </GoogleButton>
+
+              */}
             </div>
           </div>
         </div>

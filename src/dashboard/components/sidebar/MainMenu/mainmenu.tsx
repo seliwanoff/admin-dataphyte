@@ -31,6 +31,15 @@ const MainMenu = () => {
           Data Management
         </SubMainmenu>
         <SubMainmenu
+          logo={datalogo}
+          activeLogo="/path/to/active-logo.png"
+          title="Data Collection"
+          to="/data-collection"
+        >
+          <img src={datalogo} alt="" className="h-[18px]" />
+          Data Collection
+        </SubMainmenu>
+        <SubMainmenu
           logo={useranayticslogo}
           activeLogo="/path/to/active-logo.png"
           title="Dashboard"

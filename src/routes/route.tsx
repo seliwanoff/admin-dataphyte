@@ -24,6 +24,9 @@ const AnalyticsReport = React.lazy(
 );
 const Accesslog = React.lazy(() => import("../Accesslog/accesslogwrapper"));
 const LoginWrapper = React.lazy(() => import("../panel/auth/login"));
+const DataCollection = React.lazy(
+  () => import("../DataCollection/DataCollectionWrapper")
+);
 
 const RouteWrapper: React.FC = () => {
   const location = useLocation();
@@ -46,6 +49,7 @@ const RouteWrapper: React.FC = () => {
         <Route path="/user-management" element={<UserManagement />} />
         <Route path="/analytics-report" element={<AnalyticsReport />} />
         <Route path="/access-log" element={<Accesslog />} />
+        <Route path="/data-collection" element={<DataCollection />} />
       </Routes>
     </Suspense>
   );

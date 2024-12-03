@@ -2,11 +2,11 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
 interface SubMainmenuProps {
-  logo: string; // URL or path for the default logo image
-  activeLogo: string; // URL or path for the active logo image
-  title: string; // Title to display
-  to: string; // Destination path for the Link
-  children?: React.ReactNode; // Additional children if needed
+  logo: string;
+  activeLogo: string;
+  title: string;
+  to: string;
+  children?: React.ReactNode;
   activeColor?: string; // Optional color for active state
   inactiveColor?: string; // Optional color for inactive state
 }

@@ -6,13 +6,13 @@ interface InputElementProps {
   label: string;
   placeholder?: string;
   value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: any;
   className?: string;
   name?: string;
   required: any;
 }
 
-const InputElement: React.FC<InputElementProps> = ({
+const TextAreaElement: React.FC<InputElementProps> = ({
   type = "text",
   label,
   placeholder = "",
@@ -27,18 +27,18 @@ const InputElement: React.FC<InputElementProps> = ({
       <label htmlFor={name} className="label">
         {label}
       </label>
-      <input
-        type={type}
+      <textarea
         id={name}
+        cols={2}
         required={required}
         name={name}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="input"
-      />
+        className="textarea "
+      ></textarea>
     </div>
   );
 };
 
-export default InputElement;
+export default TextAreaElement;

@@ -24,6 +24,9 @@
 .input {
   @apply shadow-custom border-[#D0D5DD] border py-[10px] px-[14px] h-11 rounded-md flex justify-center outline-none;
 }
+.textarea {
+  @apply shadow-custom border-[#D0D5DD] border py-[10px] px-[14px]  rounded-md flex justify-center outline-none;
+}
 .label {
   @apply font-Satoshi text-[14px] font-medium leading-[20px] text-[#344054];
 }
