@@ -227,7 +227,7 @@ const StepperWithForms: React.FC = () => {
     formData.append("name", siteName);
     formData.append("address", siteaddress);
     formData.append(
-      "location[0][lng]",
+      "location[0][log]",
       String(siteActualAddress && siteActualAddress?.geometry.location.lng)
     );
     formData.append(
