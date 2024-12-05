@@ -36,6 +36,7 @@ const InputElement: React.FC<InputElementProps> = ({
         value={value}
         onChange={onChange}
         className="input"
+        autoComplete="off"
       />
     </div>
   );

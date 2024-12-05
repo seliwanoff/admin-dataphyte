@@ -1,14 +1,15 @@
+import React from "react";
 import uploadicon from "../../assets/images/Dashboard/uploadicon.png";
 
 interface UploadElProps<T> {
   label: string;
   placeholder?: string;
   helperText?: string;
-  name: any; // Ensures the name matches a key in the form data type
-  value: File | string | any; // Updated to allow File type (not just string)
-  setForm: any; // Matches the form data type
-  accept: any;
-  instruction: any;
+  name: any;
+  value: File[]; // Enforce array of files
+  setForm: (name: string, files: File[]) => void;
+  accept: string;
+  instruction: string;
   multipe?: boolean;
 }
 
@@ -21,15 +22,15 @@ const UploadEl = <T extends Record<string, any>>({
   setForm,
   accept,
   instruction,
-  multipe,
+  multipe = false,
 }: UploadElProps<T>) => {
-  const handleChange = (e: any) => {
-    const file = e.target.files?.[0];
-    setForm(file);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    setForm(name, files); // Update state with all selected files
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full  flex-grow  bg-white ">
+    <div className="flex flex-col gap-4 w-full flex-grow bg-white">
       <div className="flex flex-col gap-1">
         <label
           htmlFor={label}
@@ -46,10 +47,11 @@ const UploadEl = <T extends Record<string, any>>({
           className="h-full absolute top-0 w-full z-50 opacity-0"
           onChange={handleChange}
           accept={accept}
+          multiple={multipe}
         />
         <div className="outline-none border-none w-full font-Inter text-[16px] font-normal leading-6 text-left text-[#667085] relative px-[12px] py-[12px]">
           <div className="h-full flex flex-col gap-[12px] justify-center items-center">
-            <img src={uploadicon} alt="" className="h-10" />
+            <img src={uploadicon} alt="Upload Icon" className="h-10" />
             <div className="flex flex-col gap-2 font-Inter text-[12px] font-normal leading-[18px] text-center text-[#475467]">
               <span className="w-full">
                 <span className="text-[#6941C6] font-semibold">
@@ -63,9 +65,17 @@ const UploadEl = <T extends Record<string, any>>({
         </div>
       </div>
 
-      {value && (
-        <div className="w-full bg-[#475467] rounded-md py-2 text-white font-Poppins px-4  overflow-hidden text-ellipsis text-nowrap">
-          {value.name}
+      {/* Display List of Selected Files */}
+      {value && value.length > 0 && (
+        <div className="flex flex-col gap-2 mt-2">
+          {value.map((file, index) => (
+            <div
+              key={index}
+              className="w-full bg-[#475467] rounded-md py-2 text-white font-Poppins px-4 overflow-hidden text-ellipsis whitespace-nowrap"
+            >
+              {file.name}
+            </div>
+          ))}
         </div>
       )}
     </div>

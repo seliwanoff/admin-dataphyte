@@ -36,7 +36,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white w-3/4 p-4 rounded-md shadow-lg h-[400px]">
+      <div className="bg-white w-3/4 p-4 rounded-md shadow-lg h-[400px] relative">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Rich Text Editor</h2>
           <button className="text-red-500 font-bold text-xl" onClick={onClose}>
@@ -51,6 +51,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           formats={formats}
           className="h-60"
         />
+        <button
+          className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium absolute bottom-2 right-3"
+          onClick={onClose}
+        >
+          Continue
+        </button>
       </div>
     </div>
   );

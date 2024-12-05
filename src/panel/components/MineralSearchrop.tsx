@@ -78,7 +78,6 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
       updatedValues = [...values, keyToAdd];
     }
 
-    console.log(updatedValues);
     if (onChange) onChange(updatedValues);
 
     setSearch("");

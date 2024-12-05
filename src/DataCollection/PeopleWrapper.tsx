@@ -12,7 +12,6 @@ import RoleSelect from "../panel/components/RolesComponent";
 import CountrySelect from "../panel/components/CountrySelect";
 import RichTextEditor from "./components/RichText";
 import MultipleEl from "../dashboard/components/MultipleEl";
-import FilterPeopleByPosition from "../panel/components/FilterPeopleByPosition";
 
 interface StepperProps {
   steps: string[];
@@ -35,7 +34,7 @@ const Stepper: React.FC<StepperProps> = ({
                 ? "bg-[#7F55DA] border-[#7F55DA]"
                 : "bg-gray-300 border-gray-400"
             }`}
-            //onClick={() => onStepClick(index)}
+            onClick={() => onStepClick(index)}
           ></div>
         </div>
       ))}
@@ -43,7 +42,7 @@ const Stepper: React.FC<StepperProps> = ({
   );
 };
 
-const StepperWithForms: React.FC = () => {
+const PeopleWrapper: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const steps = ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6"];
 
@@ -62,15 +61,9 @@ const StepperWithForms: React.FC = () => {
   const [selectedValuesMineral, setSelectedValuesMineral] = useState<string[]>(
     []
   );
-
-  const [selectedValuesParent, setSelectedValuesParent] = useState<string[]>(
-    []
-  );
   const closeEditor = () => setIsEditorOpen(false);
 
-  const [selectedValuesPeople, setSelectedValuesPeople] = useState<string[]>(
-    []
-  );
+  const [selectedValuesPeople, setSelectedValuesPeople] = useState<any>([]);
   const [selectedValuesSite, setSelectedValuesSite] = useState<string[]>([]);
   const [selectedValuesCompany, setSelectedValuesCompany] = useState<string[]>(
     []
@@ -127,13 +120,6 @@ const StepperWithForms: React.FC = () => {
   const [content, setContent] = useState("");
   const [company_id, setCompanyId] = useState("");
   const [files, setFiles] = React.useState<File[]>([]);
-  const [searchMineralQuerycfo, setSearchMineralQuerycfo] = useState("");
-  const [searchMineralQuerycto, setSearchMineralQuerycto] = useState("");
-
-  const [ceo, setCEO] = useState<{ id: string; name: string }[]>([]);
-  const [cfo, setCFO] = useState<{ id: string; name: string }[]>([]);
-  const [cto, setCTO] = useState<{ id: string; name: string }[]>([]);
-
   // console.log(files);
 
   const handleSetForm = (name: string, files: File[]) => {
@@ -190,15 +176,14 @@ const StepperWithForms: React.FC = () => {
     currentStep === 1
       ? "search/mineral"
       : currentStep === 2
-      ? "search/people"
-      : currentStep === 3
+      ? "search/company" // "search/people"
+      : currentStep == 3
       ? "search/site"
-      : currentStep === 1 && searchMineralQueryc !== ""
+      : currentStep == 4 && searchMineralQueryc === ""
       ? "search/company"
-      : searchMineralQueryc !== ""
-      ? "search/company"
-      : "search/people";
-
+      : currentStep === 4 && searchMineralQueryc !== ""
+      ? "search/people"
+      : "";
   const fetchMineral = async (query: string) => {
     try {
       const response = await fetch(`${baseUrl}${url}?q=${query}`);
@@ -207,7 +192,7 @@ const StepperWithForms: React.FC = () => {
       }
 
       const data = await response.json();
-
+      console.log(data);
       setMineralOption(data.data);
     } catch (error) {
       console.error("Error fetching options:", error);
@@ -273,7 +258,7 @@ const StepperWithForms: React.FC = () => {
       formData.append(`country[${index}]`, country);
     });
 
-    selectedValuesPeople.forEach((people: any, index) => {
+    selectedValuesPeople.forEach((people: any, index: any) => {
       formData.append(`people[${index}]`, people.id.toString());
     });
 
@@ -308,9 +293,7 @@ const StepperWithForms: React.FC = () => {
     formData.append("name", docName);
     formData.append("company_id", company_id);
 
-    selectedValuesPeople.forEach((people: any, index) => {
-      formData.append(`people_id[${index}]`, people.id.toString());
-    });
+    formData.append(`people_id`, selectedValuesPeople);
 
     if (files) {
       files.forEach((file, index) => {
@@ -349,9 +332,8 @@ const StepperWithForms: React.FC = () => {
     formData.append("company_id", company_id);
     // formData.append("people_id", company_id);
 
-    selectedValuesPeople.forEach((people: any, index) => {
-      formData.append(`people_id[${index}]`, people.id.toString());
-    });
+    formData.append(`people_id`, selectedValuesPeople);
+
     selectedValuesMineral.forEach((mineral: any, index) => {
       formData.append(`mineral_id[${index}]`, mineral.id.toString());
     });
@@ -431,39 +413,31 @@ const StepperWithForms: React.FC = () => {
   const handleSubmitCompany = async () => {
     setIsloading(true);
     const formData = new FormData();
-    formData.append("name", name);
-    formData.append("address", companyAddress);
-    formData.append("rc_number", rc_number);
+    formData.append("first_name", first_name);
+    formData.append("last_name", last_name);
+    formData.append("other_name", other_name);
+
+    formData.append("location", companyAddress);
+    formData.append("title", title);
     formData.append("other_name", other_name);
     formData.append("rich_text", content);
     formData.append("tag[0]", tag);
-    formData.append("location", peopleCountry);
     selectedValuesMineral.forEach((mineral: any, index) => {
       formData.append(`mineral[${index}]`, mineral.id.toString());
     });
     selectedCompanyCountries.forEach((country: any, index: any) => {
       formData.append(`country[${index}]`, country);
     });
-    formData.append("other_data", other_data);
-    ceo.forEach((people: any, index) => {
-      formData.append(`ceo_id`, people.id.toString());
-    });
-    cfo.forEach((people: any, index) => {
-      formData.append(`cfo_id`, people.id.toString());
-    });
-    cto.forEach((people: any, index) => {
-      formData.append(`cto_id`, people.id.toString());
-    });
+    formData.append(`company`, selectedValuesPeople);
 
-    selectedValuesParent.forEach((people: any, index) => {
-      formData.append(`parent_id`, people.id.toString());
-    });
+    formData.append("other_data", other_data);
+
     if (image) {
       formData.append("image", image, image.name);
     }
 
     try {
-      const response = await fetch(`${baseUrl}company/create`, {
+      const response = await fetch(`${baseUrl}people/create`, {
         method: "POST",
         body: formData,
       });
@@ -473,9 +447,8 @@ const StepperWithForms: React.FC = () => {
       }
 
       const data = await response.json();
-      //console.log(data.data.id);
-      setCompanyId(data.data.id);
-      showNotification("Success!", "Company added successful", "success");
+
+      showNotification("Success!", "People added successful", "success");
       setisaddNewPeople(false);
       setCurrentStep(currentStep + 1);
     } catch (error) {
@@ -537,31 +510,51 @@ const StepperWithForms: React.FC = () => {
         {currentStep === 0 && (
           <div className="py-1 px-5">
             <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
-              Create Company
+              Create People
             </h2>
             <div className="flex flex-col gap-[24px] pt-4">
               <InputElement
                 type="text"
-                label="Company Name"
-                placeholder="Enter company name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                label=" First name"
+                placeholder="Enter first name"
+                value={first_name}
+                onChange={(e) => setFirstname(e.target.value)}
                 name="name"
                 required={true}
                 //className="additional-styles"
               />
-              <MineralSearchDrop
-                label="Select Parent Company"
-                options={mineralOptions}
-                values={selectedValuesParent}
-                onChange={(values: any) => setSelectedValuesParent(values)}
-                searchQuery={searchMineralQueryc}
-                setSearchQuery={setSearchMineralQueryc}
-                type={2}
-                // setisAddnewpeople={setisAddnewminera}
+              <InputElement
+                type="text"
+                label=" Last name"
+                placeholder="Enter last name"
+                value={last_name}
+                onChange={(e) => setLastname(e.target.value)}
+                name="name"
+                required={true}
+                //className="additional-styles"
+              />
+              <InputElement
+                type="text"
+                label=" Other name"
+                placeholder="Enter other name"
+                value={other_name}
+                onChange={(e) => setOtherName(e.target.value)}
+                name="name"
+                required={true}
+                //className="additional-styles"
+              />
+              <InputElement
+                type="text"
+                label="Title"
+                placeholder="Enter title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                name="name"
+                required={true}
+                //className="additional-styles"
               />
               <SearchableSelect
-                label="Company Address"
+                label="Location"
                 placeholder="Select address"
                 value={companyAddress}
                 onChange={handleOptionChange}
@@ -572,6 +565,7 @@ const StepperWithForms: React.FC = () => {
                 options={options}
                 setPlacedId={setPlacedId}
               />
+              {/***
               <InputElement
                 type="text"
                 label="RC Number"
@@ -582,46 +576,11 @@ const StepperWithForms: React.FC = () => {
                 required={true}
                 //className="additional-styles"
               />
+              */}
               <CountrySelect
                 label="Select Countries"
                 values={selectedCompanyCountries}
                 onChange={(countries) => setSelectedCompanyCountries(countries)}
-              />
-              <FilterPeopleByPosition
-                label="Select CEO"
-                options={mineralOptions}
-                value={ceo}
-                onChange={(values: any) => setCEO(values)}
-                searchQuery={searchMineralQuery}
-                setSearchQuery={setSearchMineralQuery}
-                type={2}
-                //setisAddnewpeople={setisAddnewminera}
-
-                positionFilter="CEO" // Filter only for CEOs
-              />
-              <FilterPeopleByPosition
-                label="Select CTO"
-                options={mineralOptions}
-                value={cto}
-                onChange={(values: any) => setCTO(values)}
-                searchQuery={searchMineralQuerycto}
-                setSearchQuery={setSearchMineralQuerycto}
-                type={2}
-                //setisAddnewpeople={setisAddnewminera}
-
-                positionFilter="CTO" // Filter only for CEOs
-              />
-              <FilterPeopleByPosition
-                label="Select CFO"
-                options={mineralOptions}
-                value={cfo}
-                onChange={(values: any) => setCFO(values)}
-                searchQuery={searchMineralQuerycfo}
-                setSearchQuery={setSearchMineralQuerycfo}
-                type={2}
-                //setisAddnewpeople={setisAddnewminera}
-
-                positionFilter="CFO" // Filter only for CEOs
               />
               <InputElement
                 type="text"
@@ -665,7 +624,7 @@ const StepperWithForms: React.FC = () => {
               <UploadEl
                 placeholder="Gold, Ore etc..."
                 helperText="A cover image of yourself"
-                label="Company  Profile Picture"
+                label="Profile Picture"
                 value={image}
                 setForm={setImage}
                 name="display_picture"
@@ -774,18 +733,18 @@ const StepperWithForms: React.FC = () => {
         {currentStep === 2 && (
           <div className="py-1 px-5">
             <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
-              {isaddNewPeople ? "Add People" : "Select People"}
+              {isaddNewPeople ? "Add Company" : "Select Company"}
             </h2>
             <div className="flex flex-col gap-[24px] pt-4">
               {isaddNewPeople === false && (
                 <MineralSearchDrop
-                  label="Select people"
+                  label="Select company"
                   options={mineralOptions}
                   values={selectedValuesPeople}
                   onChange={(values: any) => setSelectedValuesPeople(values)}
                   searchQuery={searchMineralQuery}
                   setSearchQuery={setSearchMineralQuery}
-                  type={3}
+                  type={2}
                   setisAddnewpeople={setisaddNewPeople}
                 />
               )}
@@ -1127,4 +1086,4 @@ const StepperWithForms: React.FC = () => {
   );
 };
 
-export default StepperWithForms;
+export default PeopleWrapper;
