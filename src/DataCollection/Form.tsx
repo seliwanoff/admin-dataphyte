@@ -10,6 +10,7 @@ import MineralSearchDrop from "../panel/components/MineralSearchrop";
 import LoginButton from "../panel/components/loginButton";
 import RoleSelect from "../panel/components/RolesComponent";
 import CountrySelect from "../panel/components/CountrySelect";
+import RichTextEditor from "./components/RichText";
 
 interface StepperProps {
   steps: string[];
@@ -42,7 +43,7 @@ const Stepper: React.FC<StepperProps> = ({
 
 const StepperWithForms: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const steps = ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5"];
+  const steps = ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6"];
 
   const [name, setName] = useState("");
   const [rc_number, setRcNumber] = useState("");
@@ -59,6 +60,8 @@ const StepperWithForms: React.FC = () => {
   const [selectedValuesMineral, setSelectedValuesMineral] = useState<string[]>(
     []
   );
+  const closeEditor = () => setIsEditorOpen(false);
+
   const [selectedValuesPeople, setSelectedValuesPeople] = useState<string[]>(
     []
   );
@@ -113,6 +116,8 @@ const StepperWithForms: React.FC = () => {
   const [siteActualAddress, setSiteActualAddress] = useState<any>([]);
 
   const baseUrl = process.env.REACT_APP_URL;
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [content, setContent] = useState("");
 
   const fetchOptions = async (query: string) => {
     try {
@@ -495,7 +500,26 @@ const StepperWithForms: React.FC = () => {
                 name="tag"
                 required={true}
               />
-
+              <div className="flex flex-col gap-3">
+                <label htmlFor="" className="label">
+                  Rich text
+                </label>
+                <div
+                  className="input cursor-pointer"
+                  onClick={() => setIsEditorOpen(true)}
+                >
+                  {" "}
+                  Click to write text
+                </div>
+              </div>
+              {isEditorOpen && (
+                <RichTextEditor
+                  value={content}
+                  onChange={setContent}
+                  onClose={closeEditor}
+                />
+              )}
+              {/***
               <TextAreaElement
                 type="text"
                 label="Other Info"
@@ -505,6 +529,7 @@ const StepperWithForms: React.FC = () => {
                 name="tag"
                 required={false}
               />
+               */}
               <UploadEl
                 placeholder="Gold, Ore etc..."
                 helperText="A cover image of yourself"
@@ -897,6 +922,75 @@ const StepperWithForms: React.FC = () => {
                 disable={isLoading}
               >
                 {isLoading ? "Adding..." : "Add document"}
+              </LoginButton>
+            </div>
+          </div>
+        )}
+        {currentStep === 5 && (
+          <div className="py-1 px-5">
+            <div className="flex flex-col gap-1">
+              <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
+                {"Upload Pictures"}
+              </h2>
+              <span className="text-[#202020] font-Satoshi font-medium text-[14px]">
+                After uploading your document, Click on finish.
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-[24px] pt-4">
+              <InputElement
+                type="text"
+                label="Name"
+                placeholder="Enter document name"
+                value={docName}
+                onChange={(e) => setDocName(e.target.value)}
+                name="name"
+                required={false}
+              />
+              <MineralSearchDrop
+                label="Select company "
+                options={mineralOptions}
+                values={selectedValuesCompany}
+                onChange={(values: any) => setSelectedValuesCompany(values)}
+                searchQuery={searchMineralQuery}
+                setSearchQuery={setSearchMineralQuery}
+                type={5}
+                setCurrentStep={setCurrentStep}
+                setisAddnewpeople={setisAddnewSite}
+                isDocument={false}
+              />
+
+              <MineralSearchDrop
+                label="Select people"
+                options={mineralOptions}
+                values={selectedValuesDoc}
+                onChange={(values: any) => setSelectedValuesDoc(values)}
+                searchQuery={searchMineralQueryc}
+                setSearchQuery={setSearchMineralQueryc}
+                type={6}
+                setisAddnewpeople={setisaddNewPeople}
+                setCurrentStep={setCurrentStep}
+                isDocument={true}
+              />
+
+              <UploadEl
+                placeholder="Gold, Ore etc..."
+                helperText=""
+                label="Document"
+                value={docImage}
+                setForm={setdocImage}
+                multipe={false}
+                name="display_picture"
+                accept=""
+                instruction="PDF, DOC, DOCX or XLSX (max. 800x400px)"
+              />
+
+              <LoginButton
+                onClick={handleSubmitDoc}
+                type="button"
+                disable={isLoading}
+              >
+                {isLoading ? "Adding..." : "Add Pictures"}
               </LoginButton>
             </div>
           </div>

@@ -1,0 +1,17 @@
+/* Reduce the size of dropdown arrows in the Quill toolbar */
+.ql-toolbar .ql-picker {
+  font-size: 14px !important;
+}
+
+.ql-toolbar .ql-picker-options {
+  font-size: 14px !important;
+}
+
+.ql-toolbar .ql-picker-label::after {
+  font-size: 14px !important;
+  display: none !important;
+}
+
+.ql-toolbar .ql-picker-item::before {
+  font-size: 14px !important;
+}
