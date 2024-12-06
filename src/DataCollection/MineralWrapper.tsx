@@ -296,12 +296,16 @@ const MineralWrapper: React.FC = () => {
     formData.append("company_id", company_id);
 
     selectedValuesPeople.forEach((people: any, index) => {
-      formData.append(`people_id[${index}]`, people.id.toString());
+      formData.append(`people_id`, people.id.toString());
+    });
+
+    selectedValuesSite.forEach((mineral: any, index) => {
+      formData.append(`mining_site_id`, mineral.id.toString());
     });
 
     if (files) {
       files.forEach((file, index) => {
-        formData.append("files", file, file.name);
+        formData.append(`files[${index}]`, file, file.name);
       });
     }
 
@@ -335,21 +339,24 @@ const MineralWrapper: React.FC = () => {
     formData.append("name", picName);
     formData.append("company_id", company_id);
     // formData.append("people_id", company_id);
-
+    /**
     selectedValuesPeople.forEach((people: any, index) => {
       formData.append(`people_id[${index}]`, people.id.toString());
     });
+    */
+    /**
     selectedValuesMineral.forEach((mineral: any, index) => {
       formData.append(`mineral_id[${index}]`, mineral.id.toString());
     });
+    */
 
     selectedValuesSite.forEach((mineral: any, index) => {
-      formData.append(`mining_site_id[${index}]`, mineral.id.toString());
+      formData.append(`mining_site_id`, mineral.id.toString());
     });
 
     if (files) {
       files.forEach((file, index) => {
-        formData.append("files", file, file.name);
+        formData.append(`files[${index}]`, file, file.name);
       });
     }
 
@@ -370,6 +377,17 @@ const MineralWrapper: React.FC = () => {
       setFiles([]);
       setpicName("");
       setCurrentStep(0);
+      setImage([]);
+      setName("");
+      setTag("");
+      setContent("");
+      setSelectedCompanyCountries([]);
+      setSelectedCompanyCountries([]);
+      setSelectedValuesCompany([]);
+      setSelectedValuesDoc([]);
+      setSelectedValuesMineral([]);
+      setSelectedValuesPeople([]);
+      setSelectedValuesSite([]);
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
@@ -419,7 +437,7 @@ const MineralWrapper: React.FC = () => {
     setIsloading(true);
     const formData = new FormData();
     formData.append("name", name);
-    formData.append("location", companyAddress);
+    // formData.append("location", companyAddress);
     //formData.append("rc_number", rc_number);
     //  formData.append("other_name", other_name);
     formData.append("rich_text", content);
@@ -428,11 +446,11 @@ const MineralWrapper: React.FC = () => {
     selectedValuesMineral.forEach((mineral: any, index) => {
       formData.append(`company[${index}]`, mineral.id.toString());
     });
-    /**
+
     selectedCompanyCountries.forEach((country: any, index: any) => {
       formData.append(`country[${index}]`, country);
     });
-    */
+
     formData.append("other_data", other_data);
 
     if (image) {
@@ -452,7 +470,7 @@ const MineralWrapper: React.FC = () => {
       const data = await response.json();
       //console.log(data.data.id);
       setCompanyId(data.data.id);
-      showNotification("Success!", "MIneral added successful", "success");
+      // showNotification("Success!", "MIneral added successful", "success");
       setisaddNewPeople(false);
       setCurrentStep(currentStep + 1);
     } catch (error) {
@@ -527,6 +545,7 @@ const MineralWrapper: React.FC = () => {
                 required={true}
                 //className="additional-styles"
               />
+              {/**
               <SearchableSelect
                 label="Mineral location"
                 placeholder="Select address"
@@ -539,6 +558,7 @@ const MineralWrapper: React.FC = () => {
                 options={options}
                 setPlacedId={setPlacedId}
               />
+              */}
               {/**
               <InputElement
                 type="text"
@@ -550,15 +570,16 @@ const MineralWrapper: React.FC = () => {
                 required={true}
                 //className="additional-styles"
               />
+                */}
               <CountrySelect
                 label="Select Countries"
                 values={selectedCompanyCountries}
                 onChange={(countries) => setSelectedCompanyCountries(countries)}
               />
-              */}
+
               <InputElement
                 type="text"
-                label="Tag"
+                label="Tag (Please separate with (,)"
                 placeholder="Enter Tag"
                 value={tag}
                 onChange={(e) => setTag(e.target.value)}
@@ -570,11 +591,27 @@ const MineralWrapper: React.FC = () => {
                   Rich text
                 </label>
                 <div
-                  className="input cursor-pointer"
+                  className="input cursor-pointer relative"
                   onClick={() => setIsEditorOpen(true)}
                 >
                   {" "}
                   Click to write text
+                  {content !== "" && (
+                    <div className="flex items-center justify-center w-4 h-4 bg-primary absolute rounded-full right-3">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-6 h-6 text-white"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                    </div>
+                  )}
                 </div>
               </div>
               {isEditorOpen && (
@@ -930,7 +967,7 @@ const MineralWrapper: React.FC = () => {
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
-                {"Upload Documents"}
+                {"Attach Documents"}
               </h2>
             </div>
 
@@ -954,14 +991,20 @@ const MineralWrapper: React.FC = () => {
                 instruction="PDF, DOC, DOCX or XLSX (max. 800x400px)"
                 multipe={true} // Enable multiple file uploads
               />
-
-              <LoginButton
-                onClick={handleSubmitDoc}
-                type="button"
-                disable={isLoading}
-              >
-                {isLoading ? "Uploading..." : "Upload document"}
-              </LoginButton>
+              {files && files.length > 0 && (
+                <>
+                  <span className="font-Satoshi text-[14px] font-bold mb-[-20px]">
+                    Please attach document before proceed.
+                  </span>
+                  <LoginButton
+                    onClick={handleSubmitDoc}
+                    type="button"
+                    disable={isLoading}
+                  >
+                    {isLoading ? "Uploading..." : "Attach document"}
+                  </LoginButton>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -969,7 +1012,7 @@ const MineralWrapper: React.FC = () => {
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
-                {"Upload Pictures"}
+                {"Attach Pictures"}
               </h2>
             </div>
 
@@ -1020,14 +1063,20 @@ const MineralWrapper: React.FC = () => {
                 instruction="GIF, PNG, JPG or JPEG (max. 800x400px)"
                 multipe={true}
               />
-
-              <LoginButton
-                onClick={handleSubmitPics}
-                type="button"
-                disable={isLoading}
-              >
-                {isLoading ? "uploading..." : "Upload Pictures"}
-              </LoginButton>
+              {files && files.length > 0 && (
+                <>
+                  <span className="font-Satoshi text-[14px] font-bold mb-[-20px]">
+                    Please attach pictures before proceed.
+                  </span>
+                  <LoginButton
+                    onClick={handleSubmitPics}
+                    type="button"
+                    disable={isLoading}
+                  >
+                    {isLoading ? "uploading..." : "Attach Pictures"}
+                  </LoginButton>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -1047,9 +1096,10 @@ const MineralWrapper: React.FC = () => {
         {currentStep !== 3 && currentStep !== 5 && (
           <button
             className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium"
-            onClick={() =>
-              setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))
-            }
+            onClick={() => {
+              setFiles([]);
+              setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+            }}
             disabled={currentStep === steps.length - 1}
           >
             Next

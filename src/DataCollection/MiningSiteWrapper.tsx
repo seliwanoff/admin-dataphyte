@@ -304,16 +304,16 @@ const MiningSiteWrapper: React.FC = () => {
     const formData = new FormData();
     formData.append("name", docName);
     selectedValuesSite.forEach((people: any, index) => {
-      formData.append(`company_id[${index}]`, people.id.toString());
+      formData.append(`company_id`, people.id.toString());
     });
 
     selectedValuesPeople.forEach((people: any, index) => {
-      formData.append(`people_id[${index}]`, people.id.toString());
+      formData.append(`people_id`, people.id.toString());
     });
 
     if (files) {
       files.forEach((file, index) => {
-        formData.append("files", file, file.name);
+        formData.append(`files[${index}]`, file, file.name);
       });
     }
 
@@ -349,18 +349,18 @@ const MiningSiteWrapper: React.FC = () => {
     // formData.append("people_id", company_id);
 
     selectedValuesSite.forEach((people: any, index) => {
-      formData.append(`company_id[${index}]`, people.id.toString());
+      formData.append(`company_id`, people.id.toString());
     });
 
     selectedValuesPeople.forEach((people: any, index) => {
-      formData.append(`people_id[${index}]`, people.id.toString());
+      formData.append(`people_id`, people.id.toString());
     });
     selectedValuesMineral.forEach((mineral: any, index) => {
-      formData.append(`mineral_id[${index}]`, mineral.id.toString());
+      formData.append(`mineral_id`, mineral.id.toString());
     });
 
     selectedValuesSite.forEach((mineral: any, index) => {
-      formData.append(`mining_site_id[${index}]`, mineral.id.toString());
+      formData.append(`mining_site_id`, mineral.id.toString());
     });
 
     if (files) {
@@ -385,6 +385,22 @@ const MiningSiteWrapper: React.FC = () => {
       setisAddnewSite(false);
       setFiles([]);
       setpicName("");
+      setCEO([]);
+      setCFO([]);
+      setCTO([]);
+      setName("");
+      setCompanyAddress("");
+      setCompanyActualAdress("");
+      setImage(null);
+      setContent("");
+      setCompanyAddress("");
+      setSelectedCompanyCountries([]);
+      setSelectedValuesCompany([]);
+      setSelectedValuesDoc([]);
+      setSelectedValuesMineral([]);
+      setSelectedValuesPeople([]);
+      setSelectedValuesSite([]);
+
       setCurrentStep(0);
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
@@ -509,7 +525,7 @@ const MiningSiteWrapper: React.FC = () => {
       const data = await response.json();
       //console.log(data.data.id);
       setCompanyId(data.data.id);
-      showNotification("Success!", "Mining Site added successful", "success");
+      //  showNotification("Success!", "Mining Site added successful", "success");
       setisaddNewPeople(false);
       setCurrentStep(currentStep + 1);
     } catch (error) {
@@ -602,52 +618,33 @@ const MiningSiteWrapper: React.FC = () => {
                 values={selectedCompanyCountries}
                 onChange={(countries) => setSelectedCompanyCountries(countries)}
               />
-              <FilterPeopleByPosition
-                label="Select CEO"
-                options={mineralOptions}
-                value={ceo}
-                onChange={(values: any) => setCEO(values)}
-                searchQuery={searchMineralQuery}
-                setSearchQuery={setSearchMineralQuery}
-                type={2}
-                //setisAddnewpeople={setisAddnewminera}
 
-                positionFilter="CEO" // Filter only for CEOs
-              />
-              <FilterPeopleByPosition
-                label="Select CTO"
-                options={mineralOptions}
-                value={cto}
-                onChange={(values: any) => setCTO(values)}
-                searchQuery={searchMineralQuerycto}
-                setSearchQuery={setSearchMineralQuerycto}
-                type={2}
-                //setisAddnewpeople={setisAddnewminera}
-
-                positionFilter="CTO" // Filter only for CEOs
-              />
-              <FilterPeopleByPosition
-                label="Select CFO"
-                options={mineralOptions}
-                value={cfo}
-                onChange={(values: any) => setCFO(values)}
-                searchQuery={searchMineralQuerycfo}
-                setSearchQuery={setSearchMineralQuerycfo}
-                type={2}
-                //setisAddnewpeople={setisAddnewminera}
-
-                positionFilter="CFO" // Filter only for CEOs
-              />
               <div className="flex flex-col gap-3">
                 <label htmlFor="" className="label">
                   Rich text
                 </label>
                 <div
-                  className="input cursor-pointer"
+                  className="input cursor-pointer relative"
                   onClick={() => setIsEditorOpen(true)}
                 >
                   {" "}
                   Click to write text
+                  {content !== "" && (
+                    <div className="flex items-center justify-center w-4 h-4 bg-primary absolute rounded-full right-3">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-6 h-6 text-white"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                    </div>
+                  )}
                 </div>
               </div>
               {isEditorOpen && (
@@ -784,16 +781,54 @@ const MiningSiteWrapper: React.FC = () => {
             </h2>
             <div className="flex flex-col gap-[24px] pt-4">
               {isaddNewPeople === false && (
-                <MineralSearchDrop
-                  label="Select people"
-                  options={mineralOptions}
-                  values={selectedValuesPeople}
-                  onChange={(values: any) => setSelectedValuesPeople(values)}
-                  searchQuery={searchMineralQuery}
-                  setSearchQuery={setSearchMineralQuery}
-                  type={3}
-                  setisAddnewpeople={setisaddNewPeople}
-                />
+                <>
+                  <MineralSearchDrop
+                    label="Select people"
+                    options={mineralOptions}
+                    values={selectedValuesPeople}
+                    onChange={(values: any) => setSelectedValuesPeople(values)}
+                    searchQuery={searchMineralQuery}
+                    setSearchQuery={setSearchMineralQuery}
+                    type={3}
+                    setisAddnewpeople={setisaddNewPeople}
+                  />
+                  <FilterPeopleByPosition
+                    label="Select CEO"
+                    options={mineralOptions}
+                    value={ceo}
+                    onChange={(values: any) => setCEO(values)}
+                    searchQuery={searchMineralQuery}
+                    setSearchQuery={setSearchMineralQuery}
+                    type={2}
+                    //setisAddnewpeople={setisAddnewminera}
+
+                    positionFilter="CEO" // Filter only for CEOs
+                  />
+                  <FilterPeopleByPosition
+                    label="Select CTO"
+                    options={mineralOptions}
+                    value={cto}
+                    onChange={(values: any) => setCTO(values)}
+                    searchQuery={searchMineralQuerycto}
+                    setSearchQuery={setSearchMineralQuerycto}
+                    type={2}
+                    //setisAddnewpeople={setisAddnewminera}
+
+                    positionFilter="CTO" // Filter only for CEOs
+                  />
+                  <FilterPeopleByPosition
+                    label="Select CFO"
+                    options={mineralOptions}
+                    value={cfo}
+                    onChange={(values: any) => setCFO(values)}
+                    searchQuery={searchMineralQuerycfo}
+                    setSearchQuery={setSearchMineralQuerycfo}
+                    type={2}
+                    //setisAddnewpeople={setisAddnewminera}
+
+                    positionFilter="CFO" // Filter only for CEOs
+                  />
+                </>
               )}
               {isaddNewPeople && (
                 <>
@@ -913,7 +948,7 @@ const MiningSiteWrapper: React.FC = () => {
         {currentStep === 3 && (
           <div className="py-1 px-5">
             <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
-              {isaddNewSite ? "Add company" : "SelectCompany"}
+              {isaddNewSite ? "Add company" : "Select Company"}
             </h2>
             <div className="flex flex-col gap-[24px] pt-4">
               {isaddNewSite === false && (
@@ -1027,14 +1062,20 @@ const MiningSiteWrapper: React.FC = () => {
                 instruction="PDF, DOC, DOCX or XLSX (max. 800x400px)"
                 multipe={true} // Enable multiple file uploads
               />
-
-              <LoginButton
-                onClick={handleSubmitDoc}
-                type="button"
-                disable={isLoading}
-              >
-                {isLoading ? "Uploading..." : "Upload document"}
-              </LoginButton>
+              {files && files.length > 0 && (
+                <>
+                  <span className="font-Satoshi text-[14px] font-bold mb-[-20px]">
+                    Please attach document before proceed.
+                  </span>
+                  <LoginButton
+                    onClick={handleSubmitDoc}
+                    type="button"
+                    disable={isLoading}
+                  >
+                    {isLoading ? "Uploading..." : "Attach document"}
+                  </LoginButton>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -1042,7 +1083,7 @@ const MiningSiteWrapper: React.FC = () => {
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
-                {"Upload Pictures"}
+                {"Attach Pictures"}
               </h2>
             </div>
 
@@ -1093,14 +1134,20 @@ const MiningSiteWrapper: React.FC = () => {
                 instruction="GIF, PNG, JPG or JPEG (max. 800x400px)"
                 multipe={true}
               />
-
-              <LoginButton
-                onClick={handleSubmitPics}
-                type="button"
-                disable={isLoading}
-              >
-                {isLoading ? "uploading..." : "Upload Pictures"}
-              </LoginButton>
+              {files && files.length > 0 && (
+                <>
+                  <span className="font-Satoshi text-[14px] font-bold mb-[-20px]">
+                    Please attach picture before proceed.
+                  </span>
+                  <LoginButton
+                    onClick={handleSubmitPics}
+                    type="button"
+                    disable={isLoading}
+                  >
+                    {isLoading ? "uploading..." : "Attach Pictures"}
+                  </LoginButton>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -1120,9 +1167,10 @@ const MiningSiteWrapper: React.FC = () => {
         {currentStep !== 3 && currentStep !== 5 && (
           <button
             className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium"
-            onClick={() =>
-              setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))
-            }
+            onClick={() => {
+              setFiles([]);
+              setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+            }}
             disabled={currentStep === steps.length - 1}
           >
             Next

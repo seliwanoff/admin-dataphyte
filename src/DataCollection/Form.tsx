@@ -45,7 +45,7 @@ const Stepper: React.FC<StepperProps> = ({
 
 const StepperWithForms: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const steps = ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6"];
+  const steps = ["Step 1", "Step 2", "Step 3", "Step 5", "Step 6"];
 
   const [name, setName] = useState("");
   const [rc_number, setRcNumber] = useState("");
@@ -304,6 +304,9 @@ const StepperWithForms: React.FC = () => {
 
   const handleSubmitDoc = async () => {
     setIsloading(true);
+    await handleSubmitCompany().then((res) => {
+      console.log(res);
+    });
     const formData = new FormData();
     formData.append("name", docName);
     formData.append("company_id", company_id);
@@ -314,7 +317,7 @@ const StepperWithForms: React.FC = () => {
 
     if (files) {
       files.forEach((file, index) => {
-        formData.append("files", file, file.name);
+        formData.append(`files[${index}]`, file, file.name);
       });
     }
 
@@ -348,13 +351,20 @@ const StepperWithForms: React.FC = () => {
     formData.append("name", picName);
     formData.append("company_id", company_id);
     // formData.append("people_id", company_id);
-
+    {
+      /**
     selectedValuesPeople.forEach((people: any, index) => {
       formData.append(`people_id[${index}]`, people.id.toString());
     });
+    */
+    }
+    {
+      /**
     selectedValuesMineral.forEach((mineral: any, index) => {
       formData.append(`mineral_id[${index}]`, mineral.id.toString());
     });
+     */
+    }
 
     selectedValuesSite.forEach((mineral: any, index) => {
       formData.append(`mining_site_id[${index}]`, mineral.id.toString());
@@ -362,7 +372,7 @@ const StepperWithForms: React.FC = () => {
 
     if (files) {
       files.forEach((file, index) => {
-        formData.append("files", file, file.name);
+        formData.append(`files[${index}]`, file, file.name);
       });
     }
 
@@ -381,7 +391,18 @@ const StepperWithForms: React.FC = () => {
       showNotification("Success!", "Pictures upload successful", "success");
       setisAddnewSite(false);
       setFiles([]);
+      setCompanyAddress("");
+      setRcNumber("");
+      setSelectedCompanyCountries([]);
+      setTag("");
+      setImage(null);
       setpicName("");
+      setSelectedCompanyCountries([]);
+      setSelectedValuesCompany([]);
+      setSelectedValuesDoc([]);
+      setSelectedValuesMineral([]);
+      setSelectedValuesPeople([]);
+      setSelectedValuesSite([]);
       setCurrentStep(0);
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
@@ -475,7 +496,7 @@ const StepperWithForms: React.FC = () => {
       const data = await response.json();
       //console.log(data.data.id);
       setCompanyId(data.data.id);
-      showNotification("Success!", "Company added successful", "success");
+      // showNotification("Success!", "Company added successful", "success");
       setisaddNewPeople(false);
       setCurrentStep(currentStep + 1);
     } catch (error) {
@@ -587,45 +608,10 @@ const StepperWithForms: React.FC = () => {
                 values={selectedCompanyCountries}
                 onChange={(countries) => setSelectedCompanyCountries(countries)}
               />
-              <FilterPeopleByPosition
-                label="Select CEO"
-                options={mineralOptions}
-                value={ceo}
-                onChange={(values: any) => setCEO(values)}
-                searchQuery={searchMineralQuery}
-                setSearchQuery={setSearchMineralQuery}
-                type={2}
-                //setisAddnewpeople={setisAddnewminera}
 
-                positionFilter="CEO" // Filter only for CEOs
-              />
-              <FilterPeopleByPosition
-                label="Select CTO"
-                options={mineralOptions}
-                value={cto}
-                onChange={(values: any) => setCTO(values)}
-                searchQuery={searchMineralQuerycto}
-                setSearchQuery={setSearchMineralQuerycto}
-                type={2}
-                //setisAddnewpeople={setisAddnewminera}
-
-                positionFilter="CTO" // Filter only for CEOs
-              />
-              <FilterPeopleByPosition
-                label="Select CFO"
-                options={mineralOptions}
-                value={cfo}
-                onChange={(values: any) => setCFO(values)}
-                searchQuery={searchMineralQuerycfo}
-                setSearchQuery={setSearchMineralQuerycfo}
-                type={2}
-                //setisAddnewpeople={setisAddnewminera}
-
-                positionFilter="CFO" // Filter only for CEOs
-              />
               <InputElement
                 type="text"
-                label="Tag"
+                label="Tag (Please separate with (,))"
                 placeholder="Enter Tag"
                 value={tag}
                 onChange={(e) => setTag(e.target.value)}
@@ -637,11 +623,27 @@ const StepperWithForms: React.FC = () => {
                   Rich text
                 </label>
                 <div
-                  className="input cursor-pointer"
+                  className="input cursor-pointer relative"
                   onClick={() => setIsEditorOpen(true)}
                 >
                   {" "}
                   Click to write text
+                  {content !== "" && (
+                    <div className="flex items-center justify-center w-4 h-4 bg-primary absolute rounded-full right-3">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-6 h-6 text-white"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                    </div>
+                  )}
                 </div>
               </div>
               {isEditorOpen && (
@@ -778,6 +780,7 @@ const StepperWithForms: React.FC = () => {
             </h2>
             <div className="flex flex-col gap-[24px] pt-4">
               {isaddNewPeople === false && (
+                /***
                 <MineralSearchDrop
                   label="Select people"
                   options={mineralOptions}
@@ -788,6 +791,45 @@ const StepperWithForms: React.FC = () => {
                   type={3}
                   setisAddnewpeople={setisaddNewPeople}
                 />
+ */
+                <>
+                  <FilterPeopleByPosition
+                    label="Select CEO"
+                    options={mineralOptions}
+                    value={ceo}
+                    onChange={(values: any) => setCEO(values)}
+                    searchQuery={searchMineralQuery}
+                    setSearchQuery={setSearchMineralQuery}
+                    type={2}
+                    //setisAddnewpeople={setisAddnewminera}
+
+                    positionFilter="CEO" // Filter only for CEOs
+                  />
+                  <FilterPeopleByPosition
+                    label="Select CTO"
+                    options={mineralOptions}
+                    value={cto}
+                    onChange={(values: any) => setCTO(values)}
+                    searchQuery={searchMineralQuerycto}
+                    setSearchQuery={setSearchMineralQuerycto}
+                    type={2}
+                    //setisAddnewpeople={setisAddnewminera}
+
+                    positionFilter="CTO" // Filter only for CEOs
+                  />
+                  <FilterPeopleByPosition
+                    label="Select CFO"
+                    options={mineralOptions}
+                    value={cfo}
+                    onChange={(values: any) => setCFO(values)}
+                    searchQuery={searchMineralQuerycfo}
+                    setSearchQuery={setSearchMineralQuerycfo}
+                    type={2}
+                    //setisAddnewpeople={setisAddnewminera}
+
+                    positionFilter="CFO" // Filter only for CEOs
+                  />
+                </>
               )}
               {isaddNewPeople && (
                 <>
@@ -856,7 +898,7 @@ const StepperWithForms: React.FC = () => {
                   />
                   <InputElement
                     type="text"
-                    label="Tag"
+                    label="Tag(Please separate with (,))"
                     placeholder="Enter Tag"
                     value={peopleTag}
                     onChange={(e) => setPeopleTag(e.target.value)}
@@ -904,6 +946,7 @@ const StepperWithForms: React.FC = () => {
             </div>
           </div>
         )}
+        {/***
         {currentStep === 3 && (
           <div className="py-1 px-5">
             <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -993,7 +1036,8 @@ const StepperWithForms: React.FC = () => {
             </div>
           </div>
         )}
-        {currentStep === 4 && (
+          */}
+        {currentStep === 3 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -1022,17 +1066,24 @@ const StepperWithForms: React.FC = () => {
                 multipe={true} // Enable multiple file uploads
               />
 
-              <LoginButton
-                onClick={handleSubmitDoc}
-                type="button"
-                disable={isLoading}
-              >
-                {isLoading ? "Uploading..." : "Upload document"}
-              </LoginButton>
+              {files && files.length > 0 && (
+                <>
+                  <span className="font-Satoshi text-[14px] font-bold mb-[-20px]">
+                    Please attach document before proceed.
+                  </span>
+                  <LoginButton
+                    onClick={handleSubmitDoc}
+                    type="button"
+                    disable={isLoading}
+                  >
+                    {isLoading ? "Uploading..." : "Attach document"}
+                  </LoginButton>
+                </>
+              )}
             </div>
           </div>
         )}
-        {currentStep === 5 && (
+        {currentStep === 4 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -1088,13 +1139,21 @@ const StepperWithForms: React.FC = () => {
                 multipe={true}
               />
 
-              <LoginButton
-                onClick={handleSubmitPics}
-                type="button"
-                disable={isLoading}
-              >
-                {isLoading ? "uploading..." : "Upload Pictures"}
-              </LoginButton>
+              {files && files.length > 0 && (
+                <>
+                  <span className="font-Satoshi text-[14px] font-bold mb-[-20px]">
+                    Please attach pictures before proceed.
+                  </span>
+
+                  <LoginButton
+                    onClick={handleSubmitPics}
+                    type="button"
+                    disable={isLoading}
+                  >
+                    {isLoading ? "uploading..." : "Attach Pictures"}
+                  </LoginButton>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -1111,7 +1170,7 @@ const StepperWithForms: React.FC = () => {
             Previous
           </button>
         )}
-        {currentStep !== 3 && currentStep !== 5 && (
+        {currentStep !== 4 && (
           <button
             className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium"
             onClick={() =>

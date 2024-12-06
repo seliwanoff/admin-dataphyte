@@ -70,7 +70,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
           {values.map((value, index) => (
             <span
               key={index}
-              className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm cursor-pointer"
+              className="bg-primary text-white  px-3 py-1 rounded-full text-sm cursor-pointer"
               onClick={() => handleSelect(value)}
             >
               {value}

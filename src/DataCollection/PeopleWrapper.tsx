@@ -292,12 +292,13 @@ const PeopleWrapper: React.FC = () => {
     const formData = new FormData();
     formData.append("name", docName);
     formData.append("company_id", company_id);
-
-    formData.append(`people_id`, selectedValuesPeople);
+    selectedValuesPeople.forEach((people: any, index: any) => {
+      formData.append(`people_id`, people.id);
+    });
 
     if (files) {
       files.forEach((file, index) => {
-        formData.append("files", file, file.name);
+        formData.append(`files[${index}]`, file, file.name);
       });
     }
 
@@ -332,7 +333,9 @@ const PeopleWrapper: React.FC = () => {
     formData.append("company_id", company_id);
     // formData.append("people_id", company_id);
 
-    formData.append(`people_id`, selectedValuesPeople);
+    selectedValuesPeople.forEach((people: any, index: any) => {
+      formData.append(`people_id`, people.id);
+    });
 
     selectedValuesMineral.forEach((mineral: any, index) => {
       formData.append(`mineral_id[${index}]`, mineral.id.toString());
@@ -364,6 +367,22 @@ const PeopleWrapper: React.FC = () => {
       setisAddnewSite(false);
       setFiles([]);
       setpicName("");
+      setImage(null);
+      setTitle("");
+      setFirstname("");
+      setLastname("");
+      setOtherName("");
+      setCompanyAddress("");
+      setSelectedCountries([]);
+      setSelectedCompanyCountries([]);
+      setContent("");
+      setTag("");
+      setSelectedCompanyCountries([]);
+      setSelectedValuesCompany([]);
+      setSelectedValuesDoc([]);
+      setSelectedValuesMineral([]);
+      setSelectedValuesPeople([]);
+      setSelectedValuesSite([]);
       setCurrentStep(0);
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
@@ -584,7 +603,7 @@ const PeopleWrapper: React.FC = () => {
               />
               <InputElement
                 type="text"
-                label="Tag"
+                label="Tag  (Please separate with (,)"
                 placeholder="Enter Tag"
                 value={tag}
                 onChange={(e) => setTag(e.target.value)}
@@ -596,11 +615,27 @@ const PeopleWrapper: React.FC = () => {
                   Rich text
                 </label>
                 <div
-                  className="input cursor-pointer"
+                  className="input cursor-pointer relative"
                   onClick={() => setIsEditorOpen(true)}
                 >
                   {" "}
                   Click to write text
+                  {content !== "" && (
+                    <div className="flex items-center justify-center w-4 h-4 bg-primary absolute rounded-full right-3">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-6 h-6 text-white"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                    </div>
+                  )}
                 </div>
               </div>
               {isEditorOpen && (
@@ -956,7 +991,7 @@ const PeopleWrapper: React.FC = () => {
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
-                {"Upload Documents"}
+                {"Attach Documents"}
               </h2>
             </div>
 
@@ -980,14 +1015,20 @@ const PeopleWrapper: React.FC = () => {
                 instruction="PDF, DOC, DOCX or XLSX (max. 800x400px)"
                 multipe={true} // Enable multiple file uploads
               />
-
-              <LoginButton
-                onClick={handleSubmitDoc}
-                type="button"
-                disable={isLoading}
-              >
-                {isLoading ? "Uploading..." : "Upload document"}
-              </LoginButton>
+              {files && files.length > 0 && (
+                <>
+                  <span className="font-Satoshi text-[14px] font-bold mb-[-20px]">
+                    Please attach document before proceed.
+                  </span>
+                  <LoginButton
+                    onClick={handleSubmitDoc}
+                    type="button"
+                    disable={isLoading}
+                  >
+                    {isLoading ? "Uploading..." : "Attach document"}
+                  </LoginButton>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -995,7 +1036,7 @@ const PeopleWrapper: React.FC = () => {
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
-                {"Upload Pictures"}
+                {"Attach Pictures"}
               </h2>
             </div>
 
@@ -1046,14 +1087,21 @@ const PeopleWrapper: React.FC = () => {
                 instruction="GIF, PNG, JPG or JPEG (max. 800x400px)"
                 multipe={true}
               />
+              {files && files.length > 0 && (
+                <>
+                  <span className="font-Satoshi text-[14px] font-bold mb-[-20px]">
+                    Please attach document before proceed.
+                  </span>
 
-              <LoginButton
-                onClick={handleSubmitPics}
-                type="button"
-                disable={isLoading}
-              >
-                {isLoading ? "uploading..." : "Upload Pictures"}
-              </LoginButton>
+                  <LoginButton
+                    onClick={handleSubmitPics}
+                    type="button"
+                    disable={isLoading}
+                  >
+                    {isLoading ? "uploading..." : "Attach Pictures"}
+                  </LoginButton>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -1073,9 +1121,10 @@ const PeopleWrapper: React.FC = () => {
         {currentStep !== 3 && currentStep !== 5 && (
           <button
             className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium"
-            onClick={() =>
-              setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))
-            }
+            onClick={() => {
+              setFiles([]);
+              setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+            }}
             disabled={currentStep === steps.length - 1}
           >
             Next

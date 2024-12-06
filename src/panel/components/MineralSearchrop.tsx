@@ -169,7 +169,7 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
           {values.map((value: any, index) => (
             <span
               key={index}
-              className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm cursor-pointer font-Satoshi font-medium"
+              className="bg-primary text-white px-3 py-1 rounded-full text-sm cursor-pointer font-Satoshi font-medium"
               onClick={() => handleSelect(value, type)} // Provide a dummy place_id for removal
             >
               {value && value.name}
