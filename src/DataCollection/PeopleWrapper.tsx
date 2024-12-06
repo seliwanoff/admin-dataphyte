@@ -56,7 +56,7 @@ const PeopleWrapper: React.FC = () => {
 
   const [isaddNewMineral, setisAddnewminera] = useState(false);
   const [isaddNewSite, setisAddnewSite] = useState(false);
-
+  const [people_id, setPeopId] = useState("");
   const [placeId, setPlacedId] = useState("");
   const [selectedValuesMineral, setSelectedValuesMineral] = useState<string[]>(
     []
@@ -291,10 +291,12 @@ const PeopleWrapper: React.FC = () => {
     setIsloading(true);
     const formData = new FormData();
     formData.append("name", docName);
-    formData.append("company_id", company_id);
+
     selectedValuesPeople.forEach((people: any, index: any) => {
-      formData.append(`people_id`, people.id);
+      formData.append(`company_id`, people.id);
     });
+
+    formData.append(`people_id`, people_id);
 
     if (files) {
       files.forEach((file, index) => {
@@ -330,11 +332,11 @@ const PeopleWrapper: React.FC = () => {
     setIsloading(true);
     const formData = new FormData();
     formData.append("name", picName);
-    formData.append("company_id", company_id);
+    formData.append("people_id", people_id);
     // formData.append("people_id", company_id);
 
     selectedValuesPeople.forEach((people: any, index: any) => {
-      formData.append(`people_id`, people.id);
+      formData.append(`company_id`, people.id);
     });
 
     selectedValuesMineral.forEach((mineral: any, index) => {
@@ -420,7 +422,7 @@ const PeopleWrapper: React.FC = () => {
 
       const data = await response.json();
 
-      showNotification("Success!", "People added successful", "success");
+      //showNotification("Success!", "People added successful", "success");
       setisaddNewPeople(false);
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
@@ -466,8 +468,9 @@ const PeopleWrapper: React.FC = () => {
       }
 
       const data = await response.json();
+      setPeopId(data.data.id);
 
-      showNotification("Success!", "People added successful", "success");
+      //showNotification("Success!", "People added successful", "success");
       setisaddNewPeople(false);
       setCurrentStep(currentStep + 1);
     } catch (error) {
