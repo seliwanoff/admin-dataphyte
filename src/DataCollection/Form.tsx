@@ -304,43 +304,55 @@ const StepperWithForms: React.FC = () => {
 
   const handleSubmitDoc = async () => {
     setIsloading(true);
-    await handleSubmitCompany().then((res) => {
-      console.log(res);
-    });
-    const formData = new FormData();
-    formData.append("name", docName);
-    formData.append("company_id", company_id);
-
-    selectedValuesPeople.forEach((people: any, index) => {
-      formData.append(`people_id[${index}]`, people.id.toString());
-    });
-
-    if (files) {
-      files.forEach((file, index) => {
-        formData.append(`files[${index}]`, file, file.name);
-      });
-    }
 
     try {
+      // Wait for handleSubmitCompany to resolve and extract the company ID
+      const res = await handleSubmitCompany();
+      const company_ids = res.data?.id; // Assuming the company ID is in `res.data.id`
+
+      if (!company_ids) {
+        throw new Error("Company ID is missing");
+      }
+
+      // Prepare FormData
+      const formData = new FormData();
+      formData.append("company_id", company_ids);
+      formData.append("name", docName);
+
+      selectedValuesPeople.forEach((people: any, index) => {
+        formData.append(`people_id[${index}]`, people.id.toString());
+      });
+
+      if (files) {
+        files.forEach((file, index) => {
+          formData.append(`files[${index}]`, file, file.name);
+        });
+      }
+
+      // Make the API request
       const response = await fetch(`${baseUrl}document/uploaddocuments`, {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch options");
+        throw new Error("Failed to upload documents");
       }
 
       const data = await response.json();
 
-      //showNotification("Success!", "Document upload successful", "success");
+      // Handle success
       setisAddnewSite(false);
       setFiles([]);
       setDocName("");
       setCurrentStep(currentStep + 1);
-    } catch (error) {
-      showNotification("Error!", `Error fetching options:${error}`, "danger");
+      // Optionally, notify the user
+      showNotification("Success!", "Document upload successful", "success");
+    } catch (error: any) {
+      // Handle errors
+      showNotification("Error!", `Error: ${error.message}`, "danger");
     } finally {
+      // Ensure loading is reset
       setIsloading(false);
     }
   };
@@ -499,6 +511,8 @@ const StepperWithForms: React.FC = () => {
       // showNotification("Success!", "Company added successful", "success");
       setisaddNewPeople(false);
       setCurrentStep(currentStep + 1);
+
+      return data;
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
