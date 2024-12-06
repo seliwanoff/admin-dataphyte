@@ -310,6 +310,7 @@ const MiningSiteWrapper: React.FC = () => {
     selectedValuesPeople.forEach((people: any, index) => {
       formData.append(`people_id`, people.id.toString());
     });
+    formData.append(`mining_site_id`, company_id);
 
     if (files) {
       files.forEach((file, index) => {
@@ -345,8 +346,6 @@ const MiningSiteWrapper: React.FC = () => {
     setIsloading(true);
     const formData = new FormData();
     formData.append("name", picName);
-    // formData.append("company_id", company_id);
-    // formData.append("people_id", company_id);
 
     selectedValuesSite.forEach((people: any, index) => {
       formData.append(`company_id`, people.id.toString());
@@ -358,11 +357,7 @@ const MiningSiteWrapper: React.FC = () => {
     selectedValuesMineral.forEach((mineral: any, index) => {
       formData.append(`mineral_id`, mineral.id.toString());
     });
-
-    selectedValuesSite.forEach((mineral: any, index) => {
-      formData.append(`mining_site_id`, mineral.id.toString());
-    });
-
+    formData.append(`mining_site_id`, company_id);
     if (files) {
       files.forEach((file, index) => {
         formData.append("files", file, file.name);
