@@ -333,7 +333,7 @@ const StepperWithForms: React.FC = () => {
 
       const data = await response.json();
 
-      showNotification("Success!", "Document upload successful", "success");
+      //showNotification("Success!", "Document upload successful", "success");
       setisAddnewSite(false);
       setFiles([]);
       setDocName("");
