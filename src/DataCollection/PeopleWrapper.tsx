@@ -12,6 +12,9 @@ import RoleSelect from "../panel/components/RolesComponent";
 import CountrySelect from "../panel/components/CountrySelect";
 import RichTextEditor from "./components/RichText";
 import MultipleEl from "../dashboard/components/MultipleEl";
+import CompanyInlineCreate from "./components/CompanyInlineCreate";
+import MineralInlineCreate from "./components/mineralinlineCreate";
+import PeopleInlineCreate from "./components/propleInlineCreate";
 
 interface StepperProps {
   steps: string[];
@@ -44,7 +47,7 @@ const Stepper: React.FC<StepperProps> = ({
 
 const PeopleWrapper: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const steps = ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6"];
+  const steps = ["Step 1", "Step 2", "Step 5", "Step 6"];
 
   const [name, setName] = useState("");
   const [rc_number, setRcNumber] = useState("");
@@ -71,6 +74,9 @@ const PeopleWrapper: React.FC = () => {
   const [selectedValuesDoc, setSelectedValuesDoc] = useState<string[]>([]);
 
   const [selectedCompanyCountries, setSelectedCompanyCountries] = useState<any>(
+    []
+  );
+  const [selectedValuesParent, setSelectedValuesParent] = useState<string[]>(
     []
   );
   const [formData, setFormData] = useState<{
@@ -120,6 +126,8 @@ const PeopleWrapper: React.FC = () => {
   const [content, setContent] = useState("");
   const [company_id, setCompanyId] = useState("");
   const [files, setFiles] = React.useState<File[]>([]);
+  const [showOverlay, setShowOverlay] = useState(false);
+
   // console.log(files);
 
   const handleSetForm = (name: string, files: File[]) => {
@@ -291,12 +299,15 @@ const PeopleWrapper: React.FC = () => {
     setIsloading(true);
     const formData = new FormData();
     formData.append("name", docName);
+    /***
 
     selectedValuesPeople.forEach((people: any, index: any) => {
       formData.append(`company_id`, people.id);
     });
-
-    formData.append(`people_id`, people_id);
+*/
+    const res = await handleSubmitCompany();
+    const peopledId = res.data?.id;
+    formData.append(`people_id`, peopledId);
 
     if (files) {
       files.forEach((file, index) => {
@@ -334,7 +345,7 @@ const PeopleWrapper: React.FC = () => {
     formData.append("name", picName);
     formData.append("people_id", people_id);
     // formData.append("people_id", company_id);
-
+    /**
     selectedValuesPeople.forEach((people: any, index: any) => {
       formData.append(`company_id`, people.id);
     });
@@ -346,6 +357,7 @@ const PeopleWrapper: React.FC = () => {
     selectedValuesSite.forEach((mineral: any, index) => {
       formData.append(`mining_site_id[${index}]`, mineral.id.toString());
     });
+     */
 
     if (files) {
       files.forEach((file, index) => {
@@ -385,7 +397,15 @@ const PeopleWrapper: React.FC = () => {
       setSelectedValuesMineral([]);
       setSelectedValuesPeople([]);
       setSelectedValuesSite([]);
-      setCurrentStep(0);
+
+      setSelectedCountries("");
+      window.open(
+        `https://home-sigma-liard.vercel.app/search?query=${
+          first_name + " " + " " + last_name
+        }`,
+        "_blank"
+      );
+      window.location.reload();
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
@@ -442,14 +462,17 @@ const PeopleWrapper: React.FC = () => {
     formData.append("title", title);
     formData.append("other_name", other_name);
     formData.append("rich_text", content);
-    formData.append("tag[0]", tag);
+    const tagArray = tag.split(",").map((t) => t.trim());
+    tagArray.forEach((tag: any, index: any) => {
+      formData.append(`tag[${index}]`, tag);
+    });
     selectedValuesMineral.forEach((mineral: any, index) => {
       formData.append(`mineral[${index}]`, mineral.id.toString());
     });
     selectedCompanyCountries.forEach((country: any, index: any) => {
       formData.append(`country[${index}]`, country);
     });
-    formData.append(`company`, selectedValuesPeople);
+    // formData.append(`company`, selectedValuesPeople);
 
     formData.append("other_data", other_data);
 
@@ -473,6 +496,7 @@ const PeopleWrapper: React.FC = () => {
       //showNotification("Success!", "People added successful", "success");
       setisaddNewPeople(false);
       setCurrentStep(currentStep + 1);
+      return data;
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
@@ -522,6 +546,30 @@ const PeopleWrapper: React.FC = () => {
 
   return (
     <div className="p-4">
+      {showOverlay && currentStep === 0 && (
+        <CompanyInlineCreate
+          companyName={""}
+          show={showOverlay}
+          setShowOverlay={setShowOverlay}
+          onUpdateCompanyName={setSelectedValuesParent}
+        />
+      )}
+      {showOverlay && currentStep === 1 && (
+        <MineralInlineCreate
+          mineralNames={""}
+          show={showOverlay}
+          setShowOverlay={setShowOverlay}
+          onUpdateCompanyName={setSelectedValuesParent}
+        />
+      )}
+      {showOverlay && currentStep === 2 && (
+        <PeopleInlineCreate
+          //mineralNames={""}
+          show={showOverlay}
+          setShowOverlay={setShowOverlay}
+          //  onUpdateCompanyName={setSelectedValuesParent}
+        />
+      )}
       <span className="text-gray-700 font-polySans text-[14px] mb-4 px-4  block ">
         Follow each steps below.
       </span>
@@ -565,16 +613,12 @@ const PeopleWrapper: React.FC = () => {
                 required={true}
                 //className="additional-styles"
               />
-              <InputElement
-                type="text"
-                label="Title"
-                placeholder="Enter title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                name="name"
-                required={true}
-                //className="additional-styles"
+              <RoleSelect
+                label="Select title"
+                values={title}
+                onChange={setTitle}
               />
+
               <SearchableSelect
                 label="Location"
                 placeholder="Select address"
@@ -690,6 +734,7 @@ const PeopleWrapper: React.FC = () => {
                   setSearchQuery={setSearchMineralQuery}
                   type={2}
                   setisAddnewpeople={setisAddnewminera}
+                  setShowOverlay={setShowOverlay}
                 />
               )}
               {isaddNewMineral && (
@@ -768,7 +813,7 @@ const PeopleWrapper: React.FC = () => {
           </div>
         )}
 
-        {currentStep === 2 && (
+        {currentStep === 10 && (
           <div className="py-1 px-5">
             <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
               {isaddNewPeople ? "Add Company" : "Select Company"}
@@ -826,7 +871,7 @@ const PeopleWrapper: React.FC = () => {
                   <RoleSelect
                     label="Select Roles"
                     values={selectedRoles}
-                    onChange={(roles) => setSelectedRoles(roles)}
+                    onChange={(roles: any) => setSelectedRoles(roles)}
                   />
                   <InputElement
                     type="text"
@@ -901,7 +946,7 @@ const PeopleWrapper: React.FC = () => {
             </div>
           </div>
         )}
-        {currentStep === 3 && (
+        {currentStep === 11 && (
           <div className="py-1 px-5">
             <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
               {isaddNewSite ? "Add Mining site" : "Select Mining site"}
@@ -990,7 +1035,7 @@ const PeopleWrapper: React.FC = () => {
             </div>
           </div>
         )}
-        {currentStep === 4 && (
+        {currentStep === 2 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -1035,7 +1080,7 @@ const PeopleWrapper: React.FC = () => {
             </div>
           </div>
         )}
-        {currentStep === 5 && (
+        {currentStep === 3 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">

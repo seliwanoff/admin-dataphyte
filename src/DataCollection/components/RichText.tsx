@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "../style/richText.css";
@@ -16,22 +16,37 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 }) => {
   const modules = {
     toolbar: [
-      ["bold", "italic", "underline", "strike"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "image"],
-      ["clean"],
+      [{ header: [1, 2, 3, false] }], // Headers
+      ["bold", "italic", "underline", "strike"], // Text formatting
+      [{ color: [] }, { background: [] }], // Text color and background
+      [{ script: "sub" }, { script: "super" }], // Subscript and superscript
+      [{ list: "ordered" }, { list: "bullet" }], // Lists
+      [{ indent: "-1" }, { indent: "+1" }], // Indentation
+      [{ align: [] }], // Text alignment
+      ["blockquote", "code-block"], // Blockquote and code block
+      ["link", "image", "video"], // Links, images, and videos
+      ["clean"], // Clear formatting
     ],
   };
 
   const formats = [
+    "header",
     "bold",
     "italic",
     "underline",
     "strike",
+    "color",
+    "background",
+    "script",
     "list",
     "bullet",
+    "indent",
+    "align",
+    "blockquote",
+    "code-block",
     "link",
     "image",
+    "video",
   ];
 
   return (
@@ -52,7 +67,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           className="h-60"
         />
         <button
-          className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium absolute bottom-2 right-3"
+          className="px-4 py-2 bg-primary font-polySans text-[14px] text-white rounded font-medium absolute bottom-2 right-3"
           onClick={onClose}
         >
           Continue

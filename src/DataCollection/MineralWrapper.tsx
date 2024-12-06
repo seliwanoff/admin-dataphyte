@@ -12,6 +12,9 @@ import RoleSelect from "../panel/components/RolesComponent";
 import CountrySelect from "../panel/components/CountrySelect";
 import RichTextEditor from "./components/RichText";
 import MultipleEl from "../dashboard/components/MultipleEl";
+import CompanyInlineCreate from "./components/CompanyInlineCreate";
+import MineralInlineCreate from "./components/mineralinlineCreate";
+import PeopleInlineCreate from "./components/propleInlineCreate";
 
 interface StepperProps {
   steps: string[];
@@ -44,7 +47,7 @@ const Stepper: React.FC<StepperProps> = ({
 
 const MineralWrapper: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const steps = ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6"];
+  const steps = ["Step 1", "Step 5", "Step 6"];
 
   const [name, setName] = useState("");
   const [rc_number, setRcNumber] = useState("");
@@ -122,6 +125,11 @@ const MineralWrapper: React.FC = () => {
   const [content, setContent] = useState("");
   const [company_id, setCompanyId] = useState("");
   const [files, setFiles] = React.useState<File[]>([]);
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [selectedValuesParent, setSelectedValuesParent] = useState<string[]>(
+    []
+  );
+
   // console.log(files);
 
   const handleSetForm = (name: string, files: File[]) => {
@@ -293,8 +301,8 @@ const MineralWrapper: React.FC = () => {
     setIsloading(true);
     const formData = new FormData();
     formData.append("name", docName);
-    formData.append("company_id", company_id);
-
+    //formData.append("company_id", company_id);
+    /***
     selectedValuesPeople.forEach((people: any, index) => {
       formData.append(`people_id`, people.id.toString());
     });
@@ -302,6 +310,10 @@ const MineralWrapper: React.FC = () => {
     selectedValuesSite.forEach((mineral: any, index) => {
       formData.append(`mining_site_id`, mineral.id.toString());
     });
+     */
+    const res = await handleSubmitCompany();
+    const miner_ids = res.data?.id;
+    formData.append(`mineral_id`, miner_ids);
 
     if (files) {
       files.forEach((file, index) => {
@@ -337,7 +349,7 @@ const MineralWrapper: React.FC = () => {
     setIsloading(true);
     const formData = new FormData();
     formData.append("name", picName);
-    formData.append("company_id", company_id);
+    // formData.append("company_id", company_id);
     // formData.append("people_id", company_id);
     /**
     selectedValuesPeople.forEach((people: any, index) => {
@@ -350,9 +362,7 @@ const MineralWrapper: React.FC = () => {
     });
     */
 
-    selectedValuesSite.forEach((mineral: any, index) => {
-      formData.append(`mining_site_id`, mineral.id.toString());
-    });
+    formData.append(`mineral_id`, company_id);
 
     if (files) {
       files.forEach((file, index) => {
@@ -388,6 +398,12 @@ const MineralWrapper: React.FC = () => {
       setSelectedValuesMineral([]);
       setSelectedValuesPeople([]);
       setSelectedValuesSite([]);
+      setImage([]);
+      window.open(
+        `https://home-sigma-liard.vercel.app/search?query=${name}`,
+        "_blank"
+      );
+      window.location.reload();
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
@@ -437,15 +453,21 @@ const MineralWrapper: React.FC = () => {
     setIsloading(true);
     const formData = new FormData();
     formData.append("name", name);
+    const tagArray = tag.split(",").map((t) => t.trim());
+    tagArray.forEach((tag: any, index: any) => {
+      formData.append(`tag[${index}]`, tag);
+    });
     // formData.append("location", companyAddress);
     //formData.append("rc_number", rc_number);
     //  formData.append("other_name", other_name);
     formData.append("rich_text", content);
-    formData.append("tag[0]", tag);
+    //formData.append("tag[0]", tag);
     // formData.append("location", peopleCountry);
+    /***
     selectedValuesMineral.forEach((mineral: any, index) => {
       formData.append(`company[${index}]`, mineral.id.toString());
     });
+    */
 
     selectedCompanyCountries.forEach((country: any, index: any) => {
       formData.append(`country[${index}]`, country);
@@ -473,6 +495,7 @@ const MineralWrapper: React.FC = () => {
       // showNotification("Success!", "MIneral added successful", "success");
       setisaddNewPeople(false);
       setCurrentStep(currentStep + 1);
+      return data;
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
@@ -522,6 +545,28 @@ const MineralWrapper: React.FC = () => {
 
   return (
     <div className="p-4">
+      {showOverlay && currentStep === 1 && (
+        <CompanyInlineCreate
+          companyName={""}
+          show={showOverlay}
+          setShowOverlay={setShowOverlay}
+          onUpdateCompanyName={setSelectedValuesParent}
+        />
+      )}
+      {showOverlay && currentStep === 2 && (
+        <MineralInlineCreate
+          mineralNames={""}
+          show={showOverlay}
+          setShowOverlay={setShowOverlay}
+          onUpdateCompanyName={setSelectedValuesParent}
+        />
+      )}
+      {showOverlay && currentStep === 3 && (
+        <PeopleInlineCreate
+          show={showOverlay}
+          setShowOverlay={setShowOverlay}
+        />
+      )}
       <span className="text-gray-700 font-polySans text-[14px] mb-4 px-4  block ">
         Follow each steps below.
       </span>
@@ -647,7 +692,7 @@ const MineralWrapper: React.FC = () => {
           </div>
         )}
 
-        {currentStep === 1 && (
+        {currentStep === 9 && (
           <div className="py-1 px-5">
             <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
               {isaddNewMineral ? "Add company" : "Select company"}
@@ -661,8 +706,9 @@ const MineralWrapper: React.FC = () => {
                   onChange={(values: any) => setSelectedValuesMineral(values)}
                   searchQuery={searchMineralQuery}
                   setSearchQuery={setSearchMineralQuery}
-                  type={2}
+                  type={5}
                   setisAddnewpeople={setisAddnewminera}
+                  setShowOverlay={setShowOverlay}
                 />
               )}
               {isaddNewMineral && (
@@ -741,7 +787,7 @@ const MineralWrapper: React.FC = () => {
           </div>
         )}
 
-        {currentStep === 2 && (
+        {currentStep === 10 && (
           <div className="py-1 px-5">
             <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
               {isaddNewPeople ? "Add People" : "Select People"}
@@ -799,7 +845,7 @@ const MineralWrapper: React.FC = () => {
                   <RoleSelect
                     label="Select Roles"
                     values={selectedRoles}
-                    onChange={(roles) => setSelectedRoles(roles)}
+                    onChange={(roles: any) => setSelectedRoles(roles)}
                   />
                   <InputElement
                     type="text"
@@ -963,7 +1009,7 @@ const MineralWrapper: React.FC = () => {
             </div>
           </div>
         )}
-        {currentStep === 4 && (
+        {currentStep === 1 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -1008,7 +1054,7 @@ const MineralWrapper: React.FC = () => {
             </div>
           </div>
         )}
-        {currentStep === 5 && (
+        {currentStep === 2 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -1093,7 +1139,7 @@ const MineralWrapper: React.FC = () => {
             Previous
           </button>
         )}
-        {currentStep !== 3 && currentStep !== 5 && (
+        {currentStep !== 2 && currentStep !== 5 && (
           <button
             className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium"
             onClick={() => {

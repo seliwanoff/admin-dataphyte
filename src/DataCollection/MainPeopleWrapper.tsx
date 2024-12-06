@@ -1,9 +1,10 @@
 import Layout from "../Layout/layout";
 import Tabs from "./components/tabs";
-import StepperWithForms from "./Form";
 
-const DataCollectionWrapper = () => {
-  const tabData = [{ label: "Company", content: <StepperWithForms /> }];
+import PeopleWrapper from "./PeopleWrapper";
+
+const PeopleCollectionWrapper = () => {
+  const tabData = [{ label: "People", content: <PeopleWrapper /> }];
   return (
     <Layout>
       <div className=" bg-white max-w-[500px] mx-auto rounded-md my-8 shadow-md">
@@ -13,4 +14,4 @@ const DataCollectionWrapper = () => {
   );
 };
 
-export default DataCollectionWrapper;
+export default PeopleCollectionWrapper;

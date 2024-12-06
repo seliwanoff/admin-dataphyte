@@ -13,6 +13,9 @@ import CountrySelect from "../panel/components/CountrySelect";
 import RichTextEditor from "./components/RichText";
 import MultipleEl from "../dashboard/components/MultipleEl";
 import FilterPeopleByPosition from "../panel/components/FilterPeopleByPosition";
+import CompanyInlineCreate from "./components/CompanyInlineCreate";
+import MineralInlineCreate from "./components/mineralinlineCreate";
+import PeopleInlineCreate from "./components/propleInlineCreate";
 
 interface StepperProps {
   steps: string[];
@@ -54,7 +57,7 @@ const StepperWithForms: React.FC = () => {
   const [companyAddress, setCompanyAddress] = useState("");
   const [image, setImage] = useState<any>(null);
   const [imageMineral, setImageMineral] = useState<any>(null);
-
+  const [isNameExist, setIsNameExist] = useState(false);
   const [isaddNewMineral, setisAddnewminera] = useState(false);
   const [isaddNewSite, setisAddnewSite] = useState(false);
 
@@ -129,12 +132,16 @@ const StepperWithForms: React.FC = () => {
   const [files, setFiles] = React.useState<File[]>([]);
   const [searchMineralQuerycfo, setSearchMineralQuerycfo] = useState("");
   const [searchMineralQuerycto, setSearchMineralQuerycto] = useState("");
+  const [searchMineralQueryceo, setSearchMineralQueryceo] = useState("");
 
-  const [ceo, setCEO] = useState<{ id: string; name: string }[]>([]);
-  const [cfo, setCFO] = useState<{ id: string; name: string }[]>([]);
-  const [cto, setCTO] = useState<{ id: string; name: string }[]>([]);
+  const [ceo, setCEO] = useState<{ id: string; name: string } | any>("");
+  const [cfo, setCFO] = useState<{ id: string; name: string } | any>("");
+  const [cto, setCTO] = useState<{ id: string; name: string } | any>("");
+
+  const [showOverlay, setShowOverlay] = useState(false);
 
   // console.log(files);
+  // console.log(ceo);
 
   const handleSetForm = (name: string, files: File[]) => {
     setFiles(files);
@@ -318,10 +325,13 @@ const StepperWithForms: React.FC = () => {
       const formData = new FormData();
       formData.append("company_id", company_ids);
       formData.append("name", docName);
-
+      {
+        /**
       selectedValuesPeople.forEach((people: any, index) => {
         formData.append(`people_id[${index}]`, people.id.toString());
       });
+      */
+      }
 
       if (files) {
         files.forEach((file, index) => {
@@ -346,7 +356,6 @@ const StepperWithForms: React.FC = () => {
       setFiles([]);
       setDocName("");
       setCurrentStep(currentStep + 1);
-      // Optionally, notify the user
       showNotification("Success!", "Document upload successful", "success");
     } catch (error: any) {
       // Handle errors
@@ -377,10 +386,12 @@ const StepperWithForms: React.FC = () => {
     });
      */
     }
+    /***
 
     selectedValuesSite.forEach((mineral: any, index) => {
       formData.append(`mining_site_id[${index}]`, mineral.id.toString());
     });
+    */
 
     if (files) {
       files.forEach((file, index) => {
@@ -415,7 +426,18 @@ const StepperWithForms: React.FC = () => {
       setSelectedValuesMineral([]);
       setSelectedValuesPeople([]);
       setSelectedValuesSite([]);
+      setCEO("");
+      setCFO("");
+      setCTO("");
+      setFirstname("");
+      setLastname("");
       setCurrentStep(0);
+      setSelectedCountries([]);
+      window.open(
+        `https://home-sigma-liard.vercel.app/search?query=${name}`,
+        "_blank"
+      );
+      window.location.reload();
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
@@ -460,16 +482,18 @@ const StepperWithForms: React.FC = () => {
       setIsloading(false);
     }
   };
-
   const handleSubmitCompany = async () => {
     setIsloading(true);
+    const tagArray = tag.split(",").map((t) => t.trim());
     const formData = new FormData();
     formData.append("name", name);
     formData.append("address", companyAddress);
     formData.append("rc_number", rc_number);
     formData.append("other_name", other_name);
     formData.append("rich_text", content);
-    formData.append("tag[0]", tag);
+    tagArray.forEach((tag: any, index: any) => {
+      formData.append(`tag[${index}]`, tag);
+    });
     formData.append("location", peopleCountry);
     selectedValuesMineral.forEach((mineral: any, index) => {
       formData.append(`mineral[${index}]`, mineral.id.toString());
@@ -478,15 +502,15 @@ const StepperWithForms: React.FC = () => {
       formData.append(`country[${index}]`, country);
     });
     formData.append("other_data", other_data);
-    ceo.forEach((people: any, index) => {
-      formData.append(`ceo_id`, people.id.toString());
-    });
-    cfo.forEach((people: any, index) => {
-      formData.append(`cfo_id`, people.id.toString());
-    });
-    cto.forEach((people: any, index) => {
-      formData.append(`cto_id`, people.id.toString());
-    });
+    if (ceo) {
+      formData.append(`ceo_id`, ceo.id.toString());
+    }
+    if (cfo) {
+      formData.append(`cfo_id`, cfo.id.toString());
+    }
+    if (cto) {
+      formData.append(`cto_id`, cto.id.toString());
+    }
 
     selectedValuesParent.forEach((people: any, index) => {
       formData.append(`parent_id`, people.id.toString());
@@ -521,18 +545,42 @@ const StepperWithForms: React.FC = () => {
   };
   //console.log(content);
   useEffect(() => {
-    if (searchMineralQuery || searchMineralQueryc) {
+    if (
+      searchMineralQuery ||
+      searchMineralQueryc ||
+      searchMineralQueryceo ||
+      searchMineralQuerycfo ||
+      searchMineralQuerycto
+    ) {
       const delayDebounce = setTimeout(() => {
-        fetchMineral(searchMineralQuery || searchMineralQueryc);
+        fetchMineral(
+          searchMineralQuery ||
+            searchMineralQueryc ||
+            searchMineralQueryceo ||
+            searchMineralQuerycfo ||
+            searchMineralQuerycto
+        );
       }, 300);
       return () => clearTimeout(delayDebounce);
     }
-  }, [searchMineralQuery, searchMineralQueryc]);
+  }, [
+    searchMineralQuery,
+    searchMineralQueryc,
+    searchMineralQueryceo,
+    searchMineralQuerycfo,
+    searchMineralQuerycto,
+  ]);
 
   useEffect(() => {
     if (searchQuery) {
       const delayDebounce = setTimeout(() => {
-        fetchOptions(searchQuery || searchMineralQueryc);
+        fetchOptions(
+          searchQuery ||
+            searchMineralQueryc ||
+            searchMineralQueryceo ||
+            searchMineralQuerycfo ||
+            searchMineralQuerycto
+        );
       }, 300);
 
       return () => clearTimeout(delayDebounce);
@@ -559,9 +607,59 @@ const StepperWithForms: React.FC = () => {
   const goToStep = (stepIndex: number) => {
     setCurrentStep(stepIndex);
   };
+  const checkName = async () => {
+    if (!name) return;
+    setIsloading(true);
 
+    try {
+      const response = await fetch(`${baseUrl}search/company?q=${name}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch options");
+      }
+
+      const data = await response.json();
+
+      const isNameFound = data.data.some((item: { name: string }) => {
+        // console.log(`Comparing "${item.name}" with "${name}"`);
+        return item.name.trim().toLowerCase() === name.trim().toLowerCase();
+      });
+      // console.log(isNameExist);
+
+      setIsNameExist(isNameFound);
+    } catch (error) {
+      console.error("Error fetching options:", error);
+      setIsNameExist(false);
+    } finally {
+      setIsloading(false);
+    }
+  };
+  //console.log(currentStep);
   return (
     <div className="p-4">
+      {showOverlay && currentStep === 0 && (
+        <CompanyInlineCreate
+          companyName={""}
+          show={showOverlay}
+          setShowOverlay={setShowOverlay}
+          onUpdateCompanyName={setSelectedValuesParent}
+        />
+      )}
+      {showOverlay && currentStep === 1 && (
+        <MineralInlineCreate
+          mineralNames={""}
+          show={showOverlay}
+          setShowOverlay={setShowOverlay}
+          onUpdateCompanyName={setSelectedValuesParent}
+        />
+      )}
+      {showOverlay && currentStep === 2 && (
+        <PeopleInlineCreate
+          //mineralNames={""}
+          show={showOverlay}
+          setShowOverlay={setShowOverlay}
+          //  onUpdateCompanyName={setSelectedValuesParent}
+        />
+      )}
       <span className="text-gray-700 font-polySans text-[14px] mb-4 px-4  block ">
         Follow each steps below.
       </span>
@@ -575,16 +673,29 @@ const StepperWithForms: React.FC = () => {
               Create Company
             </h2>
             <div className="flex flex-col gap-[24px] pt-4">
-              <InputElement
-                type="text"
-                label="Company Name"
-                placeholder="Enter company name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                name="name"
-                required={true}
-                //className="additional-styles"
-              />
+              <div className="flex flex-col gap-2">
+                <InputElement
+                  type="text"
+                  label="Company Name"
+                  placeholder="Enter company name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  name="name"
+                  required={true}
+                  onKeyDowns={checkName}
+                />
+                {isLoading && (
+                  <span className="font-polySans text-primary text-[12px] font-bold">
+                    Loading...
+                  </span>
+                )}
+                {isNameExist && !isLoading && (
+                  <span className="font-polySans text-[crimson] text-[14px] font-bold">
+                    Name already exist
+                  </span>
+                )}
+              </div>
+
               <MineralSearchDrop
                 label="Select Parent Company"
                 options={mineralOptions}
@@ -592,7 +703,10 @@ const StepperWithForms: React.FC = () => {
                 onChange={(values: any) => setSelectedValuesParent(values)}
                 searchQuery={searchMineralQueryc}
                 setSearchQuery={setSearchMineralQueryc}
-                type={2}
+                type={5}
+                parent={"parent"}
+                setShowOverlay={setShowOverlay}
+
                 // setisAddnewpeople={setisAddnewminera}
               />
               <SearchableSelect
@@ -709,6 +823,7 @@ const StepperWithForms: React.FC = () => {
                   setSearchQuery={setSearchMineralQuery}
                   type={2}
                   setisAddnewpeople={setisAddnewminera}
+                  setShowOverlay={setShowOverlay}
                 />
               )}
               {isaddNewMineral && (
@@ -812,9 +927,10 @@ const StepperWithForms: React.FC = () => {
                     options={mineralOptions}
                     value={ceo}
                     onChange={(values: any) => setCEO(values)}
-                    searchQuery={searchMineralQuery}
-                    setSearchQuery={setSearchMineralQuery}
+                    searchQuery={searchMineralQueryceo}
+                    setSearchQuery={setSearchMineralQueryceo}
                     type={2}
+                    setShowOverlay={setShowOverlay}
                     //setisAddnewpeople={setisAddnewminera}
 
                     positionFilter="CEO" // Filter only for CEOs
@@ -827,6 +943,7 @@ const StepperWithForms: React.FC = () => {
                     searchQuery={searchMineralQuerycto}
                     setSearchQuery={setSearchMineralQuerycto}
                     type={2}
+                    setShowOverlay={setShowOverlay}
                     //setisAddnewpeople={setisAddnewminera}
 
                     positionFilter="CTO" // Filter only for CEOs
@@ -839,6 +956,7 @@ const StepperWithForms: React.FC = () => {
                     searchQuery={searchMineralQuerycfo}
                     setSearchQuery={setSearchMineralQuerycfo}
                     type={2}
+                    setShowOverlay={setShowOverlay}
                     //setisAddnewpeople={setisAddnewminera}
 
                     positionFilter="CFO" // Filter only for CEOs
@@ -885,7 +1003,7 @@ const StepperWithForms: React.FC = () => {
                   <RoleSelect
                     label="Select Roles"
                     values={selectedRoles}
-                    onChange={(roles) => setSelectedRoles(roles)}
+                    onChange={(roles: any) => setSelectedRoles(roles)}
                   />
                   <InputElement
                     type="text"
@@ -1187,9 +1305,9 @@ const StepperWithForms: React.FC = () => {
         {currentStep !== 4 && (
           <button
             className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium"
-            onClick={() =>
-              setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))
-            }
+            onClick={() => {
+              setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+            }}
             disabled={currentStep === steps.length - 1}
           >
             Next

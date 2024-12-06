@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 interface SearchableSelectProps {
   label: string;
-  options: { name: string; place_id: string }[]; // Updated to include structured options
-  values?: string[]; // Array of selected values
-  onChange?: any; // Callback for selected values
+  options: { name: string; place_id: string; title: string }[];
+  values?: string[];
+  onChange?: any;
   placeholder?: string;
   className?: string;
   name?: string;
@@ -16,6 +16,8 @@ interface SearchableSelectProps {
   setPlacedId?: (placeId: string) => void;
   setCurrentStep?: any;
   isDocument?: any;
+  parent?: string;
+  setShowOverlay?: any;
 }
 
 const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
@@ -34,12 +36,30 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
   setPlacedId,
   setCurrentStep,
   isDocument,
+  parent,
+  setShowOverlay,
 }) => {
-  const [search, setSearch] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleSearch = async (query: string) => {
+    setSearchQuery(query);
+    if (query.trim() !== "") {
+      setIsSearching(true);
+      // Simulate an API call delay for search
+      setTimeout(() => {
+        setIsSearching(false);
+        setIsDropdownOpen(true);
+      }, 900); // Adjust as needed for actual API
+    } else {
+      setIsDropdownOpen(false);
+    }
+  };
 
   const handleSelect = (
     option: {
+      title: any;
       name: string;
       place_id: string;
       first_name?: string;
@@ -48,47 +68,59 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
     },
     type: number
   ) => {
-    let keyToCheck: string;
-    let keyToAdd: { id: string; name: string };
+    const keyToCheck =
+      type === 2 || type === 4 || type === 5
+        ? option.name
+        : `${option.title} ${option.first_name} ${option.last_name}`;
+    const keyToAdd = { id: option.id, name: keyToCheck };
 
-    if (type === 2) {
-      keyToCheck = option.name;
-      keyToAdd = { id: option.id, name: option.name };
-    } else if (type === 3 || type === 6) {
-      keyToCheck = ` ${option.first_name} ${option.last_name}`;
-      keyToAdd = { id: option.id, name: keyToCheck };
-    } else if (type === 4) {
-      keyToCheck = option.name;
-      keyToAdd = { id: option.id, name: option.name };
-    } else if (type === 5) {
-      keyToCheck = option.name;
-      keyToAdd = { id: option.id, name: option.name };
+    if (parent === "parent") {
+      const updatedValues = [keyToAdd];
+      handleSearch("");
+
+      if (onChange) onChange(updatedValues);
     } else {
-      return;
+      const alreadySelected = values.some(
+        (item: any) => item.id === option.id // Use `id` for comparison
+      );
+
+      const updatedValues = alreadySelected
+        ? values.filter((item: any) => item.id !== option.id) // Use `id` for removal
+        : [...values, keyToAdd];
+
+      if (onChange) onChange(updatedValues);
+      handleSearch("");
     }
-
-    const alreadySelected = values.some(
-      (item: any) => item.name === keyToCheck
-    );
-
-    let updatedValues;
-    if (alreadySelected) {
-      updatedValues = values.filter((item: any) => item.name !== keyToCheck);
-    } else {
-      updatedValues = [...values, keyToAdd];
-    }
-
-    if (onChange) onChange(updatedValues);
-
-    setSearch("");
-    setSearchQuery("");
-    setIsDropdownOpen(false);
 
     if (setPlacedId) setPlacedId(option.place_id);
+    setIsDropdownOpen(false);
   };
 
+  const handleCloseDropdown = () => setIsDropdownOpen(false);
+
+  const handleOutsideClick = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      handleCloseDropdown();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [handleOutsideClick]);
+  const handleClickShow = () => {
+    setShowOverlay(true);
+  };
   return (
-    <div className={`flex flex-col gap-2 w-full ${className}`}>
+    <div
+      ref={dropdownRef}
+      className={`flex flex-col gap-2 w-full ${className}`}
+    >
       <label htmlFor={name} className="label">
         {label}
       </label>
@@ -100,13 +132,16 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
           name={name}
           placeholder={placeholder}
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={() => setIsDropdownOpen(true)}
+          onChange={(e) => handleSearch(e.target.value)}
           className="input w-full"
         />
-        {isDropdownOpen && (
-          <ul className="absolute w-full z-10 mt-1 bg-white border border-gray-300 rounded shadow-md max-h-40 overflow-auto">
-            {options.length > 0 ? (
+        {isDropdownOpen && searchQuery.trim() !== "" && (
+          <ul className="absolute w-full z-10 mt-1 bg-white border border-gray-300 rounded shadow-md max-h-60 overflow-auto">
+            {isSearching ? (
+              <div className="py-4 flex justify-center items-center">
+                <span className="text-gray-700 text-sm">Searching...</span>
+              </div>
+            ) : options.length > 0 ? (
               options.map((option: any, index) => (
                 <li
                   key={index}
@@ -117,17 +152,11 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
                 >
                   {type === 2 || type === 4 || type === 5
                     ? option.name
-                    : type === 3
-                    ? `${option.title || ""} ${option.first_name || ""} ${
-                        option.last_name || ""
-                      }`
-                    : type === 6
-                    ? `${option.title} ${option.first_name} ${option.last_name}`
-                    : ""}
+                    : `${option.first_name || ""} ${option.last_name || ""}`}
                 </li>
               ))
             ) : (
-              <div className="py-4 flex justify-center items-center w-full flex-col">
+              <div className="py-4 flex justify-center items-center w-full flex-col gap-2">
                 <span className="font-Satoshi text-gray-700 text-[14px] font-semibold">
                   {type === 2
                     ? "No mineral found"
@@ -135,29 +164,16 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
                     ? "No people found"
                     : type === 4
                     ? "No Site found"
-                    : type === 5 && "No company found"}
+                    : "No company found"}
                 </span>
+
                 <button
-                  className="px-4 py-2 bg-primary font-polySans text-[14px] my-4 mx-auto text-white rounded font-medium"
-                  onClick={() => {
-                    if (type === 5) {
-                      setCurrentStep(0);
-                    } else if (type === 6) {
-                      setCurrentStep(2);
-                    } else {
-                      setisAddnewpeople && setisAddnewpeople(true);
-                    }
-                  }}
+                  className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium"
+                  onClick={handleClickShow}
+
+                  //   disabled={currentStep === steps.length - 1}
                 >
-                  {type === 2
-                    ? "Add mineral"
-                    : type === 3
-                    ? " Add People"
-                    : type === 6
-                    ? " Add People"
-                    : type === 5
-                    ? " Add company"
-                    : type === 4 && "Add site"}
+                  {type === 5 ? "Add company" : "Add mineral"}
                 </button>
               </div>
             )}
@@ -170,9 +186,9 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
             <span
               key={index}
               className="bg-primary text-white px-3 py-1 rounded-full text-sm cursor-pointer font-Satoshi font-medium"
-              onClick={() => handleSelect(value, type)} // Provide a dummy place_id for removal
+              onClick={() => handleSelect(value, type)}
             >
-              {value && value.name}
+              {value.name}
             </span>
           ))}
         </div>

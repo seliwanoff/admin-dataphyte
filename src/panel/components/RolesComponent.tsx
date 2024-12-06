@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 interface RoleSelectProps {
   label: string;
-  values?: string[]; // Array of selected values
-  onChange?: (values: string[]) => void; // Callback for selected values
+  values?: string; // Selected value
+  onChange?: (value: string) => void; // Callback for selected value
   placeholder?: string;
   className?: string;
   name?: string;
@@ -12,33 +12,49 @@ interface RoleSelectProps {
 
 const RoleSelect: React.FC<RoleSelectProps> = ({
   label,
-  values = [],
+  values = "",
   onChange,
-  placeholder = "Select roles...",
+  placeholder = "Select a title...",
   className = "",
   name,
   required,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const predefinedOptions = ["CEO", "CFO", "CTO"]; // Fixed roles
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const predefinedOptions = ["Mr", "Miss", "Dr"]; // Fixed roles
 
   const handleSelect = (option: string) => {
-    const alreadySelected = values.includes(option);
-
-    let updatedValues;
-    if (alreadySelected) {
-      // Remove if already selected
-      updatedValues = values.filter((item) => item !== option);
-    } else {
-      // Add if not selected
-      updatedValues = [...values, option];
-    }
-
-    if (onChange) onChange(updatedValues);
+    if (onChange) onChange(option);
+    setIsDropdownOpen(false); // Close dropdown after selection
   };
 
+  const handleOutsideClick = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setIsDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    } else {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [isDropdownOpen]);
+
   return (
-    <div className={`flex flex-col gap-2 w-full ${className}`}>
+    <div
+      className={`flex flex-col gap-2 w-full ${className}`}
+      ref={dropdownRef}
+    >
       <label htmlFor={name} className="label">
         {label}
       </label>
@@ -47,7 +63,7 @@ const RoleSelect: React.FC<RoleSelectProps> = ({
           className="input w-full cursor-pointer font-Satoshi font-medium"
           onClick={() => setIsDropdownOpen((prev) => !prev)}
         >
-          {values.length > 0 ? values.join(", ") : placeholder}
+          {values || placeholder}
         </div>
         {isDropdownOpen && (
           <ul className="absolute w-full z-10 mt-1 bg-white border border-gray-300 rounded shadow-md max-h-40 overflow-auto">
@@ -55,8 +71,8 @@ const RoleSelect: React.FC<RoleSelectProps> = ({
               <li
                 key={index}
                 onClick={() => handleSelect(option)}
-                className={`p-2 cursor-pointer hover:bg-slate-200 font-medium font-polySans${
-                  values.includes(option) ? "bg-slate-100" : ""
+                className={`p-2 cursor-pointer hover:bg-slate-200 font-medium font-polySans ${
+                  values === option ? "bg-slate-100" : ""
                 }`}
               >
                 {option}
@@ -65,19 +81,6 @@ const RoleSelect: React.FC<RoleSelectProps> = ({
           </ul>
         )}
       </div>
-      {values.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-2">
-          {values.map((value, index) => (
-            <span
-              key={index}
-              className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm cursor-pointer"
-              onClick={() => handleSelect(value)}
-            >
-              {value}
-            </span>
-          ))}
-        </div>
-      )}
     </div>
   );
 };

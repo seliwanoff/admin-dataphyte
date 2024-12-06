@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import uploadicon from "../../assets/images/Dashboard/uploadicon.png";
+//import { MdCancel } from "react-icons/md"; // For the cancel icon
 
 interface UploadElProps<T> {
   label: string;
@@ -24,9 +25,16 @@ const UploadEl = <T extends Record<string, any>>({
   instruction,
   multipe = false,
 }: UploadElProps<T>) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files ? Array.from(e.target.files) : [];
-    setForm(name, files); // Update state with all selected files
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setForm(name, [...value, ...newFiles]); // Add the selected files directly to the list
+    }
+  };
+
+  const handleRemoveFile = (index: number) => {
+    const updatedFiles = value.filter((_, fileIndex) => fileIndex !== index);
+    setForm(name, updatedFiles); // Remove the file from the list
   };
 
   return (
@@ -45,9 +53,9 @@ const UploadEl = <T extends Record<string, any>>({
           name={name as string}
           id={label}
           className="h-full absolute top-0 w-full z-50 opacity-0"
-          onChange={handleChange}
+          onChange={handleFileChange}
           accept={accept}
-          multiple={multipe}
+          multiple={multipe} // Allow multiple files if needed
         />
         <div className="outline-none border-none w-full font-Inter text-[16px] font-normal leading-6 text-left text-[#667085] relative px-[12px] py-[12px]">
           <div className="h-full flex flex-col gap-[12px] justify-center items-center">
@@ -71,9 +79,15 @@ const UploadEl = <T extends Record<string, any>>({
           {value.map((file, index) => (
             <div
               key={index}
-              className="w-full bg-[#475467] rounded-md py-2 text-white font-Poppins px-4 overflow-hidden text-ellipsis whitespace-nowrap"
+              className="w-full bg-[#475467] rounded-md py-2 text-white font-Poppins px-4 overflow-hidden text-ellipsis whitespace-nowrap flex justify-between items-center"
             >
-              {file.name}
+              <span>{file.name}</span>
+              <button
+                onClick={() => handleRemoveFile(index)}
+                className="text-white"
+              >
+                remove
+              </button>
             </div>
           ))}
         </div>

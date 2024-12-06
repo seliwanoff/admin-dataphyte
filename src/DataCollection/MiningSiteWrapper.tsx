@@ -13,6 +13,9 @@ import CountrySelect from "../panel/components/CountrySelect";
 import RichTextEditor from "./components/RichText";
 import MultipleEl from "../dashboard/components/MultipleEl";
 import FilterPeopleByPosition from "../panel/components/FilterPeopleByPosition";
+import CompanyInlineCreate from "./components/CompanyInlineCreate";
+import MineralInlineCreate from "./components/mineralinlineCreate";
+import PeopleInlineCreate from "./components/propleInlineCreate";
 
 interface StepperProps {
   steps: string[];
@@ -62,6 +65,8 @@ const MiningSiteWrapper: React.FC = () => {
   const [selectedValuesMineral, setSelectedValuesMineral] = useState<string[]>(
     []
   );
+  const [showOverlay, setShowOverlay] = useState(false);
+
   const closeEditor = () => setIsEditorOpen(false);
 
   const [selectedValuesPeople, setSelectedValuesPeople] = useState<string[]>(
@@ -127,9 +132,14 @@ const MiningSiteWrapper: React.FC = () => {
   const [content, setContent] = useState("");
   const [company_id, setCompanyId] = useState("");
   const [files, setFiles] = React.useState<File[]>([]);
-  const [ceo, setCEO] = useState<{ id: string; name: string }[]>([]);
-  const [cfo, setCFO] = useState<{ id: string; name: string }[]>([]);
-  const [cto, setCTO] = useState<{ id: string; name: string }[]>([]);
+  const [ceo, setCEO] = useState<{ id: string; name: string } | any>("");
+  const [cfo, setCFO] = useState<{ id: string; name: string } | any>("");
+  const [cto, setCTO] = useState<{ id: string; name: string } | any>("");
+  const [selectedValuesParent, setSelectedValuesParent] = useState<string[]>(
+    []
+  );
+
+  const [searchMineralQueryceo, setSearchMineralQueryceo] = useState("");
 
   // console.log(files);
 
@@ -303,6 +313,7 @@ const MiningSiteWrapper: React.FC = () => {
     setIsloading(true);
     const formData = new FormData();
     formData.append("name", docName);
+    /**
     selectedValuesSite.forEach((people: any, index) => {
       formData.append(`company_id`, people.id.toString());
     });
@@ -310,6 +321,7 @@ const MiningSiteWrapper: React.FC = () => {
     selectedValuesPeople.forEach((people: any, index) => {
       formData.append(`people_id`, people.id.toString());
     });
+    */
     formData.append(`mining_site_id`, company_id);
 
     if (files) {
@@ -346,7 +358,7 @@ const MiningSiteWrapper: React.FC = () => {
     setIsloading(true);
     const formData = new FormData();
     formData.append("name", picName);
-
+    /**
     selectedValuesSite.forEach((people: any, index) => {
       formData.append(`company_id`, people.id.toString());
     });
@@ -357,6 +369,7 @@ const MiningSiteWrapper: React.FC = () => {
     selectedValuesMineral.forEach((mineral: any, index) => {
       formData.append(`mineral_id`, mineral.id.toString());
     });
+    */
     formData.append(`mining_site_id`, company_id);
     if (files) {
       files.forEach((file, index) => {
@@ -397,6 +410,11 @@ const MiningSiteWrapper: React.FC = () => {
       setSelectedValuesSite([]);
 
       setCurrentStep(0);
+      window.open(
+        `https://home-sigma-liard.vercel.app/search?query=${name}`,
+        "_blank"
+      );
+      window.location.reload();
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
@@ -473,15 +491,15 @@ const MiningSiteWrapper: React.FC = () => {
       formData.append(`people[${index}]`, people.id.toString());
     });
 
-    ceo.forEach((people: any, index) => {
-      formData.append(`ceo_id`, people.id.toString());
-    });
-    cfo.forEach((people: any, index) => {
-      formData.append(`cfo_id`, people.id.toString());
-    });
-    cto.forEach((people: any, index) => {
-      formData.append(`cto_id`, people.id.toString());
-    });
+    if (ceo) {
+      formData.append(`ceo_id`, ceo.id.toString());
+    }
+    if (cfo) {
+      formData.append(`cfo_id`, cfo.id.toString());
+    }
+    if (cto) {
+      formData.append(`cto_id`, cto.id.toString());
+    }
     formData.append("rich_text", content);
     selectedValuesSite.forEach((country: any, index: any) => {
       formData.append(`company[${index}]`, country.id);
@@ -531,23 +549,55 @@ const MiningSiteWrapper: React.FC = () => {
   };
   //console.log(content);
   useEffect(() => {
-    if (searchMineralQuery || searchMineralQueryc) {
+    if (
+      searchMineralQuery ||
+      searchMineralQueryc ||
+      searchMineralQueryceo ||
+      searchMineralQuerycfo ||
+      searchMineralQuerycto
+    ) {
       const delayDebounce = setTimeout(() => {
-        fetchMineral(searchMineralQuery || searchMineralQueryc);
+        fetchMineral(
+          searchMineralQuery ||
+            searchMineralQueryc ||
+            searchMineralQueryceo ||
+            searchMineralQuerycfo ||
+            searchMineralQuerycto
+        );
       }, 300);
       return () => clearTimeout(delayDebounce);
     }
-  }, [searchMineralQuery, searchMineralQueryc]);
+  }, [
+    searchMineralQuery ||
+      searchMineralQueryc ||
+      searchMineralQueryceo ||
+      searchMineralQuerycfo ||
+      searchMineralQuerycto,
+  ]);
 
   useEffect(() => {
     if (searchQuery) {
       const delayDebounce = setTimeout(() => {
-        fetchOptions(searchQuery || searchMineralQueryc);
+        fetchOptions(
+          searchQuery ||
+            searchMineralQuery ||
+            searchMineralQueryc ||
+            searchMineralQueryceo ||
+            searchMineralQuerycfo ||
+            searchMineralQuerycto
+        );
       }, 300);
 
       return () => clearTimeout(delayDebounce);
     }
-  }, [searchQuery, searchMineralQueryc]);
+  }, [
+    searchMineralQuery ||
+      searchMineralQueryc ||
+      searchMineralQueryceo ||
+      searchMineralQuerycfo ||
+      searchMineralQuerycto,
+    searchQuery,
+  ]);
   //console.log(searchMineralQueryc);
   const handleOptionChange = (value: string) => {
     setSelectedOption(value);
@@ -572,6 +622,30 @@ const MiningSiteWrapper: React.FC = () => {
 
   return (
     <div className="p-4">
+      {showOverlay && currentStep === 3 && (
+        <CompanyInlineCreate
+          companyName={""}
+          show={showOverlay}
+          setShowOverlay={setShowOverlay}
+          onUpdateCompanyName={setSelectedValuesParent}
+        />
+      )}
+      {showOverlay && currentStep === 1 && (
+        <MineralInlineCreate
+          mineralNames={""}
+          show={showOverlay}
+          setShowOverlay={setShowOverlay}
+          onUpdateCompanyName={setSelectedValuesParent}
+        />
+      )}
+      {showOverlay && currentStep === 2 && (
+        <PeopleInlineCreate
+          //mineralNames={""}
+          show={showOverlay}
+          setShowOverlay={setShowOverlay}
+          //  onUpdateCompanyName={setSelectedValuesParent}
+        />
+      )}
       <span className="text-gray-700 font-polySans text-[14px] mb-4 px-4  block ">
         Follow each steps below.
       </span>
@@ -691,6 +765,7 @@ const MiningSiteWrapper: React.FC = () => {
                   setSearchQuery={setSearchMineralQuery}
                   type={2}
                   setisAddnewpeople={setisAddnewminera}
+                  setShowOverlay={setShowOverlay}
                 />
               )}
               {isaddNewMineral && (
@@ -786,21 +861,22 @@ const MiningSiteWrapper: React.FC = () => {
                     setSearchQuery={setSearchMineralQuery}
                     type={3}
                     setisAddnewpeople={setisaddNewPeople}
+                    setShowOverlay={setShowOverlay}
                   />
                   <FilterPeopleByPosition
-                    label="Select CEO"
+                    label="Search CEO"
                     options={mineralOptions}
                     value={ceo}
                     onChange={(values: any) => setCEO(values)}
-                    searchQuery={searchMineralQuery}
-                    setSearchQuery={setSearchMineralQuery}
+                    searchQuery={searchMineralQueryceo}
+                    setSearchQuery={setSearchMineralQueryceo}
                     type={2}
                     //setisAddnewpeople={setisAddnewminera}
 
                     positionFilter="CEO" // Filter only for CEOs
                   />
                   <FilterPeopleByPosition
-                    label="Select CTO"
+                    label="Search CTO"
                     options={mineralOptions}
                     value={cto}
                     onChange={(values: any) => setCTO(values)}
@@ -812,7 +888,7 @@ const MiningSiteWrapper: React.FC = () => {
                     positionFilter="CTO" // Filter only for CEOs
                   />
                   <FilterPeopleByPosition
-                    label="Select CFO"
+                    label="Search CFO"
                     options={mineralOptions}
                     value={cfo}
                     onChange={(values: any) => setCFO(values)}
@@ -865,7 +941,7 @@ const MiningSiteWrapper: React.FC = () => {
                   <RoleSelect
                     label="Select Roles"
                     values={selectedRoles}
-                    onChange={(roles) => setSelectedRoles(roles)}
+                    onChange={(roles: any) => setSelectedRoles(roles)}
                   />
                   <InputElement
                     type="text"
@@ -955,8 +1031,9 @@ const MiningSiteWrapper: React.FC = () => {
                     onChange={(values: any) => setSelectedValuesSite(values)}
                     searchQuery={searchMineralQuery}
                     setSearchQuery={setSearchMineralQuery}
-                    type={2}
+                    type={5}
                     setisAddnewpeople={setisAddnewSite}
+                    setShowOverlay={setShowOverlay}
                   />
                   <LoginButton
                     onClick={handleSubmitCompany}

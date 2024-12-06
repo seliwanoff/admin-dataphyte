@@ -9,6 +9,10 @@ import SkeletonScreen from "../components/skeletonScreen";
 //import DashBoardWrapper from "../dashboard/dashboardWrapper";
 import "nprogress/nprogress.css"; // Import the NProgress CSS
 import NProgress from "nprogress";
+import MineralWrapper from "../DataCollection/MineralWrapper";
+import MainMieralWrapper from "../DataCollection/MainMineralWrapper";
+import PeopleCollectionWrapper from "../DataCollection/MainPeopleWrapper";
+import MainMininsiteWrapper from "../DataCollection/MiningSiteMainWrapper";
 
 const DashBoardWrapper = React.lazy(
   () => import("../dashboard/dashboardWrapper")
@@ -50,6 +54,12 @@ const RouteWrapper: React.FC = () => {
         <Route path="/analytics-report" element={<AnalyticsReport />} />
         <Route path="/access-log" element={<Accesslog />} />
         <Route path="/data-collection" element={<DataCollection />} />
+        <Route path="/mineral-collection" element={<MainMieralWrapper />} />
+        <Route
+          path="/people-collection"
+          element={<PeopleCollectionWrapper />}
+        />
+        <Route path="/site-collection" element={<MainMininsiteWrapper />} />
       </Routes>
     </Suspense>
   );

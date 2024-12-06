@@ -34,11 +34,49 @@ const MainMenu = () => {
           logo={datalogo}
           activeLogo="/path/to/active-logo.png"
           title="Data Collection"
-          to="/data-collection"
+          to=""
         >
           <img src={datalogo} alt="" className="h-[18px]" />
-          Data Collection
+          Data Collections
         </SubMainmenu>
+        <div className="flex flex-col gap-4 pl-12">
+          <SubMainmenu
+            logo={useranayticslogo}
+            activeLogo="/path/to/active-logo.png"
+            title="Dashboard"
+            to="/data-collection"
+          >
+            <img src={useranayticslogo} alt="" className="h-[18px]" />
+            Company{" "}
+          </SubMainmenu>
+          <SubMainmenu
+            logo={useranayticslogo}
+            activeLogo="/path/to/active-logo.png"
+            title="Dashboard"
+            to="/mineral-collection"
+          >
+            <img src={useranayticslogo} alt="" className="h-[18px]" />
+            Mineral{" "}
+          </SubMainmenu>{" "}
+          <SubMainmenu
+            logo={useranayticslogo}
+            activeLogo="/path/to/active-logo.png"
+            title="Dashboard"
+            to="/people-collection"
+          >
+            <img src={useranayticslogo} alt="" className="h-[18px]" />
+            People
+          </SubMainmenu>
+          <SubMainmenu
+            logo={useranayticslogo}
+            activeLogo="/path/to/active-logo.png"
+            title="Dashboard"
+            to="/site-collection"
+          >
+            <img src={useranayticslogo} alt="" className="h-[18px]" />
+            Mining Site
+          </SubMainmenu>
+        </div>
         <SubMainmenu
           logo={useranayticslogo}
           activeLogo="/path/to/active-logo.png"

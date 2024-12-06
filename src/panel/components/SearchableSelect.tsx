@@ -60,7 +60,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
           className="input w-full"
         />
         {isDropdownOpen && (
-          <ul className="absolute w-full z-10 mt-1 bg-white border border-gray-300 rounded shadow-md max-h-[130px] overflow-auto">
+          <ul className="absolute w-full z-10 mt-1 bg-white border border-gray-300 rounded shadow-md max-h-60 overflow-auto">
             {options && options.length > 0
               ? options.map((option: any, index) => (
                   <li

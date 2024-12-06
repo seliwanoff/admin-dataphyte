@@ -10,6 +10,7 @@ interface InputElementProps {
   className?: string;
   name?: string;
   required: any;
+  onKeyDowns?: any;
 }
 
 const InputElement: React.FC<InputElementProps> = ({
@@ -21,6 +22,7 @@ const InputElement: React.FC<InputElementProps> = ({
   className = "",
   name,
   required,
+  onKeyDowns,
 }) => {
   return (
     <div className="flex flex-col gap-2">
@@ -37,6 +39,7 @@ const InputElement: React.FC<InputElementProps> = ({
         onChange={onChange}
         className="input"
         autoComplete="off"
+        onKeyUp={onKeyDowns}
       />
     </div>
   );
