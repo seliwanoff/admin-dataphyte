@@ -116,6 +116,15 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
   const handleClickShow = () => {
     setShowOverlay(true);
   };
+
+  const isType =
+    type === 5
+      ? "Add company"
+      : type === 3
+      ? "Add people"
+      : type === 4
+      ? "Add site"
+      : "Add mineral";
   return (
     <div
       ref={dropdownRef}
@@ -137,6 +146,14 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
         />
         {isDropdownOpen && searchQuery.trim() !== "" && (
           <ul className="absolute w-full z-10 mt-1 bg-white border border-gray-300 rounded shadow-md max-h-60 overflow-auto">
+            {options.length > 0 && (
+              <button
+                className="px-4 py-2 bg-primary font-polySans text-[12px]  text-white rounded font-medium m-2 float-end"
+                onClick={handleClickShow}
+              >
+                {isType}
+              </button>
+            )}
             {isSearching ? (
               <div className="py-4 flex justify-center items-center">
                 <span className="text-gray-700 text-sm">Searching...</span>
@@ -173,7 +190,7 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
 
                   //   disabled={currentStep === steps.length - 1}
                 >
-                  {type === 5 ? "Add company" : "Add mineral"}
+                  {isType}
                 </button>
               </div>
             )}

@@ -1200,9 +1200,6 @@ const StepperWithForms: React.FC = () => {
 
               {files && files.length > 0 && (
                 <>
-                  <span className="font-Satoshi text-[14px] font-bold mb-[-20px]">
-                    Please attach document before proceed.
-                  </span>
                   <LoginButton
                     onClick={handleSubmitDoc}
                     type="button"
@@ -1273,10 +1270,6 @@ const StepperWithForms: React.FC = () => {
 
               {files && files.length > 0 && (
                 <>
-                  <span className="font-Satoshi text-[14px] font-bold mb-[-20px]">
-                    Please attach pictures before proceed.
-                  </span>
-
                   <LoginButton
                     onClick={handleSubmitPics}
                     type="button"

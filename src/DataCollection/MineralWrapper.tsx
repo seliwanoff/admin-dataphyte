@@ -15,6 +15,7 @@ import MultipleEl from "../dashboard/components/MultipleEl";
 import CompanyInlineCreate from "./components/CompanyInlineCreate";
 import MineralInlineCreate from "./components/mineralinlineCreate";
 import PeopleInlineCreate from "./components/propleInlineCreate";
+import SiteInlineCreate from "./components/siteInlineCreate";
 
 interface StepperProps {
   steps: string[];
@@ -47,7 +48,7 @@ const Stepper: React.FC<StepperProps> = ({
 
 const MineralWrapper: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const steps = ["Step 1", "Step 5", "Step 6"];
+  const steps = ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6"];
 
   const [name, setName] = useState("");
   const [rc_number, setRcNumber] = useState("");
@@ -463,12 +464,16 @@ const MineralWrapper: React.FC = () => {
     formData.append("rich_text", content);
     //formData.append("tag[0]", tag);
     // formData.append("location", peopleCountry);
-    /***
+
     selectedValuesMineral.forEach((mineral: any, index) => {
       formData.append(`company[${index}]`, mineral.id.toString());
     });
-    */
-
+    selectedValuesSite.forEach((mineral: any, index) => {
+      formData.append(`mining_site_id[${index}]`, mineral.id.toString());
+    });
+    selectedValuesPeople.forEach((mineral: any, index) => {
+      formData.append(`people_id[${index}]`, mineral.id.toString());
+    });
     selectedCompanyCountries.forEach((country: any, index: any) => {
       formData.append(`country[${index}]`, country);
     });
@@ -553,15 +558,15 @@ const MineralWrapper: React.FC = () => {
           onUpdateCompanyName={setSelectedValuesParent}
         />
       )}
-      {showOverlay && currentStep === 2 && (
-        <MineralInlineCreate
-          mineralNames={""}
+      {showOverlay && currentStep === 3 && (
+        <SiteInlineCreate
+          //mineralNames={""}
           show={showOverlay}
           setShowOverlay={setShowOverlay}
-          onUpdateCompanyName={setSelectedValuesParent}
+          // onUpdateCompanyName={setSelectedValuesParent}
         />
       )}
-      {showOverlay && currentStep === 3 && (
+      {showOverlay && currentStep === 2 && (
         <PeopleInlineCreate
           show={showOverlay}
           setShowOverlay={setShowOverlay}
@@ -692,7 +697,7 @@ const MineralWrapper: React.FC = () => {
           </div>
         )}
 
-        {currentStep === 9 && (
+        {currentStep === 1 && (
           <div className="py-1 px-5">
             <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
               {isaddNewMineral ? "Add company" : "Select company"}
@@ -787,15 +792,15 @@ const MineralWrapper: React.FC = () => {
           </div>
         )}
 
-        {currentStep === 10 && (
+        {currentStep === 2 && (
           <div className="py-1 px-5">
             <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
-              {isaddNewPeople ? "Add People" : "Select People"}
+              {isaddNewPeople ? "Add People" : "Search People"}
             </h2>
             <div className="flex flex-col gap-[24px] pt-4">
               {isaddNewPeople === false && (
                 <MineralSearchDrop
-                  label="Select people"
+                  label="Search people"
                   options={mineralOptions}
                   values={selectedValuesPeople}
                   onChange={(values: any) => setSelectedValuesPeople(values)}
@@ -803,6 +808,7 @@ const MineralWrapper: React.FC = () => {
                   setSearchQuery={setSearchMineralQuery}
                   type={3}
                   setisAddnewpeople={setisaddNewPeople}
+                  setShowOverlay={setShowOverlay}
                 />
               )}
               {isaddNewPeople && (
@@ -937,14 +943,8 @@ const MineralWrapper: React.FC = () => {
                     setSearchQuery={setSearchMineralQuery}
                     type={4}
                     setisAddnewpeople={setisAddnewSite}
+                    setShowOverlay={setShowOverlay}
                   />
-                  <LoginButton
-                    onClick={handleSubmitCompany}
-                    type="button"
-                    disable={isLoading}
-                  >
-                    {isLoading ? "submitting" : "Continue"}
-                  </LoginButton>
                 </>
               )}
               {isaddNewSite && (
@@ -1009,7 +1009,7 @@ const MineralWrapper: React.FC = () => {
             </div>
           </div>
         )}
-        {currentStep === 1 && (
+        {currentStep === 4 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -1039,9 +1039,6 @@ const MineralWrapper: React.FC = () => {
               />
               {files && files.length > 0 && (
                 <>
-                  <span className="font-Satoshi text-[14px] font-bold mb-[-20px]">
-                    Please attach document before proceed.
-                  </span>
                   <LoginButton
                     onClick={handleSubmitDoc}
                     type="button"
@@ -1054,7 +1051,7 @@ const MineralWrapper: React.FC = () => {
             </div>
           </div>
         )}
-        {currentStep === 2 && (
+        {currentStep === 5 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -1111,9 +1108,6 @@ const MineralWrapper: React.FC = () => {
               />
               {files && files.length > 0 && (
                 <>
-                  <span className="font-Satoshi text-[14px] font-bold mb-[-20px]">
-                    Please attach pictures before proceed.
-                  </span>
                   <LoginButton
                     onClick={handleSubmitPics}
                     type="button"
@@ -1139,11 +1133,12 @@ const MineralWrapper: React.FC = () => {
             Previous
           </button>
         )}
-        {currentStep !== 2 && currentStep !== 5 && (
+        {currentStep !== 5 && (
           <button
             className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium"
             onClick={() => {
               setFiles([]);
+              setSearchQuery("");
               setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
             }}
             disabled={currentStep === steps.length - 1}

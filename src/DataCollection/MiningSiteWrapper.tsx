@@ -1136,9 +1136,6 @@ const MiningSiteWrapper: React.FC = () => {
               />
               {files && files.length > 0 && (
                 <>
-                  <span className="font-Satoshi text-[14px] font-bold mb-[-20px]">
-                    Please attach document before proceed.
-                  </span>
                   <LoginButton
                     onClick={handleSubmitDoc}
                     type="button"
@@ -1208,9 +1205,6 @@ const MiningSiteWrapper: React.FC = () => {
               />
               {files && files.length > 0 && (
                 <>
-                  <span className="font-Satoshi text-[14px] font-bold mb-[-20px]">
-                    Please attach picture before proceed.
-                  </span>
                   <LoginButton
                     onClick={handleSubmitPics}
                     type="button"
