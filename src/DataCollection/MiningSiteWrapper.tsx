@@ -1130,7 +1130,7 @@ const MiningSiteWrapper: React.FC = () => {
                 name="files"
                 value={files}
                 setForm={handleSetForm}
-                accept="application/*"
+                accept="application/*,video/*"
                 instruction="PDF, DOC, DOCX or XLSX (max. 800x400px)"
                 multipe={true} // Enable multiple file uploads
               />

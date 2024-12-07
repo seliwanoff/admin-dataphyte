@@ -323,6 +323,8 @@ const PeopleWrapper: React.FC = () => {
 
       if (!response.ok) {
         throw new Error("Failed to fetch options");
+      } else {
+        setCurrentStep(currentStep + 1);
       }
 
       const data = await response.json();
@@ -331,7 +333,6 @@ const PeopleWrapper: React.FC = () => {
       setisAddnewSite(false);
       setFiles([]);
       setDocName("");
-      setCurrentStep(currentStep + 1);
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
@@ -1059,7 +1060,7 @@ const PeopleWrapper: React.FC = () => {
                 name="files"
                 value={files}
                 setForm={handleSetForm}
-                accept="application/*"
+                accept="application/*,video/*"
                 instruction="PDF, DOC, DOCX or XLSX (max. 800x400px)"
                 multipe={true} // Enable multiple file uploads
               />
