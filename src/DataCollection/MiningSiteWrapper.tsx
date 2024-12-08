@@ -470,11 +470,11 @@ const MiningSiteWrapper: React.FC = () => {
     formData.append("address", companyAddress);
     formData.append(
       "location[0][log]",
-      String(companyActual && companyActual?.geometry.location.lng)
+      String(companyActual && companyActual?.geometry?.location.lng)
     );
     formData.append(
       "location[0][lat]",
-      String(companyActual && companyActual?.geometry.location.lat)
+      String(companyActual && companyActual?.geometry?.location.lat)
     );
     formData.append("location[0][name]", companyAddress);
     formData.append(
@@ -1232,7 +1232,7 @@ const MiningSiteWrapper: React.FC = () => {
             Previous
           </button>
         )}
-        {currentStep !== 3 && currentStep !== 5 && (
+        {currentStep !== 3 && currentStep !== 5 && files.length === 0 && (
           <button
             className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium"
             onClick={() => {

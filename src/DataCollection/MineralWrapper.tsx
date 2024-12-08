@@ -797,7 +797,7 @@ const MineralWrapper: React.FC = () => {
         {currentStep === 2 && (
           <div className="py-1 px-5">
             <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
-              {isaddNewPeople ? "Add People" : "Search People"}
+              {isaddNewPeople ? "Add People" : "Select People"}
             </h2>
             <div className="flex flex-col gap-[24px] pt-4">
               {isaddNewPeople === false && (
@@ -1135,7 +1135,7 @@ const MineralWrapper: React.FC = () => {
             Previous
           </button>
         )}
-        {currentStep !== 5 && (
+        {currentStep !== 5 && files.length === 0 && (
           <button
             className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium"
             onClick={() => {

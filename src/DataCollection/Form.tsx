@@ -1297,7 +1297,7 @@ const StepperWithForms: React.FC = () => {
             Previous
           </button>
         )}
-        {currentStep !== 4 && (
+        {currentStep !== 4 && files.length === 0 && (
           <button
             className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium"
             onClick={() => {
