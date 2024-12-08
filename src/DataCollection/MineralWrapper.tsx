@@ -401,7 +401,9 @@ const MineralWrapper: React.FC = () => {
       setSelectedValuesSite([]);
       setImage([]);
       window.open(
-        `https://home-sigma-liard.vercel.app/search?query=${name}`,
+        `https://home-sigma-liard.vercel.app/mineral?id=${encodeURIComponent(
+          company_id
+        )}`,
         "_blank"
       );
       window.location.reload();

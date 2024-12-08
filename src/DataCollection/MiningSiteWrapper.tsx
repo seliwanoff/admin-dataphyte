@@ -411,7 +411,9 @@ const MiningSiteWrapper: React.FC = () => {
 
       setCurrentStep(0);
       window.open(
-        `https://home-sigma-liard.vercel.app/search?query=${name}`,
+        `https://home-sigma-liard.vercel.app/mining-site?id=${encodeURIComponent(
+          company_id
+        )}`,
         "_blank"
       );
       window.location.reload();

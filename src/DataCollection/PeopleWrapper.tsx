@@ -401,11 +401,12 @@ const PeopleWrapper: React.FC = () => {
 
       setSelectedCountries("");
       window.open(
-        `https://home-sigma-liard.vercel.app/search?query=${
-          first_name + " " + " " + last_name
-        }`,
+        `https://home-sigma-liard.vercel.app/people?id=${encodeURIComponent(
+          `${people_id}`
+        )}`,
         "_blank"
       );
+
       window.location.reload();
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");

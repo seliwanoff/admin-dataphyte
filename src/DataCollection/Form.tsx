@@ -434,7 +434,9 @@ const StepperWithForms: React.FC = () => {
       setCurrentStep(0);
       setSelectedCountries([]);
       window.open(
-        `https://home-sigma-liard.vercel.app/search?query=${name}`,
+        `https://home-sigma-liard.vercel.app/company-profile?id=${encodeURIComponent(
+          company_id
+        )}`,
         "_blank"
       );
       window.location.reload();
@@ -923,7 +925,7 @@ const StepperWithForms: React.FC = () => {
  */
                 <>
                   <FilterPeopleByPosition
-                    label="Select CEO"
+                    label="Search CEO"
                     options={mineralOptions}
                     value={ceo}
                     onChange={(values: any) => setCEO(values)}
@@ -936,7 +938,7 @@ const StepperWithForms: React.FC = () => {
                     positionFilter="CEO" // Filter only for CEOs
                   />
                   <FilterPeopleByPosition
-                    label="Select CTO"
+                    label="Search CTO"
                     options={mineralOptions}
                     value={cto}
                     onChange={(values: any) => setCTO(values)}
@@ -949,7 +951,7 @@ const StepperWithForms: React.FC = () => {
                     positionFilter="CTO" // Filter only for CEOs
                   />
                   <FilterPeopleByPosition
-                    label="Select CFO"
+                    label="Search CFO"
                     options={mineralOptions}
                     value={cfo}
                     onChange={(values: any) => setCFO(values)}
