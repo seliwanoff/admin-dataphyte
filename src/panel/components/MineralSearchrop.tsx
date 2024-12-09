@@ -139,7 +139,7 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
       <label htmlFor={name} className="label">
         {label}
       </label>
-      <div className="relative w-full">
+      <div className="relative w-full ">
         <input
           type="text"
           id={name}
@@ -150,16 +150,16 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
           onChange={(e) => handleSearch(e.target.value)}
           className="input w-full"
         />
+        {options.length > 0 && (
+          <button
+            className="px-4 py-2 bg-primary font-polySans text-[12px]  text-white rounded font-medium m-1 float-end mb-9 top-0 absolute right-0 "
+            onClick={handleClickShow}
+          >
+            {isType}
+          </button>
+        )}
         {isDropdownOpen && searchQuery.trim() !== "" && (
           <ul className="absolute w-full z-10 mt-1 bg-white border border-gray-300 rounded shadow-md max-h-60 overflow-auto">
-            {options.length > 0 && (
-              <button
-                className="px-4 py-2 bg-primary font-polySans text-[12px]  text-white rounded font-medium m-2 float-end"
-                onClick={handleClickShow}
-              >
-                {isType}
-              </button>
-            )}
             {isSearching ? (
               <div className="py-4 flex justify-center items-center">
                 <span className="text-gray-700 text-sm">Searching...</span>
