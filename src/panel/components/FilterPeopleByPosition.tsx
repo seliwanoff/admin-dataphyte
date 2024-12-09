@@ -131,7 +131,7 @@ const FilterPeopleByPosition: React.FC<FilterPeopleByPositionProps> = ({
       <label htmlFor={name} className="label">
         {label}
       </label>
-      <div className="relative w-full" ref={dropdownRef}>
+      <div className="relative w-full " ref={dropdownRef}>
         <input
           type="text"
           id={name}
@@ -142,20 +142,20 @@ const FilterPeopleByPosition: React.FC<FilterPeopleByPositionProps> = ({
           onChange={handleSearchChange}
           className="input w-full"
         />
+        {filteredOptions.length > 0 && (
+          <button
+            className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium float-right m-1 top-0 right-0 absolute"
+            onClick={() => {
+              setShowOverlay(true);
+              setIsSelectedPosition(positionFilter);
+            }}
+          >
+            Add people
+          </button>
+        )}
+
         {isDropdownOpen && (
           <ul className="absolute w-full z-10 mt-1 bg-white border border-gray-300 rounded shadow-md max-h-60 overflow-auto">
-            {filteredOptions.length > 0 && (
-              <button
-                className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium float-right m-2"
-                onClick={() => {
-                  setShowOverlay(true);
-                  setIsSelectedPosition(positionFilter);
-                }}
-              >
-                Add people
-              </button>
-            )}
-
             {isLoading ? (
               <div className="py-4 flex justify-center items-center w-full">
                 <span className="font-Satoshi text-gray-700 text-[14px] font-semibold">
