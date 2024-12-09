@@ -299,43 +299,74 @@ const PeopleWrapper: React.FC = () => {
   const handleSubmitDoc = async () => {
     setIsloading(true);
     const formData = new FormData();
-    formData.append("name", docName);
-    /***
-
-    selectedValuesPeople.forEach((people: any, index: any) => {
-      formData.append(`company_id`, people.id);
-    });
-*/
-    const res = await handleSubmitCompany();
-    const peopledId = res.data?.id;
-    formData.append(`people_id`, peopledId);
-
-    if (files) {
-      files.forEach((file, index) => {
-        formData.append(`files[${index}]`, file, file.name);
-      });
-    }
+    const maxSizeInBytes = 2024 * 1024; // 2024 KB in bytes
 
     try {
+      // Append document name
+      formData.append("name", docName);
+
+      // Submit company and get `people_id`
+      const res = await handleSubmitCompany();
+      const peopleId = res.data?.id;
+      if (!peopleId) {
+        throw new Error("Failed to retrieve `people_id`.");
+      }
+      formData.append("people_id", peopleId);
+
+      // Validate and append files
+      if (files && files.length > 0) {
+        let allFilesValid = true;
+
+        files.forEach((file, index) => {
+          if (file.size > maxSizeInBytes) {
+            showNotification(
+              "Error!",
+              `File "${file.name}" exceeds the size limit of 2024 KB.`,
+              "danger"
+            );
+            allFilesValid = false;
+          } else {
+            formData.append(`files[${index}]`, file, file.name);
+          }
+        });
+
+        // If any file is invalid, stop the submission process
+        if (!allFilesValid) {
+          throw new Error("One or more files exceed the size limit.");
+        }
+      } else {
+        throw new Error("No files selected for upload.");
+      }
+
+      // Send POST request to upload documents
       const response = await fetch(`${baseUrl}document/uploaddocuments`, {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch options");
-      } else {
-        setCurrentStep(currentStep + 1);
+        const errorText = await response.text();
+        throw new Error(`Failed to upload documents: ${errorText}`);
       }
 
       const data = await response.json();
 
+      // Handle successful upload
       showNotification("Success!", "Document upload successful", "success");
+      // Proceed to next step
       setisAddnewSite(false);
       setFiles([]);
       setDocName("");
-    } catch (error) {
-      showNotification("Error!", `Error fetching options:${error}`, "danger");
+      if (response.status === 200) {
+        setCurrentStep((prevStep) => prevStep + 1);
+      }
+    } catch (error: any) {
+      // Handle errors without proceeding to the next step
+      showNotification(
+        "Error!",
+        `Error uploading document: ${error.message}`,
+        "danger"
+      );
     } finally {
       setIsloading(false);
     }
@@ -498,7 +529,7 @@ const PeopleWrapper: React.FC = () => {
 
       //showNotification("Success!", "People added successful", "success");
       setisaddNewPeople(false);
-      setCurrentStep(currentStep + 1);
+      //  setCurrentStep(currentStep + 1);
       return data;
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
@@ -590,6 +621,11 @@ const PeopleWrapper: React.FC = () => {
               Create People
             </h2>
             <div className="flex flex-col gap-[24px] pt-4">
+              <RoleSelect
+                label="Select title"
+                values={title}
+                onChange={setTitle}
+              />
               <InputElement
                 type="text"
                 label=" First name"
@@ -619,11 +655,6 @@ const PeopleWrapper: React.FC = () => {
                 name="name"
                 required={true}
                 //className="additional-styles"
-              />
-              <RoleSelect
-                label="Select title"
-                values={title}
-                onChange={setTitle}
               />
 
               <SearchableSelect

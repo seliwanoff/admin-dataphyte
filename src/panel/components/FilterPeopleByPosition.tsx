@@ -150,7 +150,7 @@ const FilterPeopleByPosition: React.FC<FilterPeopleByPositionProps> = ({
               setIsSelectedPosition(positionFilter);
             }}
           >
-            Add people
+            Add new
           </button>
         )}
 

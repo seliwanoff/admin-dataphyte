@@ -97,46 +97,58 @@ const PeopleInlineCreate: React.FC<PeopleInlineCreateProps> = ({
   const handleSubmitPeople = async () => {
     setIsLoading(true);
     const formData = new FormData();
+    const maxSizeInBytes = 2024 * 1024; // 2024 KB in bytes
     const tagArray = peopleTag.split(",").map((t) => t.trim());
 
-    formData.append("first_name", firstName);
-    formData.append("title", title);
-    formData.append("last_name", lastName);
-    formData.append("other_name", otherName);
-    tagArray.forEach((tag: any, index: any) => {
-      formData.append(`tag[${index}]`, tag);
-    });
-    selectedCountries.forEach((tag: any, index: any) => {
-      formData.append(`country[${index}]`, tag);
-    });
-    formData.append("location", peopleCountry);
-
-    formData.append("other_data", peopleOtherData);
-
-    if (peopleImage) {
-      formData.append("image", peopleImage, peopleImage.name);
-    }
-
     try {
+      // Append form data fields
+      formData.append("first_name", firstName);
+      formData.append("title", title);
+      formData.append("last_name", lastName);
+      formData.append("other_name", otherName);
+      tagArray.forEach((tag: any, index: any) => {
+        formData.append(`tag[${index}]`, tag);
+      });
+      selectedCountries.forEach((tag: any, index: any) => {
+        formData.append(`country[${index}]`, tag);
+      });
+      formData.append("location", peopleCountry);
+      formData.append("other_data", peopleOtherData);
+
+      // Validate and append the image
+      if (peopleImage) {
+        if (peopleImage.size > maxSizeInBytes) {
+          showNotification(
+            "Error!",
+            `Image "${peopleImage.name}" exceeds the size limit of 2024 KB.`,
+            "danger"
+          );
+          setIsLoading(false);
+          return; // Stop execution if the image is too large
+        }
+        formData.append("image", peopleImage, peopleImage.name);
+      }
+
+      // Send POST request
       const response = await fetch(`${baseUrl}people/create`, {
         method: "POST",
         body: formData, // Send FormData in the body
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch options");
+        throw new Error("Failed to add people");
       }
 
       const data = await response.json();
-      //  console.log(data);
+
       if (response.status === 200) {
+        // Update selected values parent
         setSelectedValuesParent((prevState: any) => {
           const currentState = Array.isArray(prevState) ? prevState : [];
 
           const filteredState = currentState.filter(
             (item: { id: any }) => item.id !== undefined
           );
-          //   console.log(data.data.id);
 
           if (data.data.id) {
             return [
@@ -153,13 +165,18 @@ const PeopleInlineCreate: React.FC<PeopleInlineCreateProps> = ({
 
           return filteredState;
         });
-        // console.log("is it there");
-        showNotification("Success!", "People added successful", "success");
+
+        showNotification("Success!", "People added successfully", "success");
         setShowOverlay(false);
         setAcquireValue(true);
       }
-    } catch (error) {
-      showNotification("Error!", `Error adding options:${error}`, "danger");
+    } catch (error: any) {
+      // Handle errors
+      showNotification(
+        "Error!",
+        `Error adding people: ${error.message}`,
+        "danger"
+      );
     } finally {
       setIsLoading(false);
       setAcquireValue(false);
@@ -263,7 +280,7 @@ const PeopleInlineCreate: React.FC<PeopleInlineCreateProps> = ({
             type="button"
             disable={isLoading}
           >
-            {isLoading ? "Adding..." : "Add People"}
+            {isLoading ? "Submitting..." : "Add People"}
           </LoginButton>
         </div>
       </div>

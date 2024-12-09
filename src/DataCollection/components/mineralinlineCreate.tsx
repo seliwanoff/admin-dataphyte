@@ -6,6 +6,7 @@ import UploadEl from "../../dashboard/components/UpdateEl";
 import LoginButton from "../../panel/components/loginButton";
 //import { image } from "d3";
 import { showNotification } from "../../components/SuccessComponent/sucess";
+import CountrySelect from "../../panel/components/CountrySelect";
 
 interface MineralInlineCreateProps {
   show?: any;
@@ -38,6 +39,9 @@ const MineralInlineCreate: React.FC<MineralInlineCreateProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState<any>(null);
   const [placeId, setPlacedId] = useState("");
+  const [selectedCompanyCountries, setSelectedCompanyCountries] = useState<any>(
+    []
+  );
 
   const fetchOptions = async (query: string) => {
     try {
@@ -96,9 +100,13 @@ const MineralInlineCreate: React.FC<MineralInlineCreateProps> = ({
 
     const formData = new FormData();
     formData.append("name", mineralName);
-    formData.append("location", mineralLocation);
+    //  formData.append("location", mineralLocation);
     tagArray.forEach((tag: any, index: any) => {
       formData.append(`tag[${index}]`, tag);
+    });
+
+    selectedCompanyCountries.forEach((tag: any, index: any) => {
+      formData.append(`company[${index}]`, tag);
     });
     formData.append("other_data", mineralOtherInfo);
 
@@ -176,6 +184,13 @@ const MineralInlineCreate: React.FC<MineralInlineCreateProps> = ({
             name="name"
             required={false}
           />
+
+          <CountrySelect
+            label="Select Countries"
+            values={selectedCompanyCountries}
+            onChange={(countries) => setSelectedCompanyCountries(countries)}
+          />
+          {/***
           <SearchableSelect
             label="Mineral Address"
             placeholder="Select address"
@@ -188,6 +203,7 @@ const MineralInlineCreate: React.FC<MineralInlineCreateProps> = ({
             options={options}
             setPlacedId={(id: string) => setPlacedId(id)}
           />
+          */}
           <InputElement
             type="text"
             label="Mineral Tag"
@@ -220,7 +236,7 @@ const MineralInlineCreate: React.FC<MineralInlineCreateProps> = ({
             instruction="SVG, PNG, JPG or GIF (max. 800x400px)"
           />
           <LoginButton onClick={handleSubmit} type="button" disable={isLoading}>
-            {isLoading ? "Adding..." : "Add Mineral"}
+            {isLoading ? "Submitting..." : "Add Mineral"}
           </LoginButton>
         </div>
       </div>

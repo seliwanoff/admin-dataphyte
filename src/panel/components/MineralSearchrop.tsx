@@ -125,12 +125,12 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
 
   const isType =
     type === 5
-      ? "Add company"
+      ? "Add new"
       : type === 3
-      ? "Add people"
+      ? "Add new"
       : type === 4
-      ? "Add site"
-      : "Add mineral";
+      ? "Add new"
+      : "Add new";
   return (
     <div
       ref={dropdownRef}

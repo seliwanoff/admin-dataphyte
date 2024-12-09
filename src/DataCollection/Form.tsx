@@ -326,18 +326,22 @@ const StepperWithForms: React.FC = () => {
       const formData = new FormData();
       formData.append("company_id", company_ids);
       formData.append("name", docName);
-      {
-        /**
-      selectedValuesPeople.forEach((people: any, index) => {
-        formData.append(`people_id[${index}]`, people.id.toString());
-      });
-      */
-      }
 
+      // File size validation and appending
+      const maxSizeInBytes = 2024 * 1024; // 2024 KB in bytes
       if (files) {
-        files.forEach((file, index) => {
-          formData.append(`files[${index}]`, file, file.name);
-        });
+        for (const file of files) {
+          if (file.size > maxSizeInBytes) {
+            showNotification(
+              "Error!",
+              `File "${file.name}" exceeds the size limit of 2024 KB.`,
+              "danger"
+            );
+            setIsloading(false);
+            return; // Exit if validation fails
+          }
+          formData.append(`files[]`, file, file.name);
+        }
       }
 
       // Make the API request
@@ -537,7 +541,7 @@ const StepperWithForms: React.FC = () => {
       setCompanyId(data.data.id);
       // showNotification("Success!", "Company added successful", "success");
       setisaddNewPeople(false);
-      setCurrentStep(currentStep + 1);
+      //  setCurrentStep(currentStep + 1);
 
       return data;
     } catch (error) {
@@ -636,7 +640,7 @@ const StepperWithForms: React.FC = () => {
       setIsloading(false);
     }
   };
-  console.log(selectedValuesParent);
+  //  console.log(selectedValuesParent);
   return (
     <div className="p-4">
       {showOverlay && currentStep === 0 && (

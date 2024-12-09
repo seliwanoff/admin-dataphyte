@@ -221,7 +221,7 @@ const SiteInlineCreate: React.FC<PeopleInlineCreateProps> = ({
           />
 
           <LoginButton onClick={handleSubmit} type="button" disable={isLoading}>
-            {isLoading ? "Adding..." : "Add site"}
+            {isLoading ? "Submitting..." : "Add site"}
           </LoginButton>
         </div>
       </div>
