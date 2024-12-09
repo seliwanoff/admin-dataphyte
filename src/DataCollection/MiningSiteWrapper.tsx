@@ -314,53 +314,43 @@ const MiningSiteWrapper: React.FC = () => {
   const handleSubmitDoc = async () => {
     setIsloading(true);
     const formData = new FormData();
-    const maxSizeInBytes = 2024 * 1024; // 2024 KB in bytes
-
-    // Append document name and mining site ID
     formData.append("name", docName);
-    formData.append("mining_site_id", company_id);
+    /**
+    selectedValuesSite.forEach((people: any, index) => {
+      formData.append(`company_id`, people.id.toString());
+    });
 
-    // Validate files before appending
+    selectedValuesPeople.forEach((people: any, index) => {
+      formData.append(`people_id`, people.id.toString());
+    });
+    */
+    formData.append(`mining_site_id`, company_id);
+
     if (files) {
-      for (const file of files) {
-        if (file.size > maxSizeInBytes) {
-          showNotification(
-            "Error!",
-            `File "${file.name}" exceeds the size limit of 2024 KB.`,
-            "danger"
-          );
-          setIsloading(false);
-          return; // Stop execution if any file exceeds the size limit
-        }
-        formData.append(`files[]`, file, file.name);
-      }
+      files.forEach((file, index) => {
+        formData.append(`files[${index}]`, file, file.name);
+      });
     }
 
     try {
-      // Perform API request
       const response = await fetch(`${baseUrl}document/uploaddocuments`, {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error("Failed to upload documents");
+        throw new Error("Failed to fetch options");
       }
 
       const data = await response.json();
 
-      // Notify success and reset states
       showNotification("Success!", "Document upload successful", "success");
       setisAddnewSite(false);
       setFiles([]);
       setDocName("");
       setCurrentStep(currentStep + 1);
-    } catch (error: any) {
-      showNotification(
-        "Error!",
-        `Error uploading documents: ${error.message}`,
-        "danger"
-      );
+    } catch (error) {
+      showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
       setIsloading(false);
     }

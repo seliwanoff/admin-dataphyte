@@ -327,21 +327,10 @@ const StepperWithForms: React.FC = () => {
       formData.append("company_id", company_ids);
       formData.append("name", docName);
 
-      // File size validation and appending
-      const maxSizeInBytes = 2024 * 1024; // 2024 KB in bytes
       if (files) {
-        for (const file of files) {
-          if (file.size > maxSizeInBytes) {
-            showNotification(
-              "Error!",
-              `File "${file.name}" exceeds the size limit of 2024 KB.`,
-              "danger"
-            );
-            setIsloading(false);
-            return; // Exit if validation fails
-          }
-          formData.append(`files[]`, file, file.name);
-        }
+        files.forEach((file, index) => {
+          formData.append(`files[${index}]`, file, file.name);
+        });
       }
 
       // Make the API request

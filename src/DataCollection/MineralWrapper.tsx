@@ -303,59 +303,46 @@ const MineralWrapper: React.FC = () => {
   const handleSubmitDoc = async () => {
     setIsloading(true);
     const formData = new FormData();
-    const maxSizeInBytes = 2024 * 1024; // 2024 KB in bytes
-
-    // Append document name
     formData.append("name", docName);
+    //formData.append("company_id", company_id);
+    /***
+    selectedValuesPeople.forEach((people: any, index) => {
+      formData.append(`people_id`, people.id.toString());
+    });
 
-    // Submit company and append mineral ID
+    selectedValuesSite.forEach((mineral: any, index) => {
+      formData.append(`mining_site_id`, mineral.id.toString());
+    });
+     */
+    const res = await handleSubmitCompany();
+    const miner_ids = res.data?.id;
+    formData.append(`mineral_id`, miner_ids);
+
+    if (files) {
+      files.forEach((file, index) => {
+        formData.append(`files[${index}]`, file, file.name);
+      });
+    }
+
     try {
-      const res = await handleSubmitCompany();
-      const miner_ids = res.data?.id;
-      if (miner_ids) {
-        formData.append(`mineral_id`, miner_ids);
-      }
-
-      // Validate files before appending
-      if (files) {
-        for (const file of files) {
-          if (file.size > maxSizeInBytes) {
-            showNotification(
-              "Error!",
-              `File "${file.name}" exceeds the size limit of 2024 KB.`,
-              "danger"
-            );
-            setIsloading(false);
-            return; // Stop execution if any file exceeds the size limit
-          }
-          formData.append(`files[]`, file, file.name);
-        }
-      }
-
-      // Perform API request
       const response = await fetch(`${baseUrl}document/uploaddocuments`, {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error("Failed to upload documents");
+        throw new Error("Failed to fetch options");
       }
 
       const data = await response.json();
 
-      // Notify success and reset states
       showNotification("Success!", "Document upload successful", "success");
       setisAddnewSite(false);
       setFiles([]);
       setDocName("");
       setCurrentStep(currentStep + 1);
-    } catch (error: any) {
-      showNotification(
-        "Error!",
-        `Error uploading document: ${error.message}`,
-        "danger"
-      );
+    } catch (error) {
+      showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
       setIsloading(false);
     }
@@ -516,7 +503,7 @@ const MineralWrapper: React.FC = () => {
       setCompanyId(data.data.id);
       // showNotification("Success!", "MIneral added successful", "success");
       setisaddNewPeople(false);
-      // setCurrentStep(currentStep + 1);
+    //  setCurrentStep(currentStep + 1);
       return data;
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
