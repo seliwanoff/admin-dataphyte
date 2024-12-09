@@ -12,6 +12,10 @@ interface MineralInlineCreateProps {
   setShowOverlay: any;
   mineralNames?: any;
   onUpdateCompanyName: any;
+  selectedValuesParent?: any;
+  setAcquireValue?: any;
+  setSelectedValuesParent?: any;
+  setSearchMineralQueryc?: any;
 }
 
 const MineralInlineCreate: React.FC<MineralInlineCreateProps> = ({
@@ -19,6 +23,10 @@ const MineralInlineCreate: React.FC<MineralInlineCreateProps> = ({
   setShowOverlay,
   mineralNames,
   onUpdateCompanyName,
+  selectedValuesParent,
+  setAcquireValue,
+  setSelectedValuesParent,
+  setSearchMineralQueryc,
 }) => {
   const [mineralName, setMineralName] = useState("");
   const [mineralLocation, setMineralLocation] = useState("");
@@ -85,13 +93,13 @@ const MineralInlineCreate: React.FC<MineralInlineCreateProps> = ({
   const handleSubmit = async () => {
     setIsLoading(true);
     const tagArray = mineralTag.split(",").map((t) => t.trim());
-    tagArray.forEach((tag: any, index: any) => {
-      formData.append(`tag[${index}]`, tag);
-    });
+
     const formData = new FormData();
     formData.append("name", mineralName);
     formData.append("location", mineralLocation);
-
+    tagArray.forEach((tag: any, index: any) => {
+      formData.append(`tag[${index}]`, tag);
+    });
     formData.append("other_data", mineralOtherInfo);
 
     // If `imageMineral` is a File, append it to FormData
@@ -110,14 +118,39 @@ const MineralInlineCreate: React.FC<MineralInlineCreateProps> = ({
       }
 
       const data = await response.json();
+      if (response.status === 200) {
+        setSelectedValuesParent((prevState: any) => {
+          const currentState = Array.isArray(prevState) ? prevState : [];
 
-      showNotification("Success!", "Mineral added successful", "success");
-      //setisAddnewminera(false);
-      setShowOverlay(false);
+          const filteredState = currentState.filter(
+            (item: { id: any; name: any }) =>
+              item.id !== undefined && item.name !== undefined
+          );
+
+          if (data.data.id && data.data.name) {
+            return [
+              ...filteredState,
+              {
+                id: data.data.id,
+                name: data.data.name,
+              },
+            ];
+          }
+
+          // If no valid data, return the filtered state
+          return filteredState;
+        });
+
+        showNotification("Success!", "Mineral added successful", "success");
+        setShowOverlay(false);
+        setAcquireValue(true);
+      }
     } catch (error) {
       showNotification("Error!", `Error adding mineral:${error}`, "danger");
     } finally {
       setIsLoading(false);
+      setAcquireValue(false);
+      setSearchMineralQueryc("");
     }
   };
 

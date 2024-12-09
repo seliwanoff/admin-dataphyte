@@ -13,6 +13,10 @@ interface CompanyInlineCreateProps {
   onUpdateCompanyName: any;
   show?: any;
   setShowOverlay: any;
+  selectedValuesParent?: any;
+  setAcquireValue?: any;
+  setSelectedValuesParent?: any;
+  setSearchMineralQueryc?: any;
 }
 
 const CompanyInlineCreate: React.FC<CompanyInlineCreateProps> = ({
@@ -20,11 +24,15 @@ const CompanyInlineCreate: React.FC<CompanyInlineCreateProps> = ({
   onUpdateCompanyName,
   show,
   setShowOverlay,
+  selectedValuesParent,
+  setAcquireValue,
+  setSelectedValuesParent,
+  setSearchMineralQueryc,
 }) => {
   const [name, setName] = useState(companyName);
   const [isLoading, setIsLoading] = useState(false);
   const [isNameExist, setIsNameExist] = useState(false);
-  const [selectedValuesParent, setSelectedValuesParent] = useState<any[]>([]);
+  // const [selectedValuesParent, setSelectedValuesParent] = useState<any[]>([]);
   const [searchMineralQuery, setSearchMineralQuery] = useState("");
   const [companyAddress, setCompanyAddress] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,13 +76,37 @@ const CompanyInlineCreate: React.FC<CompanyInlineCreateProps> = ({
         method: "POST",
         body: formData,
       });
+      const data = await response.json();
+      // console.log(data);
 
       if (!response.ok) {
         throw new Error("Failed to fetch options");
       }
 
       if (response.status === 200) {
-        //   onUpdateCompanyName(name);
+        setSelectedValuesParent((prevState: any) => {
+          const currentState = Array.isArray(prevState) ? prevState : [];
+
+          const filteredState = currentState.filter(
+            (item: { id: any; name: any }) =>
+              item.id !== undefined && item.name !== undefined
+          );
+
+          if (data.data.id && data.data.name) {
+            return [
+              ...filteredState,
+              {
+                id: data.data.id,
+                name: data.data.name,
+              },
+            ];
+          }
+
+          // If no valid data, return the filtered state
+          return filteredState;
+        });
+
+        setAcquireValue(true);
         setShowOverlay(false);
         showNotification("Success!", "Company added successful", "success");
       }
@@ -86,6 +118,8 @@ const CompanyInlineCreate: React.FC<CompanyInlineCreateProps> = ({
       );
     } finally {
       setIsLoading(false);
+      setAcquireValue(false);
+      setSearchMineralQueryc("");
     }
   };
   const fetchOptions = async (query: string) => {
@@ -124,7 +158,6 @@ const CompanyInlineCreate: React.FC<CompanyInlineCreateProps> = ({
           }
 
           const data = await response.json();
-          // console.log(data.result.formatted_address);
 
           setCompanyAddress(data.result.formatted_address);
         } catch (error) {
@@ -147,10 +180,8 @@ const CompanyInlineCreate: React.FC<CompanyInlineCreateProps> = ({
       const data = await response.json();
 
       const isNameFound = data.data.some((item: { name: string }) => {
-        // console.log(`Comparing "${item.name}" with "${name}"`);
         return item.name.trim().toLowerCase() === name.trim().toLowerCase();
       });
-      // console.log(isNameExist);
 
       setIsNameExist(isNameFound);
     } catch (error) {

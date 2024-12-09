@@ -60,6 +60,7 @@ const StepperWithForms: React.FC = () => {
   const [isNameExist, setIsNameExist] = useState(false);
   const [isaddNewMineral, setisAddnewminera] = useState(false);
   const [isaddNewSite, setisAddnewSite] = useState(false);
+  const [acquireValue, setAcquireValue] = useState(false);
 
   const [placeId, setPlacedId] = useState("");
   const [selectedValuesMineral, setSelectedValuesMineral] = useState<string[]>(
@@ -605,7 +606,7 @@ const StepperWithForms: React.FC = () => {
       },
     }));
   };
-
+  // console.log(selectedValuesParent);
   const goToStep = (stepIndex: number) => {
     setCurrentStep(stepIndex);
   };
@@ -635,7 +636,7 @@ const StepperWithForms: React.FC = () => {
       setIsloading(false);
     }
   };
-  //console.log(currentStep);
+  console.log(selectedValuesParent);
   return (
     <div className="p-4">
       {showOverlay && currentStep === 0 && (
@@ -644,6 +645,10 @@ const StepperWithForms: React.FC = () => {
           show={showOverlay}
           setShowOverlay={setShowOverlay}
           onUpdateCompanyName={setSelectedValuesParent}
+          setSelectedValuesParent={setSelectedValuesParent}
+          selectedValuesParent={selectedValuesParent}
+          setAcquireValue={setAcquireValue}
+          setSearchMineralQueryc={setSearchMineralQueryc}
         />
       )}
       {showOverlay && currentStep === 1 && (
@@ -652,6 +657,9 @@ const StepperWithForms: React.FC = () => {
           show={showOverlay}
           setShowOverlay={setShowOverlay}
           onUpdateCompanyName={setSelectedValuesParent}
+          setSearchMineralQueryc={setSearchMineralQuery}
+          setSelectedValuesParent={setSelectedValuesMineral}
+          setAcquireValue={setAcquireValue}
         />
       )}
       {showOverlay && currentStep === 2 && (
@@ -708,9 +716,13 @@ const StepperWithForms: React.FC = () => {
                 type={5}
                 parent={"parent"}
                 setShowOverlay={setShowOverlay}
+                acquireValue={acquireValue}
+
+                //  acquiredValue={}
 
                 // setisAddnewpeople={setisAddnewminera}
               />
+
               <SearchableSelect
                 label="Company Address"
                 placeholder="Select address"

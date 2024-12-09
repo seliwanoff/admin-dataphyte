@@ -79,6 +79,8 @@ const MineralWrapper: React.FC = () => {
   const [selectedCompanyCountries, setSelectedCompanyCountries] = useState<any>(
     []
   );
+  const [acquireValue, setAcquireValue] = useState(false);
+
   const [formData, setFormData] = useState<{
     [key: number]: { [key: string]: string };
   }>({});
@@ -557,7 +559,11 @@ const MineralWrapper: React.FC = () => {
           companyName={""}
           show={showOverlay}
           setShowOverlay={setShowOverlay}
-          onUpdateCompanyName={setSelectedValuesParent}
+          onUpdateCompanyName={selectedValuesMineral}
+          setSelectedValuesParent={setSelectedValuesMineral}
+          selectedValuesParent={selectedValuesParent}
+          setAcquireValue={setAcquireValue}
+          setSearchMineralQueryc={setSearchMineralQuery}
         />
       )}
       {showOverlay && currentStep === 3 && (
@@ -565,6 +571,10 @@ const MineralWrapper: React.FC = () => {
           //mineralNames={""}
           show={showOverlay}
           setShowOverlay={setShowOverlay}
+          setSelectedValuesParent={setSelectedValuesSite}
+          selectedValuesParent={selectedValuesSite}
+          setAcquireValue={setAcquireValue}
+          setSearchMineralQueryc={setSearchMineralQuery}
           // onUpdateCompanyName={setSelectedValuesParent}
         />
       )}
@@ -572,6 +582,10 @@ const MineralWrapper: React.FC = () => {
         <PeopleInlineCreate
           show={showOverlay}
           setShowOverlay={setShowOverlay}
+          setSelectedValuesParent={setSelectedValuesPeople}
+          selectedValuesParent={selectedValuesPeople}
+          setAcquireValue={setAcquireValue}
+          setSearchMineralQueryc={setSearchMineralQuery}
         />
       )}
       <span className="text-gray-700 font-polySans text-[14px] mb-4 px-4  block ">
@@ -716,6 +730,7 @@ const MineralWrapper: React.FC = () => {
                   type={5}
                   setisAddnewpeople={setisAddnewminera}
                   setShowOverlay={setShowOverlay}
+                  acquireValue={acquireValue}
                 />
               )}
               {isaddNewMineral && (
@@ -811,6 +826,7 @@ const MineralWrapper: React.FC = () => {
                   type={3}
                   setisAddnewpeople={setisaddNewPeople}
                   setShowOverlay={setShowOverlay}
+                  acquireValue={acquireValue}
                 />
               )}
               {isaddNewPeople && (
@@ -946,6 +962,7 @@ const MineralWrapper: React.FC = () => {
                     type={4}
                     setisAddnewpeople={setisAddnewSite}
                     setShowOverlay={setShowOverlay}
+                    acquireValue={acquireValue}
                   />
                 </>
               )}

@@ -127,6 +127,7 @@ const PeopleWrapper: React.FC = () => {
   const [company_id, setCompanyId] = useState("");
   const [files, setFiles] = React.useState<File[]>([]);
   const [showOverlay, setShowOverlay] = useState(false);
+  const [acquireValue, setAcquireValue] = useState(false);
 
   // console.log(files);
 
@@ -561,7 +562,11 @@ const PeopleWrapper: React.FC = () => {
           mineralNames={""}
           show={showOverlay}
           setShowOverlay={setShowOverlay}
-          onUpdateCompanyName={setSelectedValuesParent}
+          onUpdateCompanyName={selectedValuesMineral}
+          setSelectedValuesParent={setSelectedValuesMineral}
+          selectedValuesParent={selectedValuesMineral}
+          setAcquireValue={setAcquireValue}
+          setSearchMineralQueryc={setSearchMineralQuery}
         />
       )}
       {showOverlay && currentStep === 2 && (
@@ -737,6 +742,7 @@ const PeopleWrapper: React.FC = () => {
                   type={2}
                   setisAddnewpeople={setisAddnewminera}
                   setShowOverlay={setShowOverlay}
+                  acquireValue={acquireValue}
                 />
               )}
               {isaddNewMineral && (

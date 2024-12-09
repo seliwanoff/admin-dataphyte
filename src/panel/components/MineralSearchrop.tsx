@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 interface SearchableSelectProps {
   label: string;
   options: { name: string; place_id: string; title: string }[];
-  values?: string[];
+  values?: any;
   onChange?: any;
   placeholder?: string;
   className?: string;
@@ -18,12 +18,13 @@ interface SearchableSelectProps {
   isDocument?: any;
   parent?: string;
   setShowOverlay?: any;
+  acquireValue?: boolean;
 }
 
 const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
   label,
   options,
-  values = [],
+  values,
   onChange,
   placeholder = "Search...",
   className = "",
@@ -38,6 +39,7 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
   isDocument,
   parent,
   setShowOverlay,
+  acquireValue,
 }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -56,7 +58,12 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
       setIsDropdownOpen(false);
     }
   };
-
+  // console.log(values);
+  useEffect(() => {
+    if (acquireValue) {
+      handleSelect(values, type);
+    }
+  }, [acquireValue, values, type]);
   const handleSelect = (
     option: {
       title: any;
@@ -80,12 +87,11 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
 
       if (onChange) onChange(updatedValues);
     } else {
-      const alreadySelected = values.some(
-        (item: any) => item.id === option.id // Use `id` for comparison
-      );
+      const alreadySelected =
+        values && values?.some((item: any) => item.id === option.id);
 
       const updatedValues = alreadySelected
-        ? values.filter((item: any) => item.id !== option.id) // Use `id` for removal
+        ? values.filter((item: any) => item.id !== option.id)
         : [...values, keyToAdd];
 
       if (onChange) onChange(updatedValues);
@@ -164,7 +170,9 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
                   key={index}
                   onClick={() => handleSelect(option, type)}
                   className={`p-2 cursor-pointer hover:bg-slate-200 font-Satoshi font-medium ${
-                    values.includes(option.name) ? "bg-slate-100" : ""
+                    values && values?.includes(option.name)
+                      ? "bg-slate-100"
+                      : ""
                   }`}
                 >
                   {type === 2 || type === 4 || type === 5
@@ -197,17 +205,18 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
           </ul>
         )}
       </div>
-      {values.length > 0 && (
+      {values && values.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-2">
-          {values.map((value: any, index) => (
-            <span
-              key={index}
-              className="bg-primary text-white px-3 py-1 rounded-full text-sm cursor-pointer font-Satoshi font-medium"
-              onClick={() => handleSelect(value, type)}
-            >
-              {value.name}
-            </span>
-          ))}
+          {values &&
+            values.map((value: any, index: any) => (
+              <span
+                key={index}
+                className="bg-primary text-white px-3 py-1 rounded-full text-sm cursor-pointer font-Satoshi font-medium"
+                onClick={() => handleSelect(value, type)}
+              >
+                {value.name}
+              </span>
+            ))}
         </div>
       )}
     </div>

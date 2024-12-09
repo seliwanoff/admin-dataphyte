@@ -12,11 +12,19 @@ import { showNotification } from "../../components/SuccessComponent/sucess";
 interface PeopleInlineCreateProps {
   show?: any;
   setShowOverlay: (state: boolean) => void;
+  selectedValuesParent?: any;
+  setAcquireValue?: any;
+  setSelectedValuesParent?: any;
+  setSearchMineralQueryc?: any;
 }
 
 const PeopleInlineCreate: React.FC<PeopleInlineCreateProps> = ({
   show,
   setShowOverlay,
+  selectedValuesParent,
+  setAcquireValue,
+  setSelectedValuesParent,
+  setSearchMineralQueryc,
 }) => {
   const [firstName, setFirstname] = useState("");
   const [lastName, setLastname] = useState("");
@@ -98,6 +106,9 @@ const PeopleInlineCreate: React.FC<PeopleInlineCreateProps> = ({
     tagArray.forEach((tag: any, index: any) => {
       formData.append(`tag[${index}]`, tag);
     });
+    selectedCountries.forEach((tag: any, index: any) => {
+      formData.append(`country[${index}]`, tag);
+    });
     formData.append("location", peopleCountry);
 
     formData.append("other_data", peopleOtherData);
@@ -117,14 +128,42 @@ const PeopleInlineCreate: React.FC<PeopleInlineCreateProps> = ({
       }
 
       const data = await response.json();
+      //  console.log(data);
+      if (response.status === 200) {
+        setSelectedValuesParent((prevState: any) => {
+          const currentState = Array.isArray(prevState) ? prevState : [];
 
-      showNotification("Success!", "People added successful", "success");
-      //setisaddNewPeople(false);
-      setShowOverlay(false);
+          const filteredState = currentState.filter(
+            (item: { id: any }) => item.id !== undefined
+          );
+          //   console.log(data.data.id);
+
+          if (data.data.id) {
+            return [
+              ...filteredState,
+              {
+                id: data.data.id,
+                first_name: data.data.first_name,
+                title: data.data.title,
+                last_name: data.data.last_name,
+                name: `${data.data.title} ${data.data.first_name} ${data.data.last_name}`,
+              },
+            ];
+          }
+
+          return filteredState;
+        });
+        // console.log("is it there");
+        showNotification("Success!", "People added successful", "success");
+        setShowOverlay(false);
+        setAcquireValue(true);
+      }
     } catch (error) {
       showNotification("Error!", `Error adding options:${error}`, "danger");
     } finally {
       setIsLoading(false);
+      setAcquireValue(false);
+      setSearchMineralQueryc("");
     }
   };
 

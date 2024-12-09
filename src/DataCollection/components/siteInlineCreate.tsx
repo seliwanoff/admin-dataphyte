@@ -9,11 +9,19 @@ import { showNotification } from "../../components/SuccessComponent/sucess";
 interface PeopleInlineCreateProps {
   show?: any;
   setShowOverlay: (state: boolean) => void;
+  selectedValuesParent?: any;
+  setAcquireValue?: any;
+  setSelectedValuesParent?: any;
+  setSearchMineralQueryc?: any;
 }
 
 const SiteInlineCreate: React.FC<PeopleInlineCreateProps> = ({
   show,
   setShowOverlay,
+  selectedValuesParent,
+  setAcquireValue,
+  setSelectedValuesParent,
+  setSearchMineralQueryc,
 }) => {
   const [siteName, setSiteName] = useState<string>("");
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
@@ -118,14 +126,42 @@ const SiteInlineCreate: React.FC<PeopleInlineCreateProps> = ({
       }
 
       const data = await response.json();
+      if (response.status === 200) {
+        setSelectedValuesParent((prevState: any) => {
+          const currentState = Array.isArray(prevState) ? prevState : [];
 
-      showNotification("Success!", "Site added successful", "success");
-      // setisAddnewSite(false);
-      setShowOverlay(false);
+          const filteredState = currentState.filter(
+            (item: { id: any; name: any }) =>
+              item.id !== undefined && item.name !== undefined
+          );
+
+          if (data.data.id && data.data.name) {
+            return [
+              ...filteredState,
+              {
+                id: data.data.id,
+                name: data.data.name,
+              },
+            ];
+          }
+
+          // If no valid data, return the filtered state
+          return filteredState;
+        });
+
+        showNotification("Success!", "Site added successful", "success");
+        // setisAddnewSite(false);
+        setShowOverlay(false);
+        setAcquireValue(true);
+        setShowOverlay(false);
+      }
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
       setIsLoading(false);
+      setAcquireValue(false);
+      setShowOverlay(false);
+      setSearchMineralQueryc("");
     }
   };
 

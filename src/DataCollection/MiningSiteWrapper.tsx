@@ -91,6 +91,7 @@ const MiningSiteWrapper: React.FC = () => {
   const [searchMineralQuery, setSearchMineralQuery] = useState("");
   const [searchMineralQuerycfo, setSearchMineralQuerycfo] = useState("");
   const [searchMineralQuerycto, setSearchMineralQuerycto] = useState("");
+  const [isSelectedPosition, setIsSelectedPosition] = useState("");
 
   const [searchMineralQueryc, setSearchMineralQueryc] = useState("");
 
@@ -108,6 +109,7 @@ const MiningSiteWrapper: React.FC = () => {
   const [first_name, setFirstname] = useState("");
   const [last_name, setLastname] = useState("");
   const [other_name, setOtherName] = useState("");
+  const [acquireValue, setAcquireValue] = useState(false);
 
   const [peopleCountry, setPeopleCountry] = useState("");
   const [title, setTitle] = useState("");
@@ -630,6 +632,10 @@ const MiningSiteWrapper: React.FC = () => {
           show={showOverlay}
           setShowOverlay={setShowOverlay}
           onUpdateCompanyName={setSelectedValuesParent}
+          selectedValuesParent={selectedValuesSite}
+          setSelectedValuesParent={setSelectedValuesSite}
+          setAcquireValue={setAcquireValue}
+          setSearchMineralQueryc={setSearchMineralQuery}
         />
       )}
       {showOverlay && currentStep === 1 && (
@@ -638,6 +644,10 @@ const MiningSiteWrapper: React.FC = () => {
           show={showOverlay}
           setShowOverlay={setShowOverlay}
           onUpdateCompanyName={setSelectedValuesParent}
+          selectedValuesParent={selectedValuesMineral}
+          setSelectedValuesParent={setSelectedValuesMineral}
+          setAcquireValue={setAcquireValue}
+          setSearchMineralQueryc={setSearchMineralQuery}
         />
       )}
       {showOverlay && currentStep === 2 && (
@@ -645,6 +655,20 @@ const MiningSiteWrapper: React.FC = () => {
           //mineralNames={""}
           show={showOverlay}
           setShowOverlay={setShowOverlay}
+          setSelectedValuesParent={
+            /**
+            isSelectedPosition === "CEO"
+              ? setCEO
+              : isSelectedPosition === "CFO"
+              ? setCFO
+              : isSelectedPosition === "CTO"
+              ? setCTO
+              */
+            setSelectedValuesPeople
+          }
+          selectedValuesParent={selectedValuesPeople}
+          setAcquireValue={setAcquireValue}
+          setSearchMineralQueryc={setSearchMineralQuery}
           //  onUpdateCompanyName={setSelectedValuesParent}
         />
       )}
@@ -855,7 +879,7 @@ const MiningSiteWrapper: React.FC = () => {
               {isaddNewPeople === false && (
                 <>
                   <MineralSearchDrop
-                    label="Select people"
+                    label="Search people"
                     options={mineralOptions}
                     values={selectedValuesPeople}
                     onChange={(values: any) => setSelectedValuesPeople(values)}
@@ -864,6 +888,7 @@ const MiningSiteWrapper: React.FC = () => {
                     type={3}
                     setisAddnewpeople={setisaddNewPeople}
                     setShowOverlay={setShowOverlay}
+                    acquireValue={acquireValue}
                   />
                   <FilterPeopleByPosition
                     label="Search CEO"
@@ -874,8 +899,10 @@ const MiningSiteWrapper: React.FC = () => {
                     setSearchQuery={setSearchMineralQueryceo}
                     type={2}
                     //setisAddnewpeople={setisAddnewminera}
-
+                    setIsSelectedPosition={setIsSelectedPosition}
                     positionFilter="CEO" // Filter only for CEOs
+                    //acquireValue={acquireValue}
+                    setShowOverlay={setShowOverlay}
                   />
                   <FilterPeopleByPosition
                     label="Search CTO"
@@ -885,9 +912,12 @@ const MiningSiteWrapper: React.FC = () => {
                     searchQuery={searchMineralQuerycto}
                     setSearchQuery={setSearchMineralQuerycto}
                     type={2}
+                    setIsSelectedPosition={setIsSelectedPosition}
                     //setisAddnewpeople={setisAddnewminera}
-
-                    positionFilter="CTO" // Filter only for CEOs
+                    //acquireValue={acquireValue}
+                    positionFilter="CTO"
+                    setShowOverlay={setShowOverlay}
+                    // Filter only for CEOs
                   />
                   <FilterPeopleByPosition
                     label="Search CFO"
@@ -898,8 +928,10 @@ const MiningSiteWrapper: React.FC = () => {
                     setSearchQuery={setSearchMineralQuerycfo}
                     type={2}
                     //setisAddnewpeople={setisAddnewminera}
-
+                    setIsSelectedPosition={setIsSelectedPosition}
                     positionFilter="CFO" // Filter only for CEOs
+                    //acquireValue={acquireValue}
+                    setShowOverlay={setShowOverlay}
                   />
                 </>
               )}
@@ -1036,6 +1068,7 @@ const MiningSiteWrapper: React.FC = () => {
                     type={5}
                     setisAddnewpeople={setisAddnewSite}
                     setShowOverlay={setShowOverlay}
+                    acquireValue={acquireValue}
                   />
                   <LoginButton
                     onClick={handleSubmitCompany}

@@ -25,6 +25,8 @@ interface FilterPeopleByPositionProps {
   positionFilter?: string;
   type?: any;
   setShowOverlay?: any;
+  setIsSelectedPosition?: any;
+  acquireValue?: any;
 }
 
 const FilterPeopleByPosition: React.FC<FilterPeopleByPositionProps> = ({
@@ -41,6 +43,8 @@ const FilterPeopleByPosition: React.FC<FilterPeopleByPositionProps> = ({
   positionFilter,
   type,
   setShowOverlay,
+  setIsSelectedPosition,
+  acquireValue,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -64,7 +68,15 @@ const FilterPeopleByPosition: React.FC<FilterPeopleByPositionProps> = ({
 
     return matchesSearch && matchesPosition;
   });
+  //console.log(value[0]?.first_name);
 
+  /***
+  useEffect(() => {
+    if (acquireValue) {
+      handleSelect(value);
+    }
+  }, [acquireValue, value]);
+  */
   const handleSelect = (option: OptionType) => {
     const keyToCheck = `${option.title} ${option.first_name} ${option.last_name}`;
     const selectedValue = { id: option.id, name: keyToCheck };
@@ -135,7 +147,10 @@ const FilterPeopleByPosition: React.FC<FilterPeopleByPositionProps> = ({
             {filteredOptions.length > 0 && (
               <button
                 className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium float-right m-2"
-                onClick={() => setShowOverlay(true)}
+                onClick={() => {
+                  setShowOverlay(true);
+                  setIsSelectedPosition(positionFilter);
+                }}
               >
                 Add people
               </button>
@@ -172,7 +187,10 @@ const FilterPeopleByPosition: React.FC<FilterPeopleByPositionProps> = ({
                 </span>
                 <button
                   className="px-4 py-2 bg-primary font-polySans text-[14px] my-4 mx-auto   text-white rounded font-medium"
-                  onClick={() => setShowOverlay(true)}
+                  onClick={() => {
+                    setShowOverlay(true);
+                    setIsSelectedPosition(positionFilter);
+                  }}
                 >
                   Add people
                 </button>

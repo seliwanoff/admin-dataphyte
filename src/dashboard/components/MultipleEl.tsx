@@ -79,15 +79,21 @@ const UploadEl = <T extends Record<string, any>>({
           {value.map((file, index) => (
             <div
               key={index}
-              className="w-full bg-[#475467] rounded-md py-2 text-white font-Poppins px-4 overflow-hidden text-ellipsis whitespace-nowrap flex justify-between items-center"
+              className="w-full   bg-[#475467] rounded-md py-2 text-white font-Poppins px-4 overflow-hidden text-ellipsis whitespace-nowrap flex justify-between items-center"
             >
               <span>{file.name}</span>
-              <button
+
+              <svg
                 onClick={() => handleRemoveFile(index)}
-                className="text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#fff"
+                className="float-right cursor-pointer max-w-6"
               >
-                remove
-              </button>
+                <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+              </svg>
             </div>
           ))}
         </div>
