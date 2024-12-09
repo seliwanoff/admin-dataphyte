@@ -16,16 +16,24 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 }) => {
   const modules = {
     toolbar: [
-      [{ header: [1, 2, 3, false] }], // Headers
-      ["bold", "italic", "underline", "strike"], // Text formatting
-      [{ color: [] }, { background: [] }], // Text color and background
-      [{ script: "sub" }, { script: "super" }], // Subscript and superscript
-      [{ list: "ordered" }, { list: "bullet" }], // Lists
-      [{ indent: "-1" }, { indent: "+1" }], // Indentation
-      [{ align: [] }], // Text alignment
-      ["blockquote", "code-block"], // Blockquote and code block
-      ["link", "image", "video"], // Links, images, and videos
-      ["clean"], // Clear formatting
+      ["bold", "italic", "underline", "strike"],
+      ["blockquote", "code-block"],
+      ["link", "image", "video", "formula"],
+
+      [{ header: 1 }, { header: 2 }],
+      [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+      [{ script: "sub" }, { script: "super" }],
+      [{ indent: "-1" }, { indent: "+1" }],
+      [{ direction: "rtl" }],
+
+      [{ size: ["small", false, "large", "huge"] }],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+      [{ color: [] }, { background: [] }],
+      [{ font: [] }],
+      [{ align: [] }],
+
+      ["clean"],
     ],
   };
 

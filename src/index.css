@@ -97,3 +97,26 @@ svg {
 .vertical_scroll::-webkit-scrollbar-track {
   background: #f1f1f1; /* Set the track background color */
 }
+.ql-toolbar .ql-picker {
+  font-size: 14px; /* Optional: adjust dropdown text font size */
+  padding-right: 16px; /* Reduce space for the arrow */
+}
+
+.ql-toolbar .ql-picker .ql-picker-label::after {
+  content: ""; /* Ensure the arrow icon is visible */
+  display: inline-block;
+  border: solid black; /* Color of the arrow */
+  border-width: 0 1.5px 1.5px 0; /* Make the arrow lines thinner */
+  padding: 2px; /* Reduce the arrow size */
+  transform: rotate(45deg); /* Maintain arrow shape */
+  position: absolute;
+  right: 4px; /* Adjust position of the arrow */
+  top: 50%; /* Center align the arrow vertically */
+  transform: translateY(-50%) rotate(45deg); /* Combine alignment and rotation */
+  width: 4px !important;
+  height: 4px !important; /* Set a smaller height */
+}
+.ql-picker-label svg {
+  width: 20px !important;
+  height: 20px !important;
+}
