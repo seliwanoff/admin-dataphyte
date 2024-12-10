@@ -82,6 +82,15 @@ const MainMenu = () => {
               <img src={useranayticslogo} alt="" className="h-[18px]" />
               Mining Site
             </SubMainmenu>
+            <SubMainmenu
+              logo={useranayticslogo}
+              activeLogo="/path/to/active-logo.png"
+              title="Dashboard"
+              to="/document"
+            >
+              <img src={useranayticslogo} alt="" className="h-[18px]" />
+              Document
+            </SubMainmenu>
           </div>
         )}
         <SubMainmenu

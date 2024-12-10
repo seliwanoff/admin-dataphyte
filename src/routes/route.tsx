@@ -13,6 +13,7 @@ import MineralWrapper from "../DataCollection/MineralWrapper";
 import MainMieralWrapper from "../DataCollection/MainMineralWrapper";
 import PeopleCollectionWrapper from "../DataCollection/MainPeopleWrapper";
 import MainMininsiteWrapper from "../DataCollection/MiningSiteMainWrapper";
+import DocumentWrapper from "../DataCollection/DocumentWrapper";
 
 const DashBoardWrapper = React.lazy(
   () => import("../dashboard/dashboardWrapper")
@@ -55,6 +56,7 @@ const RouteWrapper: React.FC = () => {
         <Route path="/access-log" element={<Accesslog />} />
         <Route path="/data-collection" element={<DataCollection />} />
         <Route path="/mineral-collection" element={<MainMieralWrapper />} />
+        <Route path="/document" element={<DocumentWrapper />} />
         <Route
           path="/people-collection"
           element={<PeopleCollectionWrapper />}
