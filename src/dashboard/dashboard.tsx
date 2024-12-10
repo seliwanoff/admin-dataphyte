@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Cards from "../components/cards";
 import DateButton from "../components/tabs/datebutton";
 import Tabs from "../components/tabs/tab";
@@ -7,6 +8,29 @@ import Greetings from "./components/Greetings";
 import Maintable from "./components/table/maintable";
 
 const Dashboard = () => {
+  const baseUrl = process.env.REACT_APP_URL;
+  const [reports, setReports] = useState([]);
+
+  const fetchMineral = async () => {
+    try {
+      const response = await fetch(`${baseUrl}admin/reports`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch options");
+      }
+
+      const data = await response.json();
+      // console.log(data);
+      setReports(data.data.data);
+
+      //setMineralOption(data.data);
+    } catch (error) {
+      console.error("Error fetching options:", error);
+      //  setOptions([]);
+    }
+  };
+  useEffect(() => {
+    fetchMineral();
+  }, []);
   return (
     <>
       <div className="flex flex-col gap-6">
@@ -23,7 +47,7 @@ const Dashboard = () => {
         <Activities />
       </div>
       <div className="mt-5 w-full">
-        <Maintable />
+        <Maintable reports={reports} />
       </div>
     </>
   );

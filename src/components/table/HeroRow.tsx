@@ -9,7 +9,11 @@ interface HeroRowProps {
 const HeroRow: React.FC<HeroRowProps> = ({ name, width, image }) => {
   return (
     <td className="row  flex items-center gap-4">
-      <img src={image} alt="" className="h-8" />
+      <img
+        src={`https://cardri.s3.eu-west-1.amazonaws.com/${image}`}
+        alt=""
+        className="h-8"
+      />
       <div className="flex flex-col gap-[2]">
         <span className="block">{name}</span>
         <span className="block text-[#828282] text-xs font-normal font-polySans">
