@@ -66,7 +66,7 @@ body {
   @apply w-full;
 }
 .row {
-  @apply py-4 border-b border-b-[#F2F2F2] font-normal text-xs font-polySans;
+  @apply py-4 border-b border-b-[#F2F2F2]  text-[#4F4F4F] font-medium text-xs font-Satoshi;
 }
 svg {
   width: 100% !important;
