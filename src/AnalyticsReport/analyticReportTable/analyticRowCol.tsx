@@ -16,7 +16,6 @@ const AnalyticTableRowCol: React.FC<MaintableProps> = ({ reports }) => {
       <thead className="thead">
         <tr className="w-full ">
           <TableColumn name="Document name" width={30} />
-          <TableColumn name="Reports" width={20} />
           <TableColumn name="Added by" width={20} />
           <TableColumn name="Tag" width={15} />
           <TableColumn name="Date added" width={20} />
