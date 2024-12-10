@@ -19,6 +19,7 @@ const AnalyticTableRowCol: React.FC<MaintableProps> = ({ reports }) => {
           <TableColumn name="Added by" width={20} />
           <TableColumn name="Tag" width={15} />
           <TableColumn name="Date added" width={20} />
+          <TableColumn name="Status" width={20} />
           <TableColumn name="" width={15} />
         </tr>
       </thead>
@@ -41,7 +42,8 @@ const AnalyticTableRowCol: React.FC<MaintableProps> = ({ reports }) => {
               name={new Date(report.created_at).toLocaleDateString()}
               width={15}
             />
-            <ActionRow name="Take action" width={15} />
+            <TableRow name={report.status} width={15} />
+            <ActionRow name="Take action" width={15} id={report.id} />
           </tr>
         ))}
       </tbody>
