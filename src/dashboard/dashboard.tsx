@@ -47,7 +47,7 @@ const Dashboard = () => {
         <Activities />
       </div>
       <div className="mt-5 w-full">
-        <Maintable reports={reports} />
+        <Maintable reports={reports} fetchMineral={fetchMineral} />
       </div>
     </>
   );

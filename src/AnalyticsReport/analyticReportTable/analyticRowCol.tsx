@@ -9,8 +9,12 @@ import ActionRow from "../../dashboard/components/table/actionRow";
 
 interface MaintableProps {
   reports?: any;
+  fetchMineral?: any;
 }
-const AnalyticTableRowCol: React.FC<MaintableProps> = ({ reports }) => {
+const AnalyticTableRowCol: React.FC<MaintableProps> = ({
+  reports,
+  fetchMineral,
+}) => {
   return (
     <table className="bg-inherit w-full border-none">
       <thead className="thead">
@@ -43,7 +47,12 @@ const AnalyticTableRowCol: React.FC<MaintableProps> = ({ reports }) => {
               width={15}
             />
             <TableRow name={report.status} width={15} />
-            <ActionRow name="Take action" width={15} id={report.id} />
+            <ActionRow
+              name="Take action"
+              width={15}
+              id={report.id}
+              fetchMineral={fetchMineral}
+            />
           </tr>
         ))}
       </tbody>

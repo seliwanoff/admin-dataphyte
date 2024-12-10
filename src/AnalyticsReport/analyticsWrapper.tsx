@@ -32,7 +32,10 @@ const UserManagementWrapper = () => {
     <Layout>
       <div className="w-full">
         <UserActivities />
-        <TableManagementAnalytic reports={reports} />
+        <TableManagementAnalytic
+          reports={reports}
+          fetchMineral={fetchMineral}
+        />
       </div>
     </Layout>
   );

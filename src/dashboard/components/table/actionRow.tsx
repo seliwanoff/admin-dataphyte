@@ -8,15 +8,22 @@ interface ActionRowProps {
   name: string;
   width: any;
   id?: any;
+  fetchMineral?: any;
 }
 
-const ActionRow: React.FC<ActionRowProps> = ({ name, width, id }) => {
+const ActionRow: React.FC<ActionRowProps> = ({
+  name,
+  width,
+  id,
+  fetchMineral,
+}) => {
   const [isDrop, setIsdrop] = useState(false);
 
   const handleStatusChange = async (id: number, newStatus: string) => {
     try {
       const updatedReport = await updateReportStatus(id, newStatus);
-      console.log("Updated Report:", updatedReport);
+      // console.log("Updated Report:", updatedReport);
+      fetchMineral();
       setIsdrop(false);
     } catch (error) {
       console.error("Error updating report:", error);
