@@ -20,7 +20,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
   required,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const predefinedOptions = ["Nigeria", "Ghana"]; // Fixed countries
+  const predefinedOptions = ["Nigeria", "Ghana", "Dr Congo", "Mozambique"]; // Fixed countries
 
   const handleSelect = (option: string) => {
     const alreadySelected = values.includes(option);
