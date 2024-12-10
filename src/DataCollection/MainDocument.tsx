@@ -623,8 +623,8 @@ const MainDocumentWrapper: React.FC = () => {
             <div className="flex flex-col gap-[24px] pt-4">
               <InputElement
                 type="text"
-                label="Document attribute"
-                placeholder="Enter attribute"
+                label="Document name"
+                placeholder="Enter name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 name="name"
