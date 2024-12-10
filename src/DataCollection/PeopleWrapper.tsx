@@ -299,46 +299,41 @@ const PeopleWrapper: React.FC = () => {
   const handleSubmitDoc = async () => {
     setIsloading(true);
     const formData = new FormData();
-    const maxSizeInBytes = 2024 * 1024; // 2024 KB in bytes
+    const maxSizeInBytes = 2048 * 1024; // 2024 KB in bytes
 
     try {
-      // Append document name
       formData.append("name", docName);
+      let peopleId = people_id;
 
-      // Submit company and get `people_id`
-      const res = await handleSubmitCompany();
-      const peopleId = res.data?.id;
       if (!peopleId) {
-        throw new Error("Failed to retrieve `people_id`.");
+        const res = await handleSubmitCompany();
+        peopleId = res.data?.id;
       }
       formData.append("people_id", peopleId);
 
-      // Validate and append files
       if (files && files.length > 0) {
         let allFilesValid = true;
 
         files.forEach((file, index) => {
           if (file.size > maxSizeInBytes) {
-            showNotification(
-              "Error!",
-              `File "${file.name}" exceeds the size limit of 2024 KB.`,
-              "danger"
-            );
             allFilesValid = false;
           } else {
             formData.append(`files[${index}]`, file, file.name);
           }
         });
 
-        // If any file is invalid, stop the submission process
         if (!allFilesValid) {
-          throw new Error("One or more files exceed the size limit.");
+          showNotification(
+            "Error!",
+            `One or more files exceed the size limit.`,
+            "danger"
+          );
+          //  throw new Error("One or more files exceed the size limit.");
         }
       } else {
         throw new Error("No files selected for upload.");
       }
 
-      // Send POST request to upload documents
       const response = await fetch(`${baseUrl}document/uploaddocuments`, {
         method: "POST",
         body: formData,
@@ -346,14 +341,16 @@ const PeopleWrapper: React.FC = () => {
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Failed to upload documents: ${errorText}`);
+        showNotification(
+          "Error!",
+          `Failed to upload documents: ${errorText}`,
+          "danger"
+        );
       }
 
       const data = await response.json();
 
-      // Handle successful upload
       showNotification("Success!", "Document upload successful", "success");
-      // Proceed to next step
       setisAddnewSite(false);
       setFiles([]);
       setDocName("");
@@ -361,7 +358,6 @@ const PeopleWrapper: React.FC = () => {
         setCurrentStep((prevStep) => prevStep + 1);
       }
     } catch (error: any) {
-      // Handle errors without proceeding to the next step
       showNotification(
         "Error!",
         `Error uploading document: ${error.message}`,

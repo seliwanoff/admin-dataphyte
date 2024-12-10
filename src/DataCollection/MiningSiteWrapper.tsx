@@ -239,7 +239,7 @@ const MiningSiteWrapper: React.FC = () => {
     try {
       const response = await fetch(`${baseUrl}mineral/create`, {
         method: "POST",
-        body: formData, // Send FormData in the body
+        body: formData,
       });
 
       if (!response.ok) {
@@ -293,7 +293,7 @@ const MiningSiteWrapper: React.FC = () => {
     try {
       const response = await fetch(`${baseUrl}mininig_site/create`, {
         method: "POST",
-        body: formData, // Send FormData in the body
+        body: formData,
       });
 
       if (!response.ok) {
@@ -313,45 +313,58 @@ const MiningSiteWrapper: React.FC = () => {
 
   const handleSubmitDoc = async () => {
     setIsloading(true);
-    const formData = new FormData();
-    formData.append("name", docName);
-    /**
-    selectedValuesSite.forEach((people: any, index) => {
-      formData.append(`company_id`, people.id.toString());
-    });
-
-    selectedValuesPeople.forEach((people: any, index) => {
-      formData.append(`people_id`, people.id.toString());
-    });
-    */
-    formData.append(`mining_site_id`, company_id);
-
-    if (files) {
-      files.forEach((file, index) => {
-        formData.append(`files[${index}]`, file, file.name);
-      });
-    }
 
     try {
+      if (!company_id) {
+        throw new Error("Company ID is missing");
+      }
+
+      const formData = new FormData();
+      formData.append("name", docName);
+      formData.append("mining_site_id", company_id);
+
+      if (files) {
+        for (const file of files) {
+          if (file.size > 2048 * 1024) {
+            showNotification(
+              "Error!",
+              `File "${file.name}" exceeds the 2048KB size limit`,
+              "danger"
+            );
+            setIsloading(false);
+            return;
+
+            // throw new Error(`File "${file.name}" exceeds the 2024KB size limit.`);
+          }
+        }
+
+        files.forEach((file, index) => {
+          formData.append(`files[${index}]`, file, file.name);
+        });
+      }
+
       const response = await fetch(`${baseUrl}document/uploaddocuments`, {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch options");
+        throw new Error("Failed to upload documents");
       }
 
       const data = await response.json();
 
+      // Handle success
       showNotification("Success!", "Document upload successful", "success");
       setisAddnewSite(false);
       setFiles([]);
       setDocName("");
       setCurrentStep(currentStep + 1);
-    } catch (error) {
-      showNotification("Error!", `Error fetching options:${error}`, "danger");
+    } catch (error: any) {
+      // Handle errors
+      showNotification("Error!", `Error: ${error.message}`, "danger");
     } finally {
+      // Ensure loading is reset
       setIsloading(false);
     }
   };
@@ -360,18 +373,7 @@ const MiningSiteWrapper: React.FC = () => {
     setIsloading(true);
     const formData = new FormData();
     formData.append("name", picName);
-    /**
-    selectedValuesSite.forEach((people: any, index) => {
-      formData.append(`company_id`, people.id.toString());
-    });
 
-    selectedValuesPeople.forEach((people: any, index) => {
-      formData.append(`people_id`, people.id.toString());
-    });
-    selectedValuesMineral.forEach((mineral: any, index) => {
-      formData.append(`mineral_id`, mineral.id.toString());
-    });
-    */
     formData.append(`mining_site_id`, company_id);
     if (files) {
       files.forEach((file, index) => {
@@ -438,7 +440,6 @@ const MiningSiteWrapper: React.FC = () => {
     formData.append("role", selectedRoles);
     formData.append("other_data", peopleOtherData);
 
-    // If `imageMineral` is a File, append it to FormData
     if (peopleImage) {
       formData.append("image", peopleImage, peopleImage.name);
     }
@@ -446,7 +447,7 @@ const MiningSiteWrapper: React.FC = () => {
     try {
       const response = await fetch(`${baseUrl}people/create`, {
         method: "POST",
-        body: formData, // Send FormData in the body
+        body: formData,
       });
 
       if (!response.ok) {
@@ -509,22 +510,6 @@ const MiningSiteWrapper: React.FC = () => {
       formData.append(`company[${index}]`, country.id);
     });
 
-    /**
-    formData.append("name", name);
-    formData.append("address", companyAddress);
-    formData.append("rc_number", rc_number);
-    formData.append("other_name", other_name);
-    formData.append("rich_text", content);
-    formData.append("tag[0]", tag);
-    formData.append("location", peopleCountry);
-    selectedValuesMineral.forEach((mineral: any, index) => {
-      formData.append(`mineral[${index}]`, mineral.id.toString());
-    });
-    selectedCompanyCountries.forEach((country: any, index: any) => {
-      formData.append(`country[${index}]`, country);
-    });
-    formData.append("other_data", other_data);
-*/
     if (image) {
       formData.append("image", image, image.name);
     }
@@ -540,9 +525,7 @@ const MiningSiteWrapper: React.FC = () => {
       }
 
       const data = await response.json();
-      //console.log(data.data.id);
       setCompanyId(data.data.id);
-      //  showNotification("Success!", "Mining Site added successful", "success");
       setisaddNewPeople(false);
       setCurrentStep(currentStep + 1);
     } catch (error) {
@@ -551,7 +534,6 @@ const MiningSiteWrapper: React.FC = () => {
       setIsloading(false);
     }
   };
-  //console.log(content);
   useEffect(() => {
     if (
       searchMineralQuery ||
@@ -602,7 +584,6 @@ const MiningSiteWrapper: React.FC = () => {
       searchMineralQuerycto,
     searchQuery,
   ]);
-  //console.log(searchMineralQueryc);
   const handleOptionChange = (value: string) => {
     setSelectedOption(value);
   };

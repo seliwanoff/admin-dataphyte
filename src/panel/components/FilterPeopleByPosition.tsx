@@ -147,7 +147,7 @@ const FilterPeopleByPosition: React.FC<FilterPeopleByPositionProps> = ({
             className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium float-right m-1 top-0 right-0 absolute"
             onClick={() => {
               setShowOverlay(true);
-              setIsSelectedPosition(positionFilter);
+              //  setIsSelectedPosition(positionFilter);
             }}
           >
             Add new
@@ -189,7 +189,7 @@ const FilterPeopleByPosition: React.FC<FilterPeopleByPositionProps> = ({
                   className="px-4 py-2 bg-primary font-polySans text-[14px] my-4 mx-auto   text-white rounded font-medium"
                   onClick={() => {
                     setShowOverlay(true);
-                    setIsSelectedPosition(positionFilter);
+                    // setIsSelectedPosition(positionFilter);
                   }}
                 >
                   Add people

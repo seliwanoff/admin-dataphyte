@@ -302,36 +302,49 @@ const MineralWrapper: React.FC = () => {
 
   const handleSubmitDoc = async () => {
     setIsloading(true);
-    const formData = new FormData();
-    formData.append("name", docName);
-    //formData.append("company_id", company_id);
-    /***
-    selectedValuesPeople.forEach((people: any, index) => {
-      formData.append(`people_id`, people.id.toString());
-    });
-
-    selectedValuesSite.forEach((mineral: any, index) => {
-      formData.append(`mining_site_id`, mineral.id.toString());
-    });
-     */
-    const res = await handleSubmitCompany();
-    const miner_ids = res.data?.id;
-    formData.append(`mineral_id`, miner_ids);
-
-    if (files) {
-      files.forEach((file, index) => {
-        formData.append(`files[${index}]`, file, file.name);
-      });
-    }
 
     try {
+      const formData = new FormData();
+      formData.append("name", docName);
+
+      let miner_ids = company_id;
+
+      if (!miner_ids) {
+        const res = await handleSubmitCompany();
+        miner_ids = res.data?.id;
+
+        if (!miner_ids) {
+          throw new Error("Mineral ID is missing");
+        }
+      }
+
+      formData.append("mineral_id", miner_ids);
+
+      if (files) {
+        for (const file of files) {
+          if (file.size > 2048 * 1024) {
+            showNotification(
+              "Error!",
+              `File "${file.name}" exceeds the 2048KB size limit.`,
+              "danger"
+            );
+
+            return;
+          }
+        }
+
+        files.forEach((file, index) => {
+          formData.append(`files[${index}]`, file, file.name);
+        });
+      }
+
       const response = await fetch(`${baseUrl}document/uploaddocuments`, {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch options");
+        throw new Error("Failed to upload documents");
       }
 
       const data = await response.json();
@@ -341,8 +354,8 @@ const MineralWrapper: React.FC = () => {
       setFiles([]);
       setDocName("");
       setCurrentStep(currentStep + 1);
-    } catch (error) {
-      showNotification("Error!", `Error fetching options:${error}`, "danger");
+    } catch (error: any) {
+      showNotification("Error!", `Error: ${error.message}`, "danger");
     } finally {
       setIsloading(false);
     }
@@ -352,18 +365,6 @@ const MineralWrapper: React.FC = () => {
     setIsloading(true);
     const formData = new FormData();
     formData.append("name", picName);
-    // formData.append("company_id", company_id);
-    // formData.append("people_id", company_id);
-    /**
-    selectedValuesPeople.forEach((people: any, index) => {
-      formData.append(`people_id[${index}]`, people.id.toString());
-    });
-    */
-    /**
-    selectedValuesMineral.forEach((mineral: any, index) => {
-      formData.append(`mineral_id[${index}]`, mineral.id.toString());
-    });
-    */
 
     formData.append(`mineral_id`, company_id);
 
@@ -462,12 +463,8 @@ const MineralWrapper: React.FC = () => {
     tagArray.forEach((tag: any, index: any) => {
       formData.append(`tag[${index}]`, tag);
     });
-    // formData.append("location", companyAddress);
-    //formData.append("rc_number", rc_number);
-    //  formData.append("other_name", other_name);
+
     formData.append("rich_text", content);
-    //formData.append("tag[0]", tag);
-    // formData.append("location", peopleCountry);
 
     selectedValuesMineral.forEach((mineral: any, index) => {
       formData.append(`company[${index}]`, mineral.id.toString());
@@ -499,11 +496,8 @@ const MineralWrapper: React.FC = () => {
       }
 
       const data = await response.json();
-      //console.log(data.data.id);
       setCompanyId(data.data.id);
-      // showNotification("Success!", "MIneral added successful", "success");
       setisaddNewPeople(false);
-    //  setCurrentStep(currentStep + 1);
       return data;
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
@@ -511,7 +505,6 @@ const MineralWrapper: React.FC = () => {
       setIsloading(false);
     }
   };
-  //console.log(content);
   useEffect(() => {
     if (searchMineralQuery || searchMineralQueryc) {
       const delayDebounce = setTimeout(() => {

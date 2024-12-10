@@ -314,15 +314,31 @@ const StepperWithForms: React.FC = () => {
     setIsloading(true);
 
     try {
-      // Wait for handleSubmitCompany to resolve and extract the company ID
-      const res = await handleSubmitCompany();
-      const company_ids = res.data?.id; // Assuming the company ID is in `res.data.id`
+      let company_ids = company_id;
 
       if (!company_ids) {
-        throw new Error("Company ID is missing");
+        const res = await handleSubmitCompany();
+        company_ids = res.data?.id;
+
+        if (!company_ids) {
+          throw new Error("Company ID is missing");
+        }
       }
 
-      // Prepare FormData
+      if (files) {
+        for (const file of files) {
+          if (file.size > 20 * 1024) {
+            showNotification(
+              "Error!",
+              `File "${file.name}" exceeds the 2048KB size limit.`,
+              "danger"
+            );
+
+            return;
+          }
+        }
+      }
+
       const formData = new FormData();
       formData.append("company_id", company_ids);
       formData.append("name", docName);
@@ -333,7 +349,6 @@ const StepperWithForms: React.FC = () => {
         });
       }
 
-      // Make the API request
       const response = await fetch(`${baseUrl}document/uploaddocuments`, {
         method: "POST",
         body: formData,
@@ -345,17 +360,14 @@ const StepperWithForms: React.FC = () => {
 
       const data = await response.json();
 
-      // Handle success
       setisAddnewSite(false);
       setFiles([]);
       setDocName("");
       setCurrentStep(currentStep + 1);
       showNotification("Success!", "Document upload successful", "success");
     } catch (error: any) {
-      // Handle errors
       showNotification("Error!", `Error: ${error.message}`, "danger");
     } finally {
-      // Ensure loading is reset
       setIsloading(false);
     }
   };
@@ -365,7 +377,6 @@ const StepperWithForms: React.FC = () => {
     const formData = new FormData();
     formData.append("name", picName);
     formData.append("company_id", company_id);
-    // formData.append("people_id", company_id);
     {
       /**
     selectedValuesPeople.forEach((people: any, index) => {
@@ -526,11 +537,8 @@ const StepperWithForms: React.FC = () => {
       }
 
       const data = await response.json();
-      //console.log(data.data.id);
       setCompanyId(data.data.id);
-      // showNotification("Success!", "Company added successful", "success");
       setisaddNewPeople(false);
-      //  setCurrentStep(currentStep + 1);
 
       return data;
     } catch (error) {
