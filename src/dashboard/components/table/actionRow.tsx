@@ -30,9 +30,9 @@ const ActionRow: React.FC<ActionRowProps> = ({
     }
   };
   return (
-    <td className="row relative" style={{ maxWidth: `${width}% ` }}>
+    <td className="row relative w-full" style={{ minWidth: `120px` }}>
       <div
-        className="py-[6px] px-3 bg-[#7F56D91F] rounded-xl flex items-center gap-[4px] cursor-pointer justify-center h-8 w-fit max-w-[350px]"
+        className="py-[6px] px-3 bg-[#7F56D91F] rounded-xl flex items-center gap-[4px] cursor-pointer justify-center h-8 w-full max-w-[120px]"
         onClick={() => setIsdrop(!isDrop)}
       >
         <span className="text-[14px] text-[#7F55DA] leading-5 font-medium font-Satoshi">

@@ -24,7 +24,7 @@ const AnalyticTableRowCol: React.FC<MaintableProps> = ({
           <TableColumn name="Tag" width={15} />
           <TableColumn name="Date added" width={20} />
           <TableColumn name="Status" width={20} />
-          <TableColumn name="" width={15} />
+          <TableColumn name="" width={20} />
         </tr>
       </thead>
 
@@ -49,7 +49,7 @@ const AnalyticTableRowCol: React.FC<MaintableProps> = ({
             <TableRow name={report.status} width={15} />
             <ActionRow
               name="Take action"
-              width={15}
+              width={30}
               id={report.id}
               fetchMineral={fetchMineral}
             />
