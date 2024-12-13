@@ -19,13 +19,9 @@ const Dashboard = () => {
       }
 
       const data = await response.json();
-      // console.log(data);
       setReports(data.data.data);
-
-      //setMineralOption(data.data);
     } catch (error) {
       console.error("Error fetching options:", error);
-      //  setOptions([]);
     }
   };
   useEffect(() => {

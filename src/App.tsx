@@ -7,6 +7,7 @@ import store, { AppDispatch } from "./redux/store";
 import { ReactNotifications } from "react-notifications-component";
 import { useDispatch } from "react-redux";
 import { getDetails } from "./slices/AuthSlice";
+import { UserProvider } from "./redux/userContext";
 
 const FetchUserDetails: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,11 +22,13 @@ const FetchUserDetails: React.FC = () => {
 const App: React.FC = () => {
   return (
     <Provider store={store}>
-      <Router>
-        <ReactNotifications />
-        <FetchUserDetails />
-        <RouteWrapper />
-      </Router>
+      <UserProvider>
+        <Router>
+          <ReactNotifications />
+          <FetchUserDetails />
+          <RouteWrapper />
+        </Router>
+      </UserProvider>
     </Provider>
   );
 };
