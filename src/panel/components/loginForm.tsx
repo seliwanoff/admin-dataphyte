@@ -24,10 +24,7 @@ const LoginFrom = () => {
     try {
       await dispatch(login({ email, password })).unwrap();
       showNotification("Success!", "Login successful", "success");
-      //navigates("/dashboard");
       window.location.href = "/dashboard";
-
-      console.log("Login successful");
     } catch (error) {
       showNotification("Error!", "Login failed: " + error, "danger");
 

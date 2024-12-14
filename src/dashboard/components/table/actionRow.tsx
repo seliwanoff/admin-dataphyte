@@ -9,6 +9,9 @@ interface ActionRowProps {
   width: any;
   id?: any;
   fetchMineral?: any;
+  setShowDocumment?: any;
+  setUrl?: any;
+  url?: AnalyserOptions;
 }
 
 const ActionRow: React.FC<ActionRowProps> = ({
@@ -16,6 +19,9 @@ const ActionRow: React.FC<ActionRowProps> = ({
   width,
   id,
   fetchMineral,
+  setShowDocumment,
+  setUrl,
+  url,
 }) => {
   const [isDrop, setIsdrop] = useState(false);
 
@@ -44,7 +50,15 @@ const ActionRow: React.FC<ActionRowProps> = ({
         <div className="absolute top-12 bg-[#fff] rounded-[8px] p-4 flex w-full flex-col gap-[10px] shadow-lg z-50  min-w-[180px]">
           <div className="flex items-center gap-4 w-full cursor-pointer">
             <img src={eye} alt="" className="h-6" />
-            <span className="text-[#101828] font-Satoshi text-[14px] leading-[18.4px]">
+            <span
+              className="text-[#101828] font-Satoshi text-[14px] leading-[18.4px]"
+              onClick={() => {
+                if (url)
+                  setUrl(`https://cardri.s3.eu-west-1.amazonaws.com/${url}`);
+                setShowDocumment(true);
+                setIsdrop(false);
+              }}
+            >
               Review Report
             </span>
           </div>
