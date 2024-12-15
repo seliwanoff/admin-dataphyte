@@ -8,33 +8,39 @@ interface CountrySelectProps {
   className?: string;
   name?: string;
   required?: boolean;
+  type?: any;
+  setSelectedCountry?: any; // Optional prop to define if it's a single or multiple selection
 }
 
 const CountrySelect: React.FC<CountrySelectProps> = ({
   label,
-  values = [],
+  values = [], // Array of selected countries (or just one)
   onChange,
   placeholder = "Select countries...",
   className = "",
   name,
   required,
+  type,
+  setSelectedCountry,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const predefinedOptions = ["Nigeria", "Ghana", "Dr Congo", "Mozambique"]; // Fixed countries
 
   const handleSelect = (option: string) => {
-    const alreadySelected = values.includes(option);
-
-    let updatedValues;
-    if (alreadySelected) {
-      // Remove if already selected
-      updatedValues = values.filter((item) => item !== option);
+    if (type === "site") {
+      if (onChange) onChange([option]);
+      setIsDropdownOpen(false);
+      setSelectedCountry(option);
     } else {
-      // Add if not selected
-      updatedValues = [...values, option];
+      const alreadySelected = values.includes(option);
+      let updatedValues;
+      if (alreadySelected) {
+        updatedValues = values.filter((item) => item !== option);
+      } else {
+        updatedValues = [...values, option];
+      }
+      if (onChange) onChange(updatedValues);
     }
-
-    if (onChange) onChange(updatedValues);
   };
 
   return (
@@ -70,7 +76,7 @@ const CountrySelect: React.FC<CountrySelectProps> = ({
           {values.map((value, index) => (
             <span
               key={index}
-              className="bg-primary text-white  px-3 py-1 rounded-full text-sm cursor-pointer"
+              className="bg-primary text-white px-3 py-1 rounded-full text-sm cursor-pointer"
               onClick={() => handleSelect(value)}
             >
               {value}

@@ -16,6 +16,20 @@ import FilterPeopleByPosition from "../panel/components/FilterPeopleByPosition";
 import CompanyInlineCreate from "./components/CompanyInlineCreate";
 import MineralInlineCreate from "./components/mineralinlineCreate";
 import PeopleInlineCreate from "./components/propleInlineCreate";
+import countriesData from "../data/Countries_States_LGAs.json"; // Import the JSON data
+import SearchableDropdown from "../panel/components/statelgComponent";
+interface StateData {
+  [key: string]: string[]; // Assuming each state contains an array of cities
+}
+
+interface CountryData {
+  states: StateData;
+}
+
+interface Countries {
+  [country: string]: CountryData;
+}
+const typedCountries: Countries = countriesData;
 
 interface StepperProps {
   steps: string[];
@@ -140,10 +154,14 @@ const MiningSiteWrapper: React.FC = () => {
   const [selectedValuesParent, setSelectedValuesParent] = useState<string[]>(
     []
   );
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [selectedState, setSelectedState] = useState<string>("");
+  const [selectedLGs, setSelectedLGS] = useState<string>("");
 
+  const [lgas, setLgas] = useState([]);
   const [searchMineralQueryceo, setSearchMineralQueryceo] = useState("");
-
-  // console.log(files);
 
   const handleSetForm = (name: string, files: File[]) => {
     setFiles(files);
@@ -196,6 +214,8 @@ const MiningSiteWrapper: React.FC = () => {
     };
     fetcPlaceDetails();
   }, [placeId]);
+  //console.log(selectedCompanyCountries);
+
   const url =
     currentStep === 1
       ? "search/mineral"
@@ -278,13 +298,16 @@ const MiningSiteWrapper: React.FC = () => {
     selectedValuesMineral.forEach((mineral: any, index) => {
       formData.append(`mineral[${index}]`, mineral.id.toString());
     });
-    selectedCountries.forEach((country: any, index: any) => {
+    selectedCompanyCountries.forEach((country: any, index: any) => {
       formData.append(`country[${index}]`, country);
     });
 
     selectedValuesPeople.forEach((people: any, index) => {
       formData.append(`people[${index}]`, people.id.toString());
     });
+
+    formData.append("state", selectedState);
+    formData.append("lg", selectedLGs);
 
     if (siteImage) {
       formData.append("image", siteImage, siteImage.name);
@@ -333,8 +356,6 @@ const MiningSiteWrapper: React.FC = () => {
             );
             setIsloading(false);
             return;
-
-            // throw new Error(`File "${file.name}" exceeds the 2024KB size limit.`);
           }
         }
 
@@ -354,17 +375,14 @@ const MiningSiteWrapper: React.FC = () => {
 
       const data = await response.json();
 
-      // Handle success
       showNotification("Success!", "Document upload successful", "success");
       setisAddnewSite(false);
       setFiles([]);
       setDocName("");
       setCurrentStep(currentStep + 1);
     } catch (error: any) {
-      // Handle errors
       showNotification("Error!", `Error: ${error.message}`, "danger");
     } finally {
-      // Ensure loading is reset
       setIsloading(false);
     }
   };
@@ -588,6 +606,14 @@ const MiningSiteWrapper: React.FC = () => {
     setSelectedOption(value);
   };
 
+  const statess = selectedCountry
+    ? Object.keys(typedCountries[selectedCountry]?.states || {})
+    : [];
+
+  // console.log(statess);
+  const localGovernments = selectedState
+    ? typedCountries[selectedCountry]?.states[selectedState] || []
+    : [];
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     step: number
@@ -636,21 +662,10 @@ const MiningSiteWrapper: React.FC = () => {
           //mineralNames={""}
           show={showOverlay}
           setShowOverlay={setShowOverlay}
-          setSelectedValuesParent={
-            /**
-            isSelectedPosition === "CEO"
-              ? setCEO
-              : isSelectedPosition === "CFO"
-              ? setCFO
-              : isSelectedPosition === "CTO"
-              ? setCTO
-              */
-            setSelectedValuesPeople
-          }
+          setSelectedValuesParent={setSelectedValuesPeople}
           selectedValuesParent={selectedValuesPeople}
           setAcquireValue={setAcquireValue}
           setSearchMineralQueryc={setSearchMineralQuery}
-          //  onUpdateCompanyName={setSelectedValuesParent}
         />
       )}
       <span className="text-gray-700 font-polySans text-[14px] mb-4 px-4  block ">
@@ -674,7 +689,6 @@ const MiningSiteWrapper: React.FC = () => {
                 onChange={(e) => setName(e.target.value)}
                 name="name"
                 required={true}
-                //className="additional-styles"
               />
               <SearchableSelect
                 label="Address"
@@ -690,10 +704,26 @@ const MiningSiteWrapper: React.FC = () => {
               />
 
               <CountrySelect
-                label="Select Countries"
+                label="Select Country"
+                type="site"
                 values={selectedCompanyCountries}
+                setSelectedCountry={setSelectedCountry}
                 onChange={(countries) => setSelectedCompanyCountries(countries)}
               />
+              {selectedCompanyCountries.length > 0 && (
+                <SearchableDropdown
+                  label="Select State"
+                  options={statess}
+                  setSelectedState={setSelectedState}
+                />
+              )}
+              {selectedState.length > 0 && (
+                <SearchableDropdown
+                  label="Select LG"
+                  options={localGovernments}
+                  setSelectedState={setSelectedLGS}
+                />
+              )}
 
               <div className="flex flex-col gap-3">
                 <label htmlFor="" className="label">
@@ -949,7 +979,7 @@ const MiningSiteWrapper: React.FC = () => {
                     //className="additional-styles"
                   />
                   <CountrySelect
-                    label="Select Countries"
+                    label="Select Country"
                     values={selectedCountries}
                     onChange={(countries) => setSelectedCountries(countries)}
                   />

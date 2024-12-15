@@ -49,11 +49,10 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
     setSearchQuery(query);
     if (query.trim() !== "") {
       setIsSearching(true);
-      // Simulate an API call delay for search
       setTimeout(() => {
         setIsSearching(false);
         setIsDropdownOpen(true);
-      }, 900); // Adjust as needed for actual API
+      }, 900);
     } else {
       setIsDropdownOpen(false);
     }
