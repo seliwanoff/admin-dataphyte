@@ -1,17 +1,16 @@
 import { showNotification } from "../components/SuccessComponent/sucess";
 
-const updateReportStatus = async (id: number, status: string) => {
+const updateUserStatus = async (id: number, status: string) => {
   const baseUrl = process.env.REACT_APP_URL;
 
   try {
-    const response = await fetch(`${baseUrl}admin/reports?id=${id}`, {
+    const response = await fetch(`${baseUrl}auth/update-admin-status`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ status }),
+      body: JSON.stringify({ status, id }),
     });
 
     if (!response.ok) {
@@ -35,4 +34,4 @@ const updateReportStatus = async (id: number, status: string) => {
   }
 };
 
-export default updateReportStatus;
+export default updateUserStatus;

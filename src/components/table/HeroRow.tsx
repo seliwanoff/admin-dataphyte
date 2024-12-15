@@ -16,9 +16,6 @@ const HeroRow: React.FC<HeroRowProps> = ({ name, width, image }) => {
       />
       <div className="flex flex-col gap-[2]">
         <span className="block">{name}</span>
-        <span className="block text-[#828282] text-xs font-normal font-polySans">
-          917kb
-        </span>
       </div>
     </td>
   );

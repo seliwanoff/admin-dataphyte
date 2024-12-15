@@ -12,7 +12,11 @@ const TableRow: React.FC<TableRowProps> = ({ name, width }) => {
       style={{
         maxWidth: `${width}%`,
         color: `${
-          name === "approved" ? "green" : name === "rejected" ? "#D92D20" : " "
+          name === "approved" || name === "active"
+            ? "green"
+            : name === "rejected" || name === "suspended"
+            ? "#D92D20"
+            : " "
         }`,
       }}
     >

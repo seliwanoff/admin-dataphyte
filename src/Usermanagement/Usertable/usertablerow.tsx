@@ -6,7 +6,16 @@ import HeroRow from "../../components/table/HeroRow";
 import TableColumn from "../../components/table/tableColumn";
 import TableRow from "../../components/table/tableRow";
 import ActionRow from "../../dashboard/components/table/actionRow";
-const UserTableRowCol = () => {
+import UserActionRole from "../../dashboard/components/table/UserActionRow";
+
+interface DataTableToolsProps {
+  admin?: any;
+  fetchAdmin?: any;
+}
+const UserTableRowCol: React.FC<DataTableToolsProps> = ({
+  admin,
+  fetchAdmin,
+}) => {
   return (
     <table className="bg-inherit w-full border-none px-4">
       <thead className="thead">
@@ -14,33 +23,37 @@ const UserTableRowCol = () => {
           <TableColumn name="Full name" width={20} />
           <TableColumn name="Email address" width={20} />
           <TableColumn name="Roles" width={15} />
-          <TableColumn name="Last activity" width={15} />
+          <TableColumn name="Date" width={15} />
+          <TableColumn name="Status" width={15} />
           <TableColumn name="" width={15} />
         </tr>
       </thead>
 
       <tbody className="tbody px-4">
-        <tr className="">
-          <HeroRow name="Adekola Johnson" width={20} image={doc} />
-          <TableRow name="oayooye@cjid.com" width={20} />
-          <TableRow name="Administrator" width={15} />
-          <TableRow name="9:05" width={15} />
-          <ActionRow name="Take action" width={15} />
-        </tr>
-        <tr className="">
-          <HeroRow name="Adekola Johnson" width={20} image={doc} />
-          <TableRow name="oayooye@cjid.com" width={20} />
-          <TableRow name="Administrator" width={15} />
-          <TableRow name="9:05" width={15} />
-          <ActionRow name="Take action" width={15} />
-        </tr>
-        <tr className="">
-          <HeroRow name="Adekola Johnson" width={20} image={doc} />
-          <TableRow name="oayooye@cjid.com" width={20} />
-          <TableRow name="Administrator" width={15} />
-          <TableRow name="9:05" width={15} />
-          <ActionRow name="Take action" width={15} />
-        </tr>
+        {admin &&
+          admin?.map((item: any, index: any) => (
+            <tr className="">
+              <HeroRow
+                name={item.first_name + " " + item.last_name}
+                width={20}
+                image={doc}
+              />
+              <TableRow name={item.email} width={20} />
+              <TableRow name={item.auth_level} width={15} />
+              <TableRow
+                name={new Date(item.created_at).toLocaleDateString()}
+                width={15}
+              />
+              <TableRow name={item.account_status} width={15} />
+              <UserActionRole
+                name="Take action"
+                width={15}
+                id={item.id}
+                status={item.account_status}
+                fetchAdmin={fetchAdmin}
+              />
+            </tr>
+          ))}
       </tbody>
     </table>
   );
