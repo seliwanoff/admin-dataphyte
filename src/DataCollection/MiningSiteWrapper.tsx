@@ -523,6 +523,8 @@ const MiningSiteWrapper: React.FC = () => {
     if (cto) {
       formData.append(`cto_id`, cto.id.toString());
     }
+    formData.append("state", selectedState);
+    formData.append("lg", selectedLGs);
     formData.append("rich_text", content);
     selectedValuesSite.forEach((country: any, index: any) => {
       formData.append(`company[${index}]`, country.id);

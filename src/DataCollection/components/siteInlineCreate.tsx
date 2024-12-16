@@ -5,6 +5,8 @@ import SearchableSelect from "../../panel/components/SearchableSelect";
 import UploadEl from "../../dashboard/components/UpdateEl";
 import LoginButton from "../../panel/components/loginButton";
 import { showNotification } from "../../components/SuccessComponent/sucess";
+import countriesData from "../../data/Countries_States_LGAs.json"; // Import the JSON data
+import SearchableDropdown from "../../panel/components/statelgComponent";
 
 interface PeopleInlineCreateProps {
   show?: any;
@@ -14,7 +16,18 @@ interface PeopleInlineCreateProps {
   setSelectedValuesParent?: any;
   setSearchMineralQueryc?: any;
 }
+interface StateData {
+  [key: string]: string[]; // Assuming each state contains an array of cities
+}
 
+interface CountryData {
+  states: StateData;
+}
+
+interface Countries {
+  [country: string]: CountryData;
+}
+const typedCountries: Countries = countriesData;
 const SiteInlineCreate: React.FC<PeopleInlineCreateProps> = ({
   show,
   setShowOverlay,
@@ -35,6 +48,9 @@ const SiteInlineCreate: React.FC<PeopleInlineCreateProps> = ({
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [options, setOptions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [selectedState, setSelectedState] = useState<string>("");
+  const [selectedLGs, setSelectedLGS] = useState<string>("");
 
   useEffect(() => {
     const fetcPlaceDetails = async () => {
@@ -88,11 +104,22 @@ const SiteInlineCreate: React.FC<PeopleInlineCreateProps> = ({
   const handleOptionChange = (value: string) => {
     setSelectedOption(value);
   };
+  const statess = selectedCountry
+    ? Object.keys(typedCountries[selectedCountry]?.states || {})
+    : [];
+
+  // console.log(statess);
+  const localGovernments = selectedState
+    ? typedCountries[selectedCountry]?.states[selectedState] || []
+    : [];
   const handleSubmit = async () => {
     setIsLoading(true);
     const formData = new FormData();
     formData.append("name", siteName);
     formData.append("address", siteAddress);
+    formData.append("state", selectedState);
+    formData.append("lg", selectedLGs);
+
     formData.append(
       "location[0][log]",
       String(siteActualAddress && siteActualAddress?.geometry.location.lng)
@@ -192,8 +219,25 @@ const SiteInlineCreate: React.FC<PeopleInlineCreateProps> = ({
           <CountrySelect
             label="Select Countries"
             values={selectedCountries}
+            setSelectedCountry={setSelectedCountry}
+            type="site"
             onChange={(countries) => setSelectedCountries(countries)}
           />
+
+          {selectedCountry.length > 0 && (
+            <SearchableDropdown
+              label="Select State"
+              options={statess}
+              setSelectedState={setSelectedState}
+            />
+          )}
+          {selectedState.length > 0 && (
+            <SearchableDropdown
+              label="Select LG"
+              options={localGovernments}
+              setSelectedState={setSelectedLGS}
+            />
+          )}
 
           <SearchableSelect
             label="Location"
