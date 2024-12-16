@@ -81,7 +81,9 @@ const UploadEl = <T extends Record<string, any>>({
               key={index}
               className="w-full   bg-[#475467] rounded-md py-2 text-white font-Poppins px-4 overflow-hidden text-ellipsis whitespace-nowrap flex justify-between items-center"
             >
-              <span>{file.name}</span>
+              <span className="overflow-hidden text-ellipsis  w-full max-w-[220px]">
+                {file.name}
+              </span>
 
               <svg
                 onClick={() => handleRemoveFile(index)}
