@@ -330,7 +330,7 @@ const MiningSiteWrapper: React.FC = () => {
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
-      // setIsloading(false);
+      setIsloading(false);
     }
   };
 
@@ -553,7 +553,7 @@ const MiningSiteWrapper: React.FC = () => {
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
-      //  setIsloading(false);
+      setIsloading(false);
     }
   };
   useEffect(() => {
