@@ -56,10 +56,11 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
           placeholder={placeholder}
           value={value === "" ? searchQuery : value}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          onFocus={() => setIsDropdownOpen(!isDropdownOpen)}
           className="input w-full"
+          autoComplete="off"
         />
-        {isDropdownOpen && (
+        {isDropdownOpen && searchQuery !== "" && (
           <ul className="absolute w-full z-10 mt-1 bg-white border border-gray-300 rounded shadow-md max-h-60 overflow-auto">
             {options && options.length > 0
               ? options.map((option: any, index) => (
