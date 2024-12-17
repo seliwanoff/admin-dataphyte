@@ -26,7 +26,7 @@ const TableRowCol = () => {
       }
 
       const data = await response.json();
-      setAlladmin(data.data.data);
+      setAlladmin(data.data.data?.reverse());
     } catch (error) {
       console.error("Error fetching options:", error);
     }
