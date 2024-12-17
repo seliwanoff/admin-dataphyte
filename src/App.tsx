@@ -16,11 +16,14 @@ const FetchUserDetails: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await dispatch(getDetails()).unwrap(); // Assumes getDetails is a thunk and supports .unwrap()
+        await dispatch(getDetails()).unwrap();
       } catch (error: any) {
         console.log(error);
-        if (error === "Unauthenticated.") {
-          navigate("/"); // Redirect to the home page on 401
+        if (
+          error === "Unauthenticated." ||
+          error.message === "No authentication token found"
+        ) {
+          navigate("/");
         }
       }
     };
