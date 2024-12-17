@@ -39,7 +39,8 @@ const TableRowCol = () => {
     <table className="bg-inherit w-full border-none">
       <thead className="thead">
         <tr className="w-full ">
-          <TableColumn name="Document name" width={30} />
+          <TableColumn name="Name" width={30} />
+          <TableColumn name="Description" width={30} />
           <TableColumn name="Country" width={10} />
           <TableColumn name="category" width={10} />
           <TableColumn name="Tag" width={15} />
@@ -53,13 +54,14 @@ const TableRowCol = () => {
       <tbody className="tbody">
         {allAdmin?.map((item: any, index: any) => (
           <tr className="row">
-            <NewHero name={item.name} width={20} image={doc} type={item.type} />
-            <TableRow name={item.country} width={20} />
-            <TableRow name={item.category} width={15} />
+            <NewHero name={item.name} width={30} image={doc} type={item.type} />
+            <TableRow name={item.description} width={30} />
+            <TableRow name={item.country} width={10} />
+            <TableRow name={item.category} width={10} />
             <TableRow name={JSON.parse(item.meta)} width={15} />
             <TableRow
               name={new Date(item.created_at).toLocaleDateString()}
-              width={15}
+              width={10}
             />
             {/**
             <ActionRow name="Take action" width={15} />
