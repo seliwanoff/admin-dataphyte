@@ -321,6 +321,7 @@ const MineralWrapper: React.FC = () => {
       formData.append("mineral_id", miner_ids);
 
       if (files) {
+        /***
         for (const file of files) {
           if (file.size > 2048 * 1024) {
             showNotification(
@@ -332,6 +333,7 @@ const MineralWrapper: React.FC = () => {
             return;
           }
         }
+           */
 
         files.forEach((file, index) => {
           formData.append(`files[${index}]`, file, file.name);
@@ -502,7 +504,7 @@ const MineralWrapper: React.FC = () => {
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
-      setIsloading(false);
+      //setIsloading(false);
     }
   };
   useEffect(() => {

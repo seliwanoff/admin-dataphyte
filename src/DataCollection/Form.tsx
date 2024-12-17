@@ -325,20 +325,6 @@ const StepperWithForms: React.FC = () => {
         }
       }
 
-      if (files) {
-        for (const file of files) {
-          if (file.size > 20 * 1024) {
-            showNotification(
-              "Error!",
-              `File "${file.name}" exceeds the 2048KB size limit.`,
-              "danger"
-            );
-
-            return;
-          }
-        }
-      }
-
       const formData = new FormData();
       formData.append("company_id", company_ids);
       formData.append("name", docName);
@@ -544,7 +530,7 @@ const StepperWithForms: React.FC = () => {
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
-      setIsloading(false);
+      // setIsloading(false);
     }
   };
   //console.log(content);

@@ -317,11 +317,7 @@ const MainDocumentWrapper: React.FC = () => {
         let allFilesValid = true;
 
         files.forEach((file, index) => {
-          if (file.size > maxSizeInBytes) {
-            allFilesValid = false;
-          } else {
-            formData.append(`files[${index}]`, file, file.name);
-          }
+          formData.append(`files[${index}]`, file, file.name);
         });
 
         if (!allFilesValid) {

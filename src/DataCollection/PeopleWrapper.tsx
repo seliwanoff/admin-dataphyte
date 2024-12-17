@@ -315,19 +315,11 @@ const PeopleWrapper: React.FC = () => {
         let allFilesValid = true;
 
         files.forEach((file, index) => {
-          if (file.size > maxSizeInBytes) {
-            allFilesValid = false;
-          } else {
-            formData.append(`files[${index}]`, file, file.name);
-          }
+          formData.append(`files[${index}]`, file, file.name);
         });
 
         if (!allFilesValid) {
-          showNotification(
-            "Error!",
-            `One or more files exceed the size limit.`,
-            "danger"
-          );
+          showNotification("Error!", `Please select file`, "danger");
           //  throw new Error("One or more files exceed the size limit.");
         }
       } else {
@@ -530,7 +522,7 @@ const PeopleWrapper: React.FC = () => {
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
-      setIsloading(false);
+      // setIsloading(false);
     }
   };
   //console.log(content);

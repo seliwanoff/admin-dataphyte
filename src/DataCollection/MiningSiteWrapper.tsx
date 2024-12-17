@@ -273,7 +273,7 @@ const MiningSiteWrapper: React.FC = () => {
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
-      setIsloading(false);
+      //setIsloading(false);
     }
   };
   const handleSubmitSite = async () => {
@@ -330,7 +330,7 @@ const MiningSiteWrapper: React.FC = () => {
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
-      setIsloading(false);
+      // setIsloading(false);
     }
   };
 
@@ -347,6 +347,7 @@ const MiningSiteWrapper: React.FC = () => {
       formData.append("mining_site_id", company_id);
 
       if (files) {
+        /**
         for (const file of files) {
           if (file.size > 2048 * 1024) {
             showNotification(
@@ -358,6 +359,7 @@ const MiningSiteWrapper: React.FC = () => {
             return;
           }
         }
+          */
 
         files.forEach((file, index) => {
           formData.append(`files[${index}]`, file, file.name);
@@ -479,7 +481,7 @@ const MiningSiteWrapper: React.FC = () => {
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
-      setIsloading(false);
+      //  setIsloading(false);
     }
   };
 
@@ -551,7 +553,7 @@ const MiningSiteWrapper: React.FC = () => {
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
-      setIsloading(false);
+      //  setIsloading(false);
     }
   };
   useEffect(() => {
