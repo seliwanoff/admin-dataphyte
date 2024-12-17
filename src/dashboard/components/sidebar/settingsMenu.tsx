@@ -29,7 +29,7 @@ const SettingsMenu = () => {
               <div className="rounded-full h-[40px] w-[40px] border bg-primary "></div>
               <div className="flex flex-col">
                 <span className="font-semibold text-[14px] leading-6 text-[#344054]">
-                  {user && user.auth_level}
+                  {user && user.first_name} {user && user.last_name}
                 </span>
                 <p className="font-normal text-[14px] leading-5 font-polySans w-[140px] text-ellipsis overflow-hidden">
                   {user && user.email}

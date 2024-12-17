@@ -12,21 +12,21 @@ const UserAnaylticsCard = () => {
       {" "}
       <EachCard
         title="Total users"
-        value={5737}
+        value={1}
         mainImage={feature}
         percentage="40%"
         percentageImage={arrow}
       />
       <EachCard
         title="Active users"
-        value={320}
+        value={1}
         mainImage={users}
         percentage="40%"
         percentageImage={arrow}
       />
       <EachCard
         title="Administrator"
-        value={1100}
+        value={1}
         mainImage={apicalls}
         percentage="40"
         percentageImage={arrow}

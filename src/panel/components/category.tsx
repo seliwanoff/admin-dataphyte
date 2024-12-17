@@ -24,7 +24,7 @@ const Category: React.FC<CountrySelectProps> = ({
   setSelectedCountry,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const predefinedOptions = ["Regulation", "License"];
+  const predefinedOptions = ["Regulation", "License", "Others"];
   const handleSelect = (option: string) => {
     if (type === "site") {
       if (onChange) onChange([option]);

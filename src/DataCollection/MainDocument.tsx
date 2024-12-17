@@ -299,74 +299,82 @@ const MainDocumentWrapper: React.FC = () => {
   };
 
   const handleSubmitDoc = async () => {
-    setIsloading(true);
-    const formData = new FormData();
-    const maxSizeInBytes = 2048 * 1024; // 2024 KB in bytes
+    if (name && other_data && selectedategory && tag.length > 0) {
+      setIsloading(true);
+      const formData = new FormData();
+      const maxSizeInBytes = 2048 * 1024; // 2024 KB in bytes
 
-    try {
-      formData.append("name", name);
-      //  let peopleId = people_id;
+      try {
+        formData.append("name", name);
+        //  let peopleId = people_id;
 
-      formData.append("description", other_data);
-      formData.append("category", selectedategory);
-      const tagArray = tag.split(",").map((t) => t.trim());
-      tagArray.forEach((tag: any, index: any) => {
-        formData.append(`meta[${index}]`, tag);
-      });
-      selectedCompanyCountries.forEach((country: any, index: any) => {
-        formData.append(`country`, country);
-      });
-      if (files && files.length > 0) {
-        let allFilesValid = true;
+        formData.append("description", other_data);
+        formData.append("category", selectedategory);
+        const tagArray = tag.split(",").map((t) => t.trim());
+        tagArray.forEach((tag: any, index: any) => {
+          formData.append(`meta[${index}]`, tag);
+        });
+        selectedCompanyCountries.forEach((country: any, index: any) => {
+          formData.append(`country`, country);
+        });
+        if (files && files.length > 0) {
+          let allFilesValid = true;
 
-        files.forEach((file, index) => {
-          formData.append(`files[${index}]`, file, file.name);
+          files.forEach((file, index) => {
+            formData.append(`files[${index}]`, file, file.name);
+          });
+
+          if (!allFilesValid) {
+            showNotification(
+              "Error!",
+              `One or more files exceed the size limit.`,
+              "danger"
+            );
+            //  throw new Error("One or more files exceed the size limit.");
+          }
+        } else {
+          throw new Error("No files selected for upload.");
+        }
+
+        const response = await fetch(`${baseUrl}document/uploaddocuments`, {
+          method: "POST",
+          body: formData,
         });
 
-        if (!allFilesValid) {
+        if (!response.ok) {
+          const errorText = await response.text();
           showNotification(
             "Error!",
-            `One or more files exceed the size limit.`,
+            `Failed to upload documents: ${errorText}`,
             "danger"
           );
-          //  throw new Error("One or more files exceed the size limit.");
         }
-      } else {
-        throw new Error("No files selected for upload.");
-      }
 
-      const response = await fetch(`${baseUrl}document/uploaddocuments`, {
-        method: "POST",
-        body: formData,
-      });
+        const data = await response.json();
 
-      if (!response.ok) {
-        const errorText = await response.text();
+        showNotification("Success!", "Document upload successful", "success");
+        //setisAddnewSite(false);
+        setFiles([]);
+        setName("");
+        setTag("");
+        setSelectedCompanyCountries([]);
+        setOtherdata("");
+        setSelectedCateory([]);
+      } catch (error: any) {
         showNotification(
           "Error!",
-          `Failed to upload documents: ${errorText}`,
+          `Error uploading document: ${error.message}`,
           "danger"
         );
+      } finally {
+        setIsloading(false);
       }
-
-      const data = await response.json();
-
-      showNotification("Success!", "Document upload successful", "success");
-      //setisAddnewSite(false);
-      setFiles([]);
-      setName("");
-      setTag("");
-      setSelectedCompanyCountries([]);
-      setOtherdata("");
-      setSelectedCateory([]);
-    } catch (error: any) {
+    } else {
       showNotification(
         "Error!",
-        `Error uploading document: ${error.message}`,
+        `Please  all the fields are required`,
         "danger"
       );
-    } finally {
-      setIsloading(false);
     }
   };
 
