@@ -15,6 +15,7 @@ import MultipleEl from "../dashboard/components/MultipleEl";
 import CompanyInlineCreate from "./components/CompanyInlineCreate";
 import MineralInlineCreate from "./components/mineralinlineCreate";
 import PeopleInlineCreate from "./components/propleInlineCreate";
+import Category from "../panel/components/category";
 
 interface StepperProps {
   steps: string[];
@@ -76,6 +77,7 @@ const MainDocumentWrapper: React.FC = () => {
   const [selectedCompanyCountries, setSelectedCompanyCountries] = useState<any>(
     []
   );
+  const [selectedategory, setSelectedCateory] = useState<any>([]);
   const [selectedValuesParent, setSelectedValuesParent] = useState<string[]>(
     []
   );
@@ -306,6 +308,7 @@ const MainDocumentWrapper: React.FC = () => {
       //  let peopleId = people_id;
 
       formData.append("description", other_data);
+      formData.append("category", selectedategory);
       const tagArray = tag.split(",").map((t) => t.trim());
       tagArray.forEach((tag: any, index: any) => {
         formData.append(`meta[${index}]`, tag);
@@ -355,6 +358,7 @@ const MainDocumentWrapper: React.FC = () => {
       setTag("");
       setSelectedCompanyCountries([]);
       setOtherdata("");
+      setSelectedCateory([]);
     } catch (error: any) {
       showNotification(
         "Error!",
@@ -572,6 +576,8 @@ const MainDocumentWrapper: React.FC = () => {
     setCurrentStep(stepIndex);
   };
 
+  console.log(selectedategory);
+
   return (
     <div className="p-4">
       {showOverlay && currentStep === 0 && (
@@ -640,6 +646,14 @@ const MainDocumentWrapper: React.FC = () => {
                 //className="additional-styles"
               />
               */}
+
+              <Category
+                label="Choose category"
+                values={selectedategory}
+                //onChange={(countries) => setSelectedCateory(countries)}
+                type="site"
+                setSelectedCountry={setSelectedCateory}
+              />
               <CountrySelect
                 label="Select one country"
                 values={selectedCompanyCountries}
