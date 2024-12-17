@@ -16,6 +16,7 @@ import CompanyInlineCreate from "./components/CompanyInlineCreate";
 import MineralInlineCreate from "./components/mineralinlineCreate";
 import PeopleInlineCreate from "./components/propleInlineCreate";
 import SiteInlineCreate from "./components/siteInlineCreate";
+import PreviewPage from "./previewPage";
 
 interface StepperProps {
   steps: string[];
@@ -48,7 +49,15 @@ const Stepper: React.FC<StepperProps> = ({
 
 const MineralWrapper: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const steps = ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6"];
+  const steps = [
+    "Step 1",
+    "Step 2",
+    "Step 3",
+    "Step 4",
+    "Step 4",
+    "Step 5",
+    "Step 6",
+  ];
 
   const [name, setName] = useState("");
   const [rc_number, setRcNumber] = useState("");
@@ -306,6 +315,7 @@ const MineralWrapper: React.FC = () => {
     try {
       const formData = new FormData();
       formData.append("name", docName);
+      formData.append("category", "others");
 
       let miner_ids = company_id;
 
@@ -500,11 +510,14 @@ const MineralWrapper: React.FC = () => {
       const data = await response.json();
       setCompanyId(data.data.id);
       setisaddNewPeople(false);
+      showNotification("Success!", "Mineral added successful", "success");
+      setCurrentStep(currentStep + 1);
+
       return data;
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
-      //setIsloading(false);
+      setIsloading(false);
     }
   };
   useEffect(() => {
@@ -1024,6 +1037,21 @@ const MineralWrapper: React.FC = () => {
           </div>
         )}
         {currentStep === 4 && (
+          <PreviewPage
+            name={name}
+            country={selectedCompanyCountries}
+            tag={mineralTag}
+            title={title}
+            company={selectedValuesMineral}
+            site={selectedValuesSite}
+            people={selectedValuesPeople}
+            location={companyAddress}
+            picture={image && image?.name}
+            isLoading={isLoading}
+            submitFunction={handleSubmitCompany}
+          />
+        )}
+        {currentStep === 5 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -1065,7 +1093,7 @@ const MineralWrapper: React.FC = () => {
             </div>
           </div>
         )}
-        {currentStep === 5 && (
+        {currentStep === 6 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -1147,17 +1175,20 @@ const MineralWrapper: React.FC = () => {
             Previous
           </button>
         )}
-        {currentStep !== 5 && files.length === 0 && (
+        {currentStep !== 4 && files.length === 0 && (
           <button
-            className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium"
+            className="px-4 py-2 bg-primary font-polySans text-[14px] text-white rounded font-medium"
             onClick={() => {
-              setFiles([]);
-              setSearchQuery("");
-              setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+              if (currentStep === steps.length - 1) {
+                window.location.reload();
+              } else {
+                setFiles([]);
+                setSearchQuery("");
+                setCurrentStep((prev) => prev + 1);
+              }
             }}
-            disabled={currentStep === steps.length - 1}
           >
-            Next
+            {currentStep === steps.length - 1 ? "Restart" : "Next"}
           </button>
         )}
       </div>

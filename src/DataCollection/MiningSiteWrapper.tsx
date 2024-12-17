@@ -18,6 +18,7 @@ import MineralInlineCreate from "./components/mineralinlineCreate";
 import PeopleInlineCreate from "./components/propleInlineCreate";
 import countriesData from "../data/Countries_States_LGAs.json"; // Import the JSON data
 import SearchableDropdown from "../panel/components/statelgComponent";
+import PreviewPage from "./previewPage";
 interface StateData {
   [key: string]: string[]; // Assuming each state contains an array of cities
 }
@@ -62,7 +63,15 @@ const Stepper: React.FC<StepperProps> = ({
 
 const MiningSiteWrapper: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const steps = ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6"];
+  const steps = [
+    "Step 1",
+    "Step 2",
+    "Step 3",
+    "Step 4",
+    "Step 5",
+    "Step 6",
+    "Step 6",
+  ];
 
   const [name, setName] = useState("");
   const [rc_number, setRcNumber] = useState("");
@@ -549,6 +558,8 @@ const MiningSiteWrapper: React.FC = () => {
       const data = await response.json();
       setCompanyId(data.data.id);
       setisaddNewPeople(false);
+      showNotification("Success!", "Mining site added successful", "success");
+
       setCurrentStep(currentStep + 1);
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
@@ -809,78 +820,6 @@ const MiningSiteWrapper: React.FC = () => {
                   setShowOverlay={setShowOverlay}
                 />
               )}
-              {isaddNewMineral && (
-                <>
-                  <InputElement
-                    type="text"
-                    label="Mineral Name"
-                    placeholder="Enter mineral name"
-                    value={mineralName}
-                    onChange={(e) => setMineralName(e.target.value)}
-                    name="name"
-                    required={false}
-                    //className="additional-styles"
-                  />
-
-                  <SearchableSelect
-                    label="Mineral Address"
-                    placeholder="Select address"
-                    value={mineralLocation}
-                    onChange={handleOptionChange}
-                    name="mineraladdress"
-                    required={true}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    options={options}
-                    setPlacedId={setPlacedId}
-                  />
-                  <InputElement
-                    type="text"
-                    label="Mineral Tag"
-                    placeholder="Enter Tag"
-                    value={mineralTag}
-                    onChange={(e) => setMineralTag(e.target.value)}
-                    name="tag"
-                    required={false}
-                  />
-
-                  <TextAreaElement
-                    type="text"
-                    label="Other Info"
-                    placeholder="Other Info"
-                    value={mineralOtherInfo}
-                    onChange={(e: any) => setMineralOtherInfo(e.target.value)}
-                    name="tag"
-                    required={false}
-                  />
-
-                  <UploadEl
-                    placeholder="Gold, Ore etc..."
-                    helperText=""
-                    label="Mineral display Picture"
-                    value={imageMineral}
-                    setForm={setImageMineral}
-                    multipe={false}
-                    name="display_picture"
-                    accept="image/*"
-                    instruction="SVG, PNG, JPG or GIF (max. 800x400px)"
-                  />
-
-                  <LoginButton
-                    onClick={handleSubmit}
-                    type="button"
-                    disable={isLoading}
-                  >
-                    {isLoading ? "Adding..." : "Add mineral"}
-                  </LoginButton>
-                  <span
-                    className="cursor-pointer text-[#202020] font-polySans text-[14px] text-center underline"
-                    onClick={() => setisAddnewminera(false)}
-                  >
-                    Go to search
-                  </span>
-                </>
-              )}
             </div>
           </div>
         )}
@@ -950,118 +889,6 @@ const MiningSiteWrapper: React.FC = () => {
                   />
                 </>
               )}
-              {isaddNewPeople && (
-                <>
-                  <InputElement
-                    type="text"
-                    label="FIrst Name"
-                    placeholder="Enter First name"
-                    value={first_name}
-                    onChange={(e) => setFirstname(e.target.value)}
-                    name="name"
-                    required={false}
-                    //className="additional-styles"
-                  />
-                  <InputElement
-                    type="text"
-                    label="Last Name"
-                    placeholder="Enter First name"
-                    value={last_name}
-                    onChange={(e) => setLastname(e.target.value)}
-                    name="name"
-                    required={false}
-                    //className="additional-styles"
-                  />
-                  <InputElement
-                    type="text"
-                    label="Other Name"
-                    placeholder="Enter other name"
-                    value={other_name}
-                    onChange={(e) => setOtherName(e.target.value)}
-                    name="name"
-                    required={false}
-                    //className="additional-styles"
-                  />
-                  <CountrySelect
-                    label="Select Country"
-                    values={selectedCountries}
-                    onChange={(countries) => setSelectedCountries(countries)}
-                  />
-                  <RoleSelect
-                    label="Select Roles"
-                    values={selectedRoles}
-                    onChange={(roles: any) => setSelectedRoles(roles)}
-                  />
-                  <InputElement
-                    type="text"
-                    label="Title"
-                    placeholder="Enter title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    name="name"
-                    required={false}
-                    //className="additional-styles"
-                  />
-
-                  <SearchableSelect
-                    label="Location"
-                    placeholder="Select address"
-                    value={peopleCountry}
-                    onChange={handleOptionChange}
-                    name="mineraladdress"
-                    required={true}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    options={options}
-                    setPlacedId={setPlacedId}
-                  />
-                  <InputElement
-                    type="text"
-                    label="Tag"
-                    placeholder="Enter Tag"
-                    value={peopleTag}
-                    onChange={(e) => setPeopleTag(e.target.value)}
-                    name="tag"
-                    required={false}
-                  />
-
-                  <TextAreaElement
-                    type="text"
-                    label="Other Info"
-                    placeholder="Other Info"
-                    value={peopleOtherData}
-                    onChange={(e: any) => setPeopleOtherData(e.target.value)}
-                    name="tag"
-                    required={false}
-                  />
-
-                  <UploadEl
-                    placeholder="Gold, Ore etc..."
-                    helperText=""
-                    label="People display Picture"
-                    value={peopleImage}
-                    setForm={setPeopleImage}
-                    name="display_picture"
-                    multipe={false}
-                    accept="image/*"
-                    instruction="SVG, PNG, JPG or GIF (max. 800x400px)"
-                  />
-
-                  <LoginButton
-                    onClick={handleSubmitPeople}
-                    type="button"
-                    disable={isLoading}
-                  >
-                    {isLoading ? "Adding..." : "Add people"}
-                  </LoginButton>
-                  <span
-                    className="cursor-pointer text-[#202020] font-polySans text-[14px] text-center underline"
-                    onClick={() => setisaddNewPeople(false)}
-                  >
-                    Go to search
-                  </span>
-                </>
-              )}
             </div>
           </div>
         )}
@@ -1085,78 +912,30 @@ const MiningSiteWrapper: React.FC = () => {
                     setShowOverlay={setShowOverlay}
                     acquireValue={acquireValue}
                   />
-                  <LoginButton
-                    onClick={handleSubmitCompany}
-                    type="button"
-                    disable={isLoading}
-                  >
-                    {isLoading ? "submitting" : "Continue"}
-                  </LoginButton>
-                </>
-              )}
-              {isaddNewSite && (
-                <>
-                  <InputElement
-                    type="text"
-                    label="Name"
-                    placeholder="Enter site name"
-                    value={siteName}
-                    onChange={(e) => setSiteName(e.target.value)}
-                    name="name"
-                    required={false}
-                  />
-
-                  <CountrySelect
-                    label="Select Countries"
-                    values={selectedCountries}
-                    onChange={(countries) => setSelectedCountries(countries)}
-                  />
-
-                  <SearchableSelect
-                    label="Location"
-                    placeholder="Select address"
-                    value={siteaddress}
-                    onChange={handleOptionChange}
-                    name="mineraladdress"
-                    required={true}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    options={options}
-                    setPlacedId={setPlacedId}
-                  />
-
-                  <UploadEl
-                    placeholder="Gold, Ore etc..."
-                    helperText=""
-                    label="Site display Picture"
-                    value={siteImage}
-                    setForm={setSiteImage}
-                    name="display_picture"
-                    accept="image/*"
-                    multipe={false}
-                    instruction="SVG, PNG, JPG or GIF (max. 800x400px)"
-                  />
-
-                  <LoginButton
-                    onClick={handleSubmitSite}
-                    type="button"
-                    disable={isLoading}
-                  >
-                    {isLoading ? "Adding..." : "Add site"}
-                  </LoginButton>
-
-                  <span
-                    className="cursor-pointer text-[#202020] font-polySans text-[14px] text-center underline"
-                    onClick={() => setisAddnewSite(false)}
-                  >
-                    Go to search
-                  </span>
                 </>
               )}
             </div>
           </div>
         )}
-        {currentStep === 4 && (
+        {currentStep == 4 && (
+          <PreviewPage
+            name={name}
+            country={selectedCompanyCountries}
+            tag={mineralTag}
+            title={title}
+            mineral={selectedValuesMineral}
+            //site={selectedValuesSite}
+            people={selectedValuesPeople}
+            location={companyAddress}
+            state={selectedState}
+            lg={selectedLGs}
+            picture={image && image?.name}
+            submitFunction={handleSubmitCompany}
+            company={selectedValuesSite}
+            isLoading={isLoading}
+          />
+        )}
+        {currentStep === 5 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -1198,7 +977,7 @@ const MiningSiteWrapper: React.FC = () => {
             </div>
           </div>
         )}
-        {currentStep === 5 && (
+        {currentStep === 6 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -1280,16 +1059,20 @@ const MiningSiteWrapper: React.FC = () => {
             Previous
           </button>
         )}
-        {currentStep !== 3 && currentStep !== 5 && files.length === 0 && (
+        {currentStep !== 4 && (
           <button
-            className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium"
+            className="px-4 py-2 bg-primary font-polySans text-[14px] text-white rounded font-medium"
             onClick={() => {
-              setFiles([]);
-              setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+              if (currentStep === steps.length - 1) {
+                window.location.reload();
+              } else {
+                setFiles([]);
+                setSearchQuery("");
+                setCurrentStep((prev) => prev + 1);
+              }
             }}
-            disabled={currentStep === steps.length - 1}
           >
-            Next
+            {currentStep === steps.length - 1 ? "Restart" : "Next"}
           </button>
         )}
       </div>

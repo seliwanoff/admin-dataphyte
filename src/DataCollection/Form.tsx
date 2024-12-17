@@ -16,6 +16,7 @@ import FilterPeopleByPosition from "../panel/components/FilterPeopleByPosition";
 import CompanyInlineCreate from "./components/CompanyInlineCreate";
 import MineralInlineCreate from "./components/mineralinlineCreate";
 import PeopleInlineCreate from "./components/propleInlineCreate";
+import PreviewPage from "./previewPage";
 
 interface StepperProps {
   steps: string[];
@@ -48,7 +49,7 @@ const Stepper: React.FC<StepperProps> = ({
 
 const StepperWithForms: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const steps = ["Step 1", "Step 2", "Step 3", "Step 5", "Step 6"];
+  const steps = ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6"];
 
   const [name, setName] = useState("");
   const [rc_number, setRcNumber] = useState("");
@@ -327,6 +328,8 @@ const StepperWithForms: React.FC = () => {
 
       const formData = new FormData();
       formData.append("company_id", company_ids);
+      formData.append("category", "others");
+
       formData.append("name", docName);
 
       if (files) {
@@ -525,15 +528,16 @@ const StepperWithForms: React.FC = () => {
       const data = await response.json();
       setCompanyId(data.data.id);
       setisaddNewPeople(false);
+      showNotification("Success!", "Company created successful", "success");
+      setCurrentStep(currentStep + 1);
 
       return data;
     } catch (error) {
       showNotification("Error!", `Error fetching options:${error}`, "danger");
     } finally {
-      // setIsloading(false);
+      setIsloading(false);
     }
   };
-  //console.log(content);
   useEffect(() => {
     if (
       searchMineralQuery ||
@@ -1170,7 +1174,23 @@ const StepperWithForms: React.FC = () => {
           </div>
         )}
           */}
+
         {currentStep === 3 && (
+          <PreviewPage
+            name={name}
+            country={selectedCompanyCountries}
+            tag={tag}
+            title={title}
+            rcNumber={rc_number}
+            mineral={selectedValuesMineral}
+            location={companyAddress}
+            picture={image && image?.name}
+            parent={selectedValuesParent}
+            submitFunction={handleSubmitCompany}
+            isLoading={isLoading}
+          />
+        )}
+        {currentStep === 4 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -1213,7 +1233,7 @@ const StepperWithForms: React.FC = () => {
             </div>
           </div>
         )}
-        {currentStep === 4 && (
+        {currentStep === 5 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -1296,15 +1316,20 @@ const StepperWithForms: React.FC = () => {
             Previous
           </button>
         )}
-        {currentStep !== 4 && files.length === 0 && (
+        {currentStep !== 3 && files.length === 0 && (
           <button
-            className="px-4 py-2 bg-primary font-polySans text-[14px]  text-white rounded font-medium"
+            className="px-4 py-2 bg-primary font-polySans text-[14px] text-white rounded font-medium"
             onClick={() => {
-              setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+              if (currentStep === steps.length - 1) {
+                window.location.reload();
+              } else {
+                setFiles([]);
+                setSearchQuery("");
+                setCurrentStep((prev) => prev + 1);
+              }
             }}
-            disabled={currentStep === steps.length - 1}
           >
-            Next
+            {currentStep === steps.length - 1 ? "Restart" : "Next"}
           </button>
         )}
       </div>
