@@ -53,7 +53,7 @@ const TableRowCol = () => {
 
       <tbody className="tbody">
         {allAdmin?.map((item: any, index: any) => (
-          <tr className="row">
+          <tr className="row" key={index}>
             <NewHero name={item.name} width={30} image={doc} type={item.type} />
             <TableRow name={item.description} width={30} />
             <TableRow name={item.country} width={10} />
