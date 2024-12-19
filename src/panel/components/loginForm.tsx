@@ -5,16 +5,14 @@ import LoginButton from "./loginButton";
 //import google from "../../assets/images/Login/google.png";
 import LogoTop from "./logoTop";
 import { login } from "../../slices/AuthSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store";
 import { showNotification } from "../../components/SuccessComponent/sucess";
-import { useNavigate } from "react-router-dom";
 
 const LoginFrom = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const navigates = useNavigate();
 
   const dispatch = useDispatch<AppDispatch>();
   const handleSubmit = async (e: any) => {

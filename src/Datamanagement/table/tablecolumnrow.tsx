@@ -8,33 +8,46 @@ import TableColumn from "../../components/table/tableColumn";
 import TableRow from "../../components/table/tableRow";
 import ActionRow from "../../dashboard/components/table/actionRow";
 import NewHero from "../../components/table/newHero";
-const TableRowCol = () => {
+interface tableProps {
+  currentPage?: any;
+  rowsPerPage?: any;
+  setTotalItems?: any;
+}
+const TableRowCol: React.FC<tableProps> = ({
+  currentPage,
+  rowsPerPage,
+  setTotalItems,
+}) => {
   const baseUrl = process.env.REACT_APP_URL;
 
   const [allAdmin, setAlladmin] = useState([]);
 
   const fetchAdmin = async () => {
     try {
-      const response = await fetch(`${baseUrl}document/getdocuments`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      });
+      const response = await fetch(
+        `${baseUrl}document/getdocuments?count=${rowsPerPage}&page=${currentPage}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch options");
       }
 
       const data = await response.json();
-      setAlladmin(data.data.data?.reverse());
+      // console.log(data.data.total);
+      setAlladmin(data.data.data);
+      setTotalItems(data.data.total);
     } catch (error) {
       console.error("Error fetching options:", error);
     }
   };
   useEffect(() => {
     fetchAdmin();
-  }, []);
-  //  console.log(allAdmin);
+  }, [rowsPerPage, currentPage]);
   return (
     <table className="bg-inherit w-full border-none">
       <thead className="thead">
@@ -63,9 +76,6 @@ const TableRowCol = () => {
               name={new Date(item.created_at).toLocaleDateString()}
               width={10}
             />
-            {/**
-            <ActionRow name="Take action" width={15} />
-            */}
           </tr>
         ))}
       </tbody>

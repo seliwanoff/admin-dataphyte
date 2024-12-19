@@ -3,7 +3,6 @@
 import HeroRow from "../../../components/table/HeroRow";
 import TableColumn from "../../../components/table/tableColumn";
 import TableRow from "../../../components/table/tableRow";
-import doc from "../../../assets/images/Dashboard/doc.png";
 import ActionRow from "./actionRow";
 import DocumentViewer from "../../../components/documentViewer";
 import { useState } from "react";

@@ -27,8 +27,7 @@ const ActionRow: React.FC<ActionRowProps> = ({
 
   const handleStatusChange = async (id: number, newStatus: string) => {
     try {
-      const updatedReport = await updateReportStatus(id, newStatus);
-      // console.log("Updated Report:", updatedReport);
+      await updateReportStatus(id, newStatus);
       fetchMineral();
       setIsdrop(false);
     } catch (error) {

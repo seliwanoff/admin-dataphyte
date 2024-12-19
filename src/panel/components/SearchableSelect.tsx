@@ -34,7 +34,6 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
   const [search, setSearch] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  //console.log(options);
   const handleSelect = (option: any) => {
     if (onChange) onChange(option);
     setSearch(option);

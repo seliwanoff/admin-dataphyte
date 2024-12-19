@@ -57,7 +57,6 @@ const MineralSearchDrop: React.FC<SearchableSelectProps> = ({
       setIsDropdownOpen(false);
     }
   };
-  // console.log(values);
   useEffect(() => {
     if (acquireValue) {
       handleSelect(values, type);
