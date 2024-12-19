@@ -3,10 +3,10 @@ import LoginFrom from "../components/loginForm";
 
 const LoginWrapper = () => {
   return (
-    <div className=" bg-white w-full mx-auto container">
-      <div className="py-[40px] md:px-8 ">
+    <div className=" bg-white w-full mx-auto h-full">
+      <div className="py-[40px] px-20 ">
         <div className=" ">
-          <div className="flex  justify-between ">
+          <div className="flex  justify-between w-full lg:max-w-[1400px]   mx-auto ">
             {/** Begin Login Form */}
 
             <LoginFrom />
