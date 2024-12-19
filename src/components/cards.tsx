@@ -4,35 +4,38 @@ import arrow from "../assets/images/Dashboard/arrow-up.png";
 import users from "../assets/images/Dashboard/activeusers.png";
 import reports from "../assets/images/Dashboard/reports.png";
 import apicalls from "../assets/images/Dashboard/apicalls.png";
-
-const Cards = () => {
+interface DataTableToolsProps {
+  stat?: any;
+}
+const Cards: React.FC<DataTableToolsProps> = ({ stat }) => {
+  //console.log(stat);
   return (
     <div className=" flex gap-6 items-center ">
       {" "}
       <EachCard
         title="Datasets"
-        value={5737}
+        value={(stat && stat.dataset) || 0}
         mainImage={feature}
         percentage="40%"
         percentageImage={arrow}
       />
       <EachCard
         title="Active Users"
-        value={320}
+        value={(stat && stat.users) || 0}
         mainImage={users}
         percentage="40%"
         percentageImage={arrow}
       />
       <EachCard
         title="API calls"
-        value={1100}
+        value={(stat && stat.api_call) || 0}
         mainImage={apicalls}
         percentage="40%"
         percentageImage={arrow}
       />
       <EachCard
         title="Reports"
-        value={21500}
+        value={(stat && stat.report) || 0}
         mainImage={reports}
         percentage="40%"
         percentageImage={arrow}

@@ -6,10 +6,13 @@ import Activities from "../components/Users/Activities";
 import UserActivities from "../components/Users/Useractivities";
 import Greetings from "./components/Greetings";
 import Maintable from "./components/table/maintable";
+import { getDashboardStat } from "../api/equest";
 
 const Dashboard = () => {
   const baseUrl = process.env.REACT_APP_URL;
   const [reports, setReports] = useState([]);
+  const [dashboardtat, setDashboard] = useState([]);
+  const [getDate, setDate] = useState<any>("12 months");
 
   const fetchMineral = async () => {
     try {
@@ -26,17 +29,34 @@ const Dashboard = () => {
   };
   useEffect(() => {
     fetchMineral();
+    getDashboardStat(getDate)
+      .then((data) => {
+        setDashboard(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching dashboard stats:", error);
+      });
   }, []);
+  useEffect(() => {
+    getDashboardStat(getDate)
+      .then((data) => {
+        setDashboard(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching dashboard stats:", error);
+      });
+  }, [getDate]);
+
   return (
     <>
       <div className="flex flex-col gap-6">
         <Greetings />
         <div className="w-full flex items-center justify-between">
-          <Tabs />
+          <Tabs setDate={setDate} />
 
           <DateButton />
         </div>
-        <Cards />
+        <Cards stat={dashboardtat} />
       </div>
       <div className="mt-5 flex   gap-6 justify-start">
         <UserActivities />
