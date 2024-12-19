@@ -655,10 +655,12 @@ const StepperWithForms: React.FC = () => {
       )}
       {showOverlay && currentStep === 2 && (
         <PeopleInlineCreate
-          //mineralNames={""}
           show={showOverlay}
           setShowOverlay={setShowOverlay}
-          //  onUpdateCompanyName={setSelectedValuesParent}
+          setSelectedValuesParent={setSelectedValuesPeople}
+          selectedValuesParent={selectedValuesPeople}
+          setAcquireValue={setAcquireValue}
+          setSearchMineralQueryc={setSearchMineralQuery}
         />
       )}
       <span className="text-gray-700 font-polySans text-[14px] mb-4 px-4  block ">
