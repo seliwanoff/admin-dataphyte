@@ -5,11 +5,20 @@ import userlogo from "../../../../assets/images/Dashboard/users-01.png";
 import anayltyicslogo from "../../../../assets/images/Dashboard/pie-chart-03.png";
 import datalogo from "../../../../assets/images/Dashboard/layers-three-01.png";
 import useranayticslogo from "../../../../assets/images/Dashboard/check-done-01.png";
+import inactiveDsh from "../../../../assets/images/Dashboard/inactivedas.png";
+import activeuserman from "../../../../assets/images/Dashboard/activeuserman.png";
+import dataman from "../../../../assets/images/Dashboard/data-man.png";
+import ana from "../../../../assets/images/Dashboard/ana.png";
+import accessc from "../../../../assets/images/Dashboard/access-log-ac.png";
+
 import { useState } from "react";
 import ToggleSideBar from "./ToggleSideMenu";
+import { useLocation } from "react-router-dom";
 
 const MainMenu = () => {
   const [showSideBar, setShowsidebar] = useState();
+  const location = useLocation();
+  const pathname = location.pathname;
   return (
     <div className="px-[20px] justify-start flex py-[24px] flex-col">
       <LogoTop />
@@ -21,7 +30,11 @@ const MainMenu = () => {
           title="Dashboard"
           to="/dashboard"
         >
-          <img src={dashboardlogo} alt="" className="h-[18px]" />
+          <img
+            src={pathname === "/dashboard" ? dashboardlogo : inactiveDsh}
+            alt=""
+            className="h-[18px]"
+          />
           Dashboard
         </SubMainmenu>
         <SubMainmenu
@@ -30,7 +43,11 @@ const MainMenu = () => {
           title="Dashboard"
           to="/data-management"
         >
-          <img src={datalogo} alt="" className="h-[18px]" />
+          <img
+            src={pathname === "/data-management" ? activeuserman : datalogo}
+            alt=""
+            className="h-[18px]"
+          />
           Data Management
         </SubMainmenu>
         <ToggleSideBar
@@ -52,7 +69,15 @@ const MainMenu = () => {
               title="Dashboard"
               to="/data-collection"
             >
-              <img src={useranayticslogo} alt="" className="h-[18px]" />
+              <img
+                src={
+                  pathname === "/data-collection"
+                    ? activeuserman
+                    : useranayticslogo
+                }
+                alt=""
+                className="h-[18px]"
+              />
               Company{" "}
             </SubMainmenu>
             <SubMainmenu
@@ -61,7 +86,15 @@ const MainMenu = () => {
               title="Dashboard"
               to="/mineral-collection"
             >
-              <img src={useranayticslogo} alt="" className="h-[18px]" />
+              <img
+                src={
+                  pathname === "/mineral-collection"
+                    ? activeuserman
+                    : useranayticslogo
+                }
+                alt=""
+                className="h-[18px]"
+              />
               Mineral{" "}
             </SubMainmenu>{" "}
             <SubMainmenu
@@ -70,7 +103,15 @@ const MainMenu = () => {
               title="Dashboard"
               to="/people-collection"
             >
-              <img src={useranayticslogo} alt="" className="h-[18px]" />
+              <img
+                src={
+                  pathname === "/people-collection"
+                    ? activeuserman
+                    : useranayticslogo
+                }
+                alt=""
+                className="h-[18px]"
+              />
               People
             </SubMainmenu>
             <SubMainmenu
@@ -79,7 +120,15 @@ const MainMenu = () => {
               title="Dashboard"
               to="/site-collection"
             >
-              <img src={useranayticslogo} alt="" className="h-[18px]" />
+              <img
+                src={
+                  pathname === "/site-collection"
+                    ? activeuserman
+                    : useranayticslogo
+                }
+                alt=""
+                className="h-[18px]"
+              />
               Mining Site
             </SubMainmenu>
             <SubMainmenu
@@ -88,7 +137,13 @@ const MainMenu = () => {
               title="Dashboard"
               to="/document"
             >
-              <img src={useranayticslogo} alt="" className="h-[18px]" />
+              <img
+                src={
+                  pathname === "/docunebt" ? activeuserman : useranayticslogo
+                }
+                alt=""
+                className="h-[18px]"
+              />
               Document
             </SubMainmenu>
           </div>
@@ -99,7 +154,11 @@ const MainMenu = () => {
           title="Dashboard"
           to="/user-management"
         >
-          <img src={useranayticslogo} alt="" className="h-[18px]" />
+          <img
+            src={pathname === "/user-management" ? dataman : useranayticslogo}
+            alt=""
+            className="h-[18px]"
+          />
           User Management{" "}
         </SubMainmenu>
         <SubMainmenu
@@ -108,7 +167,11 @@ const MainMenu = () => {
           title="Dashboard"
           to="/analytics-report"
         >
-          <img src={anayltyicslogo} alt="" className="h-[18px]" />
+          <img
+            src={pathname === "/analytics-report" ? ana : anayltyicslogo}
+            alt=""
+            className="h-[18px]"
+          />
           Analytics and Report
         </SubMainmenu>
         <SubMainmenu
@@ -117,7 +180,11 @@ const MainMenu = () => {
           title="Dashboard"
           to="/access-log"
         >
-          <img src={userlogo} alt="" className="h-[18px]" />
+          <img
+            src={pathname === "/access-log" ? accessc : userlogo}
+            alt=""
+            className="h-[18px]"
+          />
           Access logs
         </SubMainmenu>
       </nav>
