@@ -75,7 +75,7 @@ const Dashboard = () => {
       </div>
       <div className="mt-5 flex   gap-6 justify-start">
         <UserActivities />
-        <Activities />
+        <Activities reports={reports} />
       </div>
       <div className="mt-5 w-full">
         <Maintable reports={reports} fetchMineral={fetchMineral} />
