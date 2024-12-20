@@ -21,7 +21,6 @@ export const getDashboardStat = async (
   let fromDate: Date | null = null;
   let toDate: Date = currentDate;
 
-  // Calculate the date range
   if (typeof dateRange === "string") {
     switch (dateRange) {
       case "30 days":

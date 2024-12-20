@@ -203,7 +203,7 @@ const FilterPeopleByPosition: React.FC<FilterPeopleByPositionProps> = ({
         <div className="mt-2 flex flex-wrap gap-2">
           <span
             className="bg-primary text-white px-3 py-1 rounded-full text-sm cursor-pointer font-Satoshi font-medium"
-            onClick={() => onChange(null)} // Allow deselection by clicking
+            onClick={() => onChange(null)}
           >
             {value.name}
           </span>
