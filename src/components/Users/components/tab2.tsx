@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const datas = ["Uploads", "Downloads", "API", "Reports"];
+const datas = ["Datasets", "Reports"];
 
 const Tabs2 = () => {
   const [active, setIsactive] = useState<number>(0);

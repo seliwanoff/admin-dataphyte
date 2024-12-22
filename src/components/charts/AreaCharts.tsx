@@ -12,6 +12,22 @@ const AreaChart: React.FC<AreaChartProps> = ({ data, height = 300 }) => {
   useEffect(() => {
     if (!svgRef.current) return;
 
+    // Check if all y1 and y2 values are 0
+    const allZero = data.every((d) => d.y1 === 0 && d.y2 === 0);
+    if (allZero) {
+      d3.select(svgRef.current).selectAll("*").remove(); // Clear the SVG
+      d3.select(svgRef.current)
+        .append("text")
+        .attr("x", "50%")
+        .attr("y", "50%")
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "middle")
+        .attr("font-size", "16px")
+        .attr("fill", "#888")
+        .text("No data available");
+      return;
+    }
+
     const margin = { top: 20, right: 30, bottom: 30, left: 40 };
     const containerWidth = svgRef.current.parentElement?.clientWidth || 800;
     const svgWidth = containerWidth - margin.left - margin.right;
@@ -23,7 +39,6 @@ const AreaChart: React.FC<AreaChartProps> = ({ data, height = 300 }) => {
       .attr("viewBox", `0 0 ${containerWidth} ${height}`)
       .attr("preserveAspectRatio", "xMinYMin meet");
 
-    // Clear previous contents of the SVG
     svg.selectAll("*").remove();
 
     const g = svg
@@ -46,7 +61,8 @@ const AreaChart: React.FC<AreaChartProps> = ({ data, height = 300 }) => {
       "Dec",
     ];
     const x = d3.scalePoint().domain(months).range([0, svgWidth]).padding(0.5);
-    const y = d3.scaleLinear().domain([0, 200000]).range([svgHeight, 0]);
+    const yMax = d3.max(data, (d) => Math.max(d.y1, d.y2)) || 500;
+    const y = d3.scaleLinear().domain([0, yMax]).range([svgHeight, 0]);
 
     const area1 = d3
       .area<{ x: string; y1: number; y2: number }>()
@@ -62,7 +78,6 @@ const AreaChart: React.FC<AreaChartProps> = ({ data, height = 300 }) => {
       .y1((d) => y(d.y2))
       .curve(d3.curveBasis);
 
-    // Gradient for the first area
     const gradient1 = svg
       .append("defs")
       .append("linearGradient")
@@ -82,7 +97,6 @@ const AreaChart: React.FC<AreaChartProps> = ({ data, height = 300 }) => {
       .attr("offset", "100%")
       .attr("stop-color", "rgba(68, 45, 116, 0.05)");
 
-    // Updated gradient for the second area with your specified colors
     const gradient2 = svg
       .append("defs")
       .append("linearGradient")
@@ -108,14 +122,12 @@ const AreaChart: React.FC<AreaChartProps> = ({ data, height = 300 }) => {
       .attr("fill", "url(#gradient1)")
       .attr("d", area1);
 
-    // Area2 fill with gradient2
     g.append("path")
       .datum(data)
       .attr("fill", "url(#gradient2)")
       .attr("opacity", 0.7)
       .attr("d", area2);
 
-    // Adding lines for both areas
     g.append("path")
       .datum(data)
       .attr("class", "line")
@@ -149,12 +161,7 @@ const AreaChart: React.FC<AreaChartProps> = ({ data, height = 300 }) => {
     // Add axes
     g.append("g")
       .attr("class", "x-axis")
-      .attr("width", "100%")
       .attr("transform", `translate(0,${svgHeight})`)
-      .attr(
-        "class",
-        "font-polySans text-[12px] uppercase font-normal text-left text-[#4f4f4f]"
-      )
       .call(d3.axisBottom(x));
 
     g.append("g")
@@ -163,7 +170,13 @@ const AreaChart: React.FC<AreaChartProps> = ({ data, height = 300 }) => {
         d3
           .axisLeft(y)
           .ticks(6)
-          .tickFormat((d) => `${Number(d) / 1000}k`)
+          .tickFormat((d) => {
+            const value = Number(d);
+            if (value >= 1_000_000) return `${value / 1_000_000}m`;
+            if (value >= 1_000) return `${value / 1_000}k`;
+            if (value >= 100) return `${value}`;
+            return value.toString();
+          })
       );
   }, [data, height]);
 

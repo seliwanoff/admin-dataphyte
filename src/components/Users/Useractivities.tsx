@@ -1,22 +1,33 @@
+import { useCallback, useEffect, useState } from "react";
 import AreaChart from "../charts/AreaCharts";
 import YearCards from "../yearcard";
 import Tabs2 from "./components/tab2";
 
 const UserActivities = () => {
-  const data = [
-    { x: "Jan", y1: 50000, y2: 30000 },
-    { x: "Feb", y1: 100000, y2: 60000 },
-    { x: "Mar", y1: 150000, y2: 90000 },
-    { x: "Apr", y1: 120000, y2: 80000 },
-    { x: "May", y1: 80000, y2: 60000 },
-    { x: "Jun", y1: 130000, y2: 100000 },
-    { x: "Jul", y1: 90000, y2: 70000 },
-    { x: "Aug", y1: 140000, y2: 120000 },
-    { x: "Sep", y1: 110000, y2: 90000 },
-    { x: "Oct", y1: 130000, y2: 110000 },
-    { x: "Nov", y1: 120000, y2: 100000 },
-    { x: "Dec", y1: 150000, y2: 130000 },
-  ];
+  const baseUrl = process.env.REACT_APP_URL;
+  const [reports, setReports] = useState([]);
+  const [selectedYear, setSelectedYear] = useState<number>(
+    new Date().getFullYear()
+  );
+
+  const fetchGraphStat = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `${baseUrl}admin/stats/dashbord/graph?year=${selectedYear}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch options");
+      }
+
+      const data = await response.json();
+      setReports(data.data);
+    } catch (error) {
+      console.error("Error fetching options:", error);
+    }
+  }, [selectedYear]);
+  useEffect(() => {
+    fetchGraphStat();
+  }, [selectedYear]);
 
   return (
     <div className="cards">
@@ -28,9 +39,12 @@ const UserActivities = () => {
             </span>
             <Tabs2 />
           </div>
-          <YearCards />
+          <YearCards
+            selectedYear={selectedYear}
+            setSelectedYear={setSelectedYear}
+          />
         </div>
-        <AreaChart data={data} height={300} />
+        <AreaChart data={reports} height={300} />
       </div>
     </div>
   );

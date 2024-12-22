@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Cards from "../components/cards";
 import DateButton from "../components/tabs/datebutton";
 import Tabs from "../components/tabs/tab";
@@ -16,7 +16,7 @@ const Dashboard = () => {
   const [getDate, setDate] = useState<any>("12 months");
   const [showPicker, setShowPicker] = useState(false);
 
-  const fetchMineral = async () => {
+  const fetchMineral = useCallback(async () => {
     try {
       const response = await fetch(`${baseUrl}admin/reports`);
       if (!response.ok) {
@@ -28,16 +28,9 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error fetching options:", error);
     }
-  };
+  }, [baseUrl]);
   useEffect(() => {
     fetchMineral();
-    getDashboardStat(getDate)
-      .then((data) => {
-        setDashboard(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching dashboard stats:", error);
-      });
   }, []);
   useEffect(() => {
     getDashboardStat(getDate)

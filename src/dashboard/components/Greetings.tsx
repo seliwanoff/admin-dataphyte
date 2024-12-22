@@ -16,10 +16,12 @@ const Greetings = () => {
           Lorem ipsum dolor sit amet consectetur. Ultrices turpis amet et id.
         </p>
       </div>
+      {/**
       <button className="loginbuton w-[170px] flex items-center justify-center gap-3">
         <img src={profile} alt="" className="h-5" />
         Invite staff
       </button>
+      */}
     </div>
   );
 };
