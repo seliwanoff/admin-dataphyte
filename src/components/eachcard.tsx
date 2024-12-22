@@ -29,6 +29,7 @@ const EachCard: React.FC<EachCardProps> = ({
           </div>
           <img src={mainImage} alt={`${title} icon`} className="h-12" />
         </div>
+        {/***
 
         <div className="flex items-center gap-2 font-Satoshi text-[14px] text-[#475467]">
           <span className="flex items-center gap-2 text-[#079455]">
@@ -37,6 +38,7 @@ const EachCard: React.FC<EachCardProps> = ({
           </span>
           vs last month
         </div>
+        */}
       </div>
     </div>
   );
