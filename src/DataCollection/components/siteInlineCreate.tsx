@@ -113,6 +113,10 @@ const SiteInlineCreate: React.FC<PeopleInlineCreateProps> = ({
     ? typedCountries[selectedCountry]?.states[selectedState] || []
     : [];
   const handleSubmit = async () => {
+
+    if(siteActualAddress && siteAddress){
+
+
     setIsLoading(true);
     const formData = new FormData();
     formData.append("name", siteName);
@@ -190,6 +194,10 @@ const SiteInlineCreate: React.FC<PeopleInlineCreateProps> = ({
       setShowOverlay(false);
       setSearchMineralQueryc("");
     }
+  }else{
+    showNotification("Error!", `Address field is required.`, "danger");
+
+  }
   };
 
   return (

@@ -566,6 +566,7 @@ const MiningSiteWrapper: React.FC = () => {
     } finally {
       setIsloading(false);
     }
+
   };
   useEffect(() => {
     if (
@@ -1063,13 +1064,18 @@ const MiningSiteWrapper: React.FC = () => {
           <button
             className="px-4 py-2 bg-primary font-polySans text-[14px] text-white rounded font-medium"
             onClick={() => {
-              if (currentStep === steps.length - 1) {
+              if(companyActual && companyAddress){
+                if (currentStep === steps.length - 1) {
                 window.location.reload();
               } else {
                 setFiles([]);
                 setSearchQuery("");
                 setCurrentStep((prev) => prev + 1);
               }
+            }else{
+              showNotification("Error!", `Address field is required`, "danger");
+
+            }
             }}
           >
             {currentStep === steps.length - 1 ? "Restart" : "Next"}
