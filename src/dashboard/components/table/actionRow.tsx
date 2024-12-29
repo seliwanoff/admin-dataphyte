@@ -24,6 +24,7 @@ const ActionRow: React.FC<ActionRowProps> = ({
   url,
 }) => {
   const [isDrop, setIsdrop] = useState(false);
+  const baseURlFile = process.env.REACT_APP_FILE_URL;
 
   const handleStatusChange = async (id: number, newStatus: string) => {
     try {
@@ -52,8 +53,7 @@ const ActionRow: React.FC<ActionRowProps> = ({
             <span
               className="text-[#101828] font-Satoshi text-[14px] leading-[18.4px]"
               onClick={() => {
-                if (url)
-                  setUrl(`https://cardri.s3.eu-west-1.amazonaws.com/${url}`);
+                if (url) setUrl(`${baseURlFile}${url}`);
                 setShowDocumment(true);
                 setIsdrop(false);
               }}

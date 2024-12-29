@@ -5,6 +5,8 @@ interface CustomDatePickerProps {
 }
 
 const Activities: React.FC<CustomDatePickerProps> = ({ reports }) => {
+  const baseURlFile = process.env.REACT_APP_FILE_URL;
+
   return (
     <div className="max-w-[316px] w-full h-[408px] cards ">
       <div className="w-full h-full  my-3">
@@ -28,7 +30,7 @@ const Activities: React.FC<CustomDatePickerProps> = ({ reports }) => {
                     <img
                       src={
                         item.display_picture
-                          ? `https://cardri.s3.eu-west-1.amazonaws.com/${item.display_picture}`
+                          ? `${baseURlFile}${item.display_picture}`
                           : avater
                       }
                       alt=""
