@@ -16,6 +16,8 @@ const TableManagementAnalytic: React.FC<MaintableProps> = ({
   setCurrentPage,
   setRowsPerPage,
 }) => {
+  const [showPicker, setShowPicker] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -26,7 +28,11 @@ const TableManagementAnalytic: React.FC<MaintableProps> = ({
   return (
     <div className="mt-5 w-full cards p-6 flex flex-col gap-[10px]">
       <div className="flex flex-col gap-8">
-        <DataTableTools />
+        <DataTableTools
+          type={"report"}
+          showPicker={showPicker}
+          setShowPicker={setShowPicker}
+        />
         <AnalyticTableRowCol reports={reports} fetchMineral={fetchMineral} />
         <Pagination
           totalItems={totalItems}

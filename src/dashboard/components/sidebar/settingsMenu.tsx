@@ -13,6 +13,7 @@ const SettingsMenu = () => {
   return (
     <div className="px-[20px] justify-start flex py-[24px] flex-col">
       <nav className="flex flex-col gap-2">
+        {/**
         <SubMainmenu
           logo={settingsLogo}
           activeLogo="/path/to/active-logo.png"
@@ -22,6 +23,7 @@ const SettingsMenu = () => {
           <img src={settingsLogo} alt="" className="h-[18px]" />
           Settings
         </SubMainmenu>
+        */}
 
         <div className="border-t ">
           <div className=" flex justify-between items-center mt-3 pl-[15px] ">

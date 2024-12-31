@@ -12,12 +12,17 @@ interface tableProps {
   currentPage?: any;
   rowsPerPage?: any;
   setTotalItems?: any;
+  selectedItem?: any;
+  searchQuery?: any;
 }
 const TableRowCol: React.FC<tableProps> = ({
   currentPage,
   rowsPerPage,
   setTotalItems,
+  selectedItem,
+  searchQuery,
 }) => {
+  // console.log(selectedItem);
   const baseUrl = process.env.REACT_APP_URL;
 
   const [allAdmin, setAlladmin] = useState([]);
@@ -25,7 +30,33 @@ const TableRowCol: React.FC<tableProps> = ({
   const fetchAdmin = async () => {
     try {
       const response = await fetch(
-        `${baseUrl}document/getdocuments?count=${rowsPerPage}&page=${currentPage}`,
+        `${baseUrl}document/getdocuments?count=${rowsPerPage}&page=${currentPage}${
+          selectedItem ? `&category=${selectedItem.toLowerCase()}` : ""
+        }`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch options");
+      }
+
+      const data = await response.json();
+      // console.log(data.data.total);
+      setAlladmin(data.data.data);
+      setTotalItems(data.data.total);
+    } catch (error) {
+      console.error("Error fetching options:", error);
+    }
+  };
+
+  const fetchAdminSearch = async () => {
+    try {
+      const response = await fetch(
+        `${baseUrl}search/document?q=${searchQuery}`,
         {
           method: "GET",
           headers: {
@@ -47,7 +78,15 @@ const TableRowCol: React.FC<tableProps> = ({
   };
   useEffect(() => {
     fetchAdmin();
-  }, [rowsPerPage, currentPage]);
+  }, [rowsPerPage, currentPage, selectedItem]);
+
+  useEffect(() => {
+    if (searchQuery) {
+      fetchAdminSearch();
+    } else {
+      fetchAdmin();
+    }
+  }, [searchQuery]);
   return (
     <table className="bg-inherit w-full border-none">
       <thead className="thead">
@@ -67,7 +106,13 @@ const TableRowCol: React.FC<tableProps> = ({
       <tbody className="tbody">
         {allAdmin?.map((item: any, index: any) => (
           <tr className="row" key={index}>
-            <NewHero name={item.name} width={30} image={doc} type={item.type} />
+            <NewHero
+              name={item.name}
+              width={30}
+              image={doc}
+              type={item.type}
+              size={item.size}
+            />
             <TableRow name={item.description} width={30} />
             <TableRow name={item.country} width={10} />
             <TableRow name={item.category} width={10} />

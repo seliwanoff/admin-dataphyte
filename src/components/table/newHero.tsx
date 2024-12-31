@@ -8,8 +8,15 @@ interface HeroRowProps {
   width: any;
   image: any;
   type?: any;
+  size?: any;
 }
-const NewHero: React.FC<HeroRowProps> = ({ name, width, image, type }) => {
+const NewHero: React.FC<HeroRowProps> = ({
+  name,
+  width,
+  image,
+  type,
+  size,
+}) => {
   return (
     <td className="rows  flex items-center gap-4">
       <img
@@ -28,7 +35,7 @@ const NewHero: React.FC<HeroRowProps> = ({ name, width, image, type }) => {
       <div className="flex flex-col gap-[2]">
         <span className="block">{name}</span>
         <span className="block text-[#828282] text-xs font-normal font-polySans">
-          917kb
+          {size}
         </span>
       </div>
     </td>

@@ -174,6 +174,7 @@ const MainMenu = () => {
           />
           Analytics and Report
         </SubMainmenu>
+        {/**
         <SubMainmenu
           logo={userlogo}
           activeLogo="/path/to/active-logo.png"
@@ -187,6 +188,7 @@ const MainMenu = () => {
           />
           Access logs
         </SubMainmenu>
+        */}
       </nav>
     </div>
   );
