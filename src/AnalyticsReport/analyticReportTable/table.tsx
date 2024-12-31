@@ -9,6 +9,7 @@ interface MaintableProps {
   setCurrentPage?: any;
   setRowsPerPage?: any;
   setSearchQuery?: any;
+  setDate?: any;
 }
 const TableManagementAnalytic: React.FC<MaintableProps> = ({
   reports,
@@ -17,6 +18,7 @@ const TableManagementAnalytic: React.FC<MaintableProps> = ({
   setCurrentPage,
   setRowsPerPage,
   setSearchQuery,
+  setDate,
 }) => {
   const [showPicker, setShowPicker] = useState(false);
   const handlePageChange = (page: number) => {
@@ -34,6 +36,7 @@ const TableManagementAnalytic: React.FC<MaintableProps> = ({
           showPicker={showPicker}
           setShowPicker={setShowPicker}
           setSearchQuery={setSearchQuery}
+          setDate={setDate}
         />
         <AnalyticTableRowCol reports={reports} fetchMineral={fetchMineral} />
         <Pagination

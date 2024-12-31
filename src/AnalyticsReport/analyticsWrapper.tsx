@@ -12,6 +12,7 @@ const UserManagementWrapper = () => {
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [totalItems, setTotalItems] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [date, setDate] = useState<any>("");
 
   const fetchMineral = async () => {
     try {
@@ -33,7 +34,14 @@ const UserManagementWrapper = () => {
   const fetchMineralSearch = async () => {
     try {
       const response = await fetch(
-        `${baseUrl}search/all/report?q=${searchQuery}`
+        `${baseUrl}search/all/report?q=${searchQuery}&year=${new Date(date.from)
+          .getFullYear()
+          .toString()}&month=${(new Date(date.from).getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}&day=${new Date(date.from)
+          .getDate()
+          .toString()
+          .padStart(2, "0")}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch options");
@@ -51,12 +59,12 @@ const UserManagementWrapper = () => {
   }, [currentPage, rowsPerPage]);
 
   useEffect(() => {
-    if (searchQuery) {
+    if (searchQuery || date) {
       fetchMineralSearch();
     } else {
       fetchMineral();
     }
-  }, [searchQuery]);
+  }, [searchQuery, date]);
   return (
     <Layout>
       <div className="w-full">
@@ -68,6 +76,7 @@ const UserManagementWrapper = () => {
           setCurrentPage={setCurrentPage}
           setRowsPerPage={setRowsPerPage}
           setSearchQuery={setSearchQuery}
+          setDate={setDate}
         />
       </div>
     </Layout>

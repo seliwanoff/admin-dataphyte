@@ -11,6 +11,7 @@ interface DropdownProps {
   type?: any;
   showPicker?: any;
   setShowPicker?: any;
+  setDate?: any;
 }
 const DataTableTools: React.FC<DropdownProps> = ({
   setSelectedItem,
@@ -19,6 +20,7 @@ const DataTableTools: React.FC<DropdownProps> = ({
   type,
   showPicker,
   setShowPicker,
+  setDate,
 }) => {
   const items = ["Regulation", "License", "Others"];
 
@@ -26,7 +28,9 @@ const DataTableTools: React.FC<DropdownProps> = ({
     setSelectedItem(item);
   };
   const handleDateChange = (dates: { from: Date; to: Date }) => {
-    console.log(dates);
+    //console.log(dates);
+
+    setDate(dates);
   };
   const [show, setShow] = useState(false);
   return (

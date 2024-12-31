@@ -7,13 +7,12 @@ export const getDashboardStat = async (
     | "1 day"
     | { from: Date; to: Date }
 ): Promise<any> => {
-  const baseUrl = process.env.REACT_APP_URL; // Replace with your base URL
+  const baseUrl = process.env.REACT_APP_URL;
   const endpoint = `${baseUrl}admin/stats/dashbord`;
 
-  // Helper to format date parts
   const formatDatePart = (date: Date) => ({
     year: date.getFullYear().toString(),
-    month: (date.getMonth() + 1).toString().padStart(2, "0"), // Month is 0-based
+    month: (date.getMonth() + 1).toString().padStart(2, "0"),
     day: date.getDate().toString().padStart(2, "0"),
   });
 
@@ -40,19 +39,16 @@ export const getDashboardStat = async (
         fromDate.setHours(toDate.getHours() - 24);
         break;
       case "1 day":
-        // No parameters for "1 day"
         fromDate = null;
         break;
       default:
         throw new Error(`Invalid date range: ${dateRange}`);
     }
   } else {
-    // Custom date range
     fromDate = dateRange.from;
     toDate = dateRange.to;
   }
 
-  // Format query parameters if applicable
   let queryParams = "";
   if (fromDate) {
     const fromParts = formatDatePart(fromDate);
@@ -69,7 +65,7 @@ export const getDashboardStat = async (
   }
 
   try {
-    const url = fromDate ? `${endpoint}?${queryParams}` : endpoint; // Use query params only if applicable
+    const url = fromDate ? `${endpoint}?${queryParams}` : endpoint;
     const response = await fetch(url, {
       method: "GET",
       headers: {
