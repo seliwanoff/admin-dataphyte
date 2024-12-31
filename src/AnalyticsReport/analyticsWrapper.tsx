@@ -11,6 +11,7 @@ const UserManagementWrapper = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(20);
   const [totalItems, setTotalItems] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchMineral = async () => {
     try {
@@ -28,9 +29,34 @@ const UserManagementWrapper = () => {
       console.error("Error fetching options:", error);
     }
   };
+
+  const fetchMineralSearch = async () => {
+    try {
+      const response = await fetch(
+        `${baseUrl}search/all/report?q=${searchQuery}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch options");
+      }
+
+      const data = await response.json();
+      setReports(data.data.data);
+      setTotalItems(data.data.total);
+    } catch (error) {
+      console.error("Error fetching options:", error);
+    }
+  };
   useEffect(() => {
     fetchMineral();
   }, [currentPage, rowsPerPage]);
+
+  useEffect(() => {
+    if (searchQuery) {
+      fetchMineralSearch();
+    } else {
+      fetchMineral();
+    }
+  }, [searchQuery]);
   return (
     <Layout>
       <div className="w-full">
@@ -41,6 +67,7 @@ const UserManagementWrapper = () => {
           totalItems={totalItems}
           setCurrentPage={setCurrentPage}
           setRowsPerPage={setRowsPerPage}
+          setSearchQuery={setSearchQuery}
         />
       </div>
     </Layout>
