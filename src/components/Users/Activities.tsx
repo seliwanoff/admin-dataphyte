@@ -24,7 +24,7 @@ const Activities: React.FC<CustomDatePickerProps> = ({ reports }) => {
         {reports && reports.length > 0 ? (
           <div className="flex flex-col gap-[20px] mt-4">
             {reports &&
-              reports?.map((item: any, index: any) => (
+              reports?.slice(0, 5)?.map((item: any, index: any) => (
                 <div className="w-full flex justify-between items-center">
                   <div className="flex gap-3 items-center">
                     <img
