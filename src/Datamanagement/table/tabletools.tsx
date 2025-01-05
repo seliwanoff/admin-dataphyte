@@ -28,8 +28,6 @@ const DataTableTools: React.FC<DropdownProps> = ({
     setSelectedItem(item);
   };
   const handleDateChange = (dates: { from: Date; to: Date }) => {
-    //console.log(dates);
-
     setDate(dates);
   };
   const [show, setShow] = useState(false);
