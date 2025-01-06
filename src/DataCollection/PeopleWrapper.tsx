@@ -204,7 +204,7 @@ const PeopleWrapper: React.FC = () => {
 
       const data = await response.json();
       //  console.log(data);
-      setMineralOption(data.data);
+      setMineralOption(data.data.data);
     } catch (error) {
       console.error("Error fetching options:", error);
       setOptions([]);

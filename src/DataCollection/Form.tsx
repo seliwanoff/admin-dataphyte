@@ -217,7 +217,7 @@ const StepperWithForms: React.FC = () => {
 
       const data = await response.json();
 
-      setMineralOption(data.data);
+      setMineralOption(data.data.data);
     } catch (error) {
       console.error("Error fetching options:", error);
       setOptions([]);
