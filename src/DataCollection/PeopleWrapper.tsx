@@ -9,6 +9,8 @@ import UploadEl from "../dashboard/components/UpdateEl";
 import MineralSearchDrop from "../panel/components/MineralSearchrop";
 import LoginButton from "../panel/components/loginButton";
 import RoleSelect from "../panel/components/RolesComponent";
+import CompanyRole from "../panel/components/CompanyRoleComponent";
+
 import CountrySelect from "../panel/components/CountrySelect";
 import RichTextEditor from "./components/RichText";
 import MultipleEl from "../dashboard/components/MultipleEl";
@@ -17,6 +19,8 @@ import MineralInlineCreate from "./components/mineralinlineCreate";
 import PeopleInlineCreate from "./components/propleInlineCreate";
 import PreviewmPagem from "./previewPage";
 import PreviewPage from "./previewPage";
+import SiteInlineCreate from "./components/siteInlineCreate";
+import { splitByNumber } from "../helper";
 
 interface StepperProps {
   steps: string[];
@@ -49,7 +53,15 @@ const Stepper: React.FC<StepperProps> = ({
 
 const PeopleWrapper: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const steps = ["Step 1", "Step 2", "Step 3", "Step 5", "Step 6"];
+  const steps = [
+    "Step 1",
+    "Step 2",
+    "Step 3",
+    "Step 4",
+    "Step 5",
+    "Step 6",
+    "Step 7",
+  ];
 
   const [name, setName] = useState("");
   const [rc_number, setRcNumber] = useState("");
@@ -73,6 +85,7 @@ const PeopleWrapper: React.FC = () => {
   const [selectedValuesCompany, setSelectedValuesCompany] = useState<string[]>(
     []
   );
+  const [seletctedSiteRoles, setSelectedSiteRoles] = useState<string>("");
   const [selectedValuesDoc, setSelectedValuesDoc] = useState<string[]>([]);
 
   const [selectedCompanyCountries, setSelectedCompanyCountries] = useState<any>(
@@ -112,6 +125,8 @@ const PeopleWrapper: React.FC = () => {
   const [peopleImage, setPeopleImage] = useState<any>(null);
   const [peopleOtherData, setPeopleOtherData] = useState("");
   const [selectedRoles, setSelectedRoles] = useState<any>([]);
+  const [selectedCompanyRoles, setSelectedCompanyRoles] = useState<any>([]);
+
   const [selectedCountries, setSelectedCountries] = useState<any>([]);
 
   const [siteName, setSiteName] = useState("");
@@ -210,93 +225,6 @@ const PeopleWrapper: React.FC = () => {
       setOptions([]);
     }
   };
-  const handleSubmit = async () => {
-    setIsloading(true);
-    const formData = new FormData();
-    formData.append("name", mineralName);
-    formData.append("location", mineralLocation);
-    formData.append("tag", mineralTag);
-    formData.append("other_data", mineralOtherInfo);
-
-    // If `imageMineral` is a File, append it to FormData
-    if (imageMineral) {
-      formData.append("image", imageMineral, imageMineral.name);
-    }
-
-    try {
-      const response = await fetch(`${baseUrl}mineral/create`, {
-        method: "POST",
-        body: formData, // Send FormData in the body
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch options");
-      }
-
-      const data = await response.json();
-
-      showNotification("Success!", "Mineral added successful", "success");
-      setisAddnewminera(false);
-    } catch (error) {
-      showNotification("Error!", `Error fetching options:${error}`, "danger");
-    } finally {
-      setIsloading(false);
-    }
-  };
-  const handleSubmitSite = async () => {
-    setIsloading(true);
-    const formData = new FormData();
-    formData.append("name", siteName);
-    formData.append("address", siteaddress);
-    formData.append(
-      "location[0][log]",
-      String(siteActualAddress && siteActualAddress?.geometry.location.lng)
-    );
-    formData.append(
-      "location[0][lat]",
-      String(siteActualAddress && siteActualAddress?.geometry.location.lat)
-    );
-    formData.append("location[0][name]", siteaddress);
-    formData.append(
-      "location[0][place_id]",
-      siteActualAddress && siteActualAddress?.place_id
-    );
-
-    selectedValuesMineral.forEach((mineral: any, index) => {
-      formData.append(`mineral[${index}]`, mineral.id.toString());
-    });
-    selectedCountries.forEach((country: any, index: any) => {
-      formData.append(`country[${index}]`, country);
-    });
-
-    selectedValuesPeople.forEach((people: any, index: any) => {
-      formData.append(`people[${index}]`, people.id.toString());
-    });
-
-    if (siteImage) {
-      formData.append("image", siteImage, siteImage.name);
-    }
-
-    try {
-      const response = await fetch(`${baseUrl}mininig_site/create`, {
-        method: "POST",
-        body: formData, // Send FormData in the body
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch options");
-      }
-
-      const data = await response.json();
-
-      showNotification("Success!", "Site added successful", "success");
-      setisAddnewSite(false);
-    } catch (error) {
-      showNotification("Error!", `Error fetching options:${error}`, "danger");
-    } finally {
-      setIsloading(false);
-    }
-  };
 
   const handleSubmitDoc = async () => {
     setIsloading(true);
@@ -324,7 +252,6 @@ const PeopleWrapper: React.FC = () => {
 
         if (!allFilesValid) {
           showNotification("Error!", `Please select file`, "danger");
-          //  throw new Error("One or more files exceed the size limit.");
         }
       } else {
         throw new Error("No files selected for upload.");
@@ -438,44 +365,6 @@ const PeopleWrapper: React.FC = () => {
       setIsloading(false);
     }
   };
-  const handleSubmitPeople = async () => {
-    setIsloading(true);
-    const formData = new FormData();
-    formData.append("first_name", first_name);
-    formData.append("title", title);
-    formData.append("last_name", last_name);
-    formData.append("other_name", other_name);
-    formData.append("tag", peopleTag);
-    formData.append("location", peopleCountry);
-
-    formData.append("role", selectedRoles);
-    formData.append("other_data", peopleOtherData);
-
-    // If `imageMineral` is a File, append it to FormData
-    if (peopleImage) {
-      formData.append("image", peopleImage, peopleImage.name);
-    }
-
-    try {
-      const response = await fetch(`${baseUrl}people/create`, {
-        method: "POST",
-        body: formData, // Send FormData in the body
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch options");
-      }
-
-      const data = await response.json();
-
-      //showNotification("Success!", "People added successful", "success");
-      setisaddNewPeople(false);
-    } catch (error) {
-      showNotification("Error!", `Error fetching options:${error}`, "danger");
-    } finally {
-      setIsloading(false);
-    }
-  };
 
   const handleSubmitCompany = async () => {
     setIsloading(true);
@@ -498,7 +387,44 @@ const PeopleWrapper: React.FC = () => {
     selectedCompanyCountries.forEach((country: any, index: any) => {
       formData.append(`country[${index}]`, country);
     });
-    // formData.append(`company`, selectedValuesPeople);
+
+    selectedValuesPeople.forEach((company: any, index: any) => {
+      formData.append(`company[${index}][id]`, company.id.toString());
+
+      if (selectedCompanyRoles[index]) {
+        formData.append(`company[${index}][role]`, selectedCompanyRoles[index]);
+      }
+    });
+
+    /***
+    selectedValuesPeople.forEach((company: any, index: any) => {
+      formData.append(`company[${index}][id]`, company.id.toString());
+    });
+    selectedCompanyRoles.forEach((role: any, index: any) => {
+      formData.append(`company[${index}][role]`, role);
+    });
+     selectedValuesSite.forEach((site: any, index: any) => {
+      formData.append(`site[${index}][role]`, site?.role?.toString());
+    });
+     */
+
+    selectedValuesSite.forEach((site: any, index: any) => {
+      formData.append(`site[${index}][id]`, site.id.toString());
+    });
+
+    const siteArray = seletctedSiteRoles.split(",").map((t) => t.trim());
+    const expectedNumber = selectedValuesSite.length;
+    const chunkedTags = splitByNumber(siteArray, expectedNumber);
+
+    //console.log(expectedNumber, chunkedTags);
+    selectedValuesSite.forEach((site: any, index: any) => {
+      // Get the roles for the current site
+      const roles = chunkedTags[index] || [];
+
+      roles.forEach((role, roleIndex) => {
+        formData.append(`site[${roleIndex}][role]`, role);
+      });
+    });
 
     formData.append("other_data", other_data);
 
@@ -555,31 +481,22 @@ const PeopleWrapper: React.FC = () => {
     setSelectedOption(value);
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    step: number
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [step]: {
-        ...prev[step],
-        [e.target.name]: e.target.value,
-      },
-    }));
-  };
-
   const goToStep = (stepIndex: number) => {
     setCurrentStep(stepIndex);
   };
 
   return (
     <div className="p-4">
-      {showOverlay && currentStep === 0 && (
+      {showOverlay && currentStep === 2 && (
         <CompanyInlineCreate
           companyName={""}
           show={showOverlay}
           setShowOverlay={setShowOverlay}
           onUpdateCompanyName={setSelectedValuesParent}
+          selectedValuesParent={selectedValuesSite}
+          setSelectedValuesParent={setSelectedValuesPeople}
+          setAcquireValue={setAcquireValue}
+          setSearchMineralQueryc={setSearchMineralQuery}
         />
       )}
       {showOverlay && currentStep === 1 && (
@@ -594,7 +511,20 @@ const PeopleWrapper: React.FC = () => {
           setSearchMineralQueryc={setSearchMineralQuery}
         />
       )}
-      {showOverlay && currentStep === 2 && (
+
+      {showOverlay && currentStep === 3 && (
+        <SiteInlineCreate
+          //mineralNames={""}
+          show={showOverlay}
+          setShowOverlay={setShowOverlay}
+          setSelectedValuesParent={setSelectedValuesSite}
+          selectedValuesParent={selectedValuesSite}
+          setAcquireValue={setAcquireValue}
+          setSearchMineralQueryc={setSearchMineralQuery}
+          // onUpdateCompanyName={setSelectedValuesParent}
+        />
+      )}
+      {showOverlay && currentStep === 20 && (
         <PeopleInlineCreate
           //mineralNames={""}
           show={showOverlay}
@@ -663,18 +593,7 @@ const PeopleWrapper: React.FC = () => {
                 options={options}
                 setPlacedId={setPlacedId}
               />
-              {/***
-              <InputElement
-                type="text"
-                label="RC Number"
-                placeholder="Enter RC Number"
-                value={rc_number}
-                onChange={(e) => setRcNumber(e.target.value)}
-                name="rc_number"
-                required={true}
-                //className="additional-styles"
-              />
-              */}
+
               <CountrySelect
                 label="Select Countries"
                 values={selectedCompanyCountries}
@@ -724,17 +643,7 @@ const PeopleWrapper: React.FC = () => {
                   onClose={closeEditor}
                 />
               )}
-              {/***
-              <TextAreaElement
-                type="text"
-                label="Other Info"
-                placeholder="Other Info"
-                value={other_data}
-                onChange={(e: any) => setOtherdata(e.target.value)}
-                name="tag"
-                required={false}
-              />
-               */}
+
               <UploadEl
                 placeholder="Gold, Ore etc..."
                 helperText="A cover image of yourself"
@@ -774,7 +683,7 @@ const PeopleWrapper: React.FC = () => {
           </div>
         )}
 
-        {currentStep === 10 && (
+        {currentStep === 2 && (
           <div className="py-1 px-5">
             <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
               {isaddNewPeople ? "Add Company" : "Select Company"}
@@ -790,12 +699,22 @@ const PeopleWrapper: React.FC = () => {
                   setSearchQuery={setSearchMineralQuery}
                   type={2}
                   setisAddnewpeople={setisaddNewPeople}
+                  setShowOverlay={setShowOverlay}
+                  acquireValue={acquireValue}
                 />
               )}
+              {
+                <CompanyRole
+                  label="Select role"
+                  values={selectedCompanyRoles}
+                  onChange={setSelectedCompanyRoles}
+                  expectedCount={selectedValuesPeople.length || 0}
+                />
+              }
             </div>
           </div>
         )}
-        {currentStep === 11 && (
+        {currentStep === 3 && (
           <div className="py-1 px-5">
             <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
               {isaddNewSite ? "Add Mining site" : "Select Mining site"}
@@ -812,33 +731,38 @@ const PeopleWrapper: React.FC = () => {
                     setSearchQuery={setSearchMineralQuery}
                     type={4}
                     setisAddnewpeople={setisAddnewSite}
+                    setShowOverlay={setShowOverlay}
                   />
-                  <LoginButton
-                    onClick={handleSubmitCompany}
-                    type="button"
-                    disable={isLoading}
-                  >
-                    {isLoading ? "submitting" : "Continue"}
-                  </LoginButton>
+                  <InputElement
+                    type="text"
+                    label="Site role  (Please separate with (,)"
+                    placeholder="Enter role"
+                    value={seletctedSiteRoles}
+                    onChange={(e) => setSelectedSiteRoles(e.target.value)}
+                    name="roles"
+                    required={true}
+                  />
                 </>
               )}
             </div>
           </div>
         )}
-        {currentStep === 2 && (
+        {currentStep === 4 && (
           <PreviewPage
             name={title + " " + first_name + " " + last_name + other_name}
             country={selectedCompanyCountries}
             tag={mineralTag}
             title={title}
             mineral={selectedValuesMineral}
+            site={selectedValuesSite}
+            company={selectedValuesPeople}
             location={companyAddress}
             picture={image && image?.name}
             submitFunction={handleSubmitCompany}
             isLoading={isLoading}
           />
         )}
-        {currentStep === 3 && (
+        {currentStep === 5 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -881,7 +805,7 @@ const PeopleWrapper: React.FC = () => {
           </div>
         )}
 
-        {currentStep === 4 && (
+        {currentStep === 6 && (
           <div className="py-1 px-5">
             <div className="flex flex-col gap-1">
               <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
@@ -963,7 +887,7 @@ const PeopleWrapper: React.FC = () => {
             Previous
           </button>
         )}
-        {currentStep !== 2 && currentStep !== 5 && files.length === 0 && (
+        {currentStep !== 4 && currentStep !== 6 && files.length === 0 && (
           <button
             className="px-4 py-2 bg-primary font-polySans text-[14px] text-white rounded font-medium"
             onClick={() => {

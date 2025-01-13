@@ -147,7 +147,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({
                 </span>
                 <ul className="list-none pl-5 font-bold font-Satoshi text-[16px] max-w-[220px] text-ellipsis overflow-hidden text-nowrap">
                   {company.map((c: any) => (
-                    <li className="font-Satoshi text-[14px] text-[#202020]">
+                    <li className="font-Satoshi text-[14px] text-[#202020] text-right">
                       {c.name}
                     </li>
                   ))}
@@ -203,7 +203,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({
                   {mineral.map((m: any) => (
                     <li
                       key={m.id}
-                      className="font-Satoshi text-[14px] text-[#202020]"
+                      className="font-Satoshi text-[14px] text-[#202020] text-right"
                     >
                       {m.name}
                     </li>
@@ -220,7 +220,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({
                   {site.map((m: any) => (
                     <li
                       key={m.id}
-                      className="font-Satoshi text-[14px] text-[#202020]"
+                      className="font-Satoshi text-[14px] text-[#202020] text-right"
                     >
                       {m.name}
                     </li>
