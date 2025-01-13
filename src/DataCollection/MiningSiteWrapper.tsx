@@ -19,6 +19,7 @@ import PeopleInlineCreate from "./components/propleInlineCreate";
 import countriesData from "../data/Countries_States_LGAs.json"; // Import the JSON data
 import SearchableDropdown from "../panel/components/statelgComponent";
 import PreviewPage from "./previewPage";
+import { splitByNumber } from "../helper";
 interface StateData {
   [key: string]: string[]; // Assuming each state contains an array of cities
 }
@@ -88,6 +89,8 @@ const MiningSiteWrapper: React.FC = () => {
   const [selectedValuesMineral, setSelectedValuesMineral] = useState<string[]>(
     []
   );
+  const [seletctedSiteRoles, setSelectedSiteRoles] = useState<string>("");
+
   const [showOverlay, setShowOverlay] = useState(false);
 
   const closeEditor = () => setIsEditorOpen(false);
@@ -353,6 +356,7 @@ const MiningSiteWrapper: React.FC = () => {
 
       const formData = new FormData();
       formData.append("name", docName);
+      formData.append("category", "Others");
       formData.append("mining_site_id", company_id);
 
       if (files) {
@@ -524,7 +528,23 @@ const MiningSiteWrapper: React.FC = () => {
     selectedValuesPeople.forEach((people: any, index) => {
       formData.append(`people[${index}]`, people.id.toString());
     });
+    selectedValuesPeople.forEach((people: any, index) => {
+      formData.append(`people[${index}][id]`, people.id.toString());
+    });
 
+    const siteArray = seletctedSiteRoles.split(",").map((t) => t.trim());
+    const expectedNumber = selectedValuesPeople.length;
+    const chunkedTags = splitByNumber(siteArray, expectedNumber);
+
+    //console.log(expectedNumber, chunkedTags);
+    selectedValuesPeople.forEach((site: any, index: any) => {
+      const roles = chunkedTags[index] || [];
+
+      roles.forEach((role: any, roleIndex: any) => {
+        formData.append(`people[${roleIndex}][role]`, role);
+      });
+    });
+    /***
     if (ceo) {
       formData.append(`ceo_id`, ceo.id.toString());
     }
@@ -534,6 +554,7 @@ const MiningSiteWrapper: React.FC = () => {
     if (cto) {
       formData.append(`cto_id`, cto.id.toString());
     }
+      */
     formData.append("state", selectedState);
     formData.append("lg", selectedLGs);
     formData.append("rich_text", content);
@@ -844,6 +865,17 @@ const MiningSiteWrapper: React.FC = () => {
                     setShowOverlay={setShowOverlay}
                     acquireValue={acquireValue}
                   />
+
+                  <InputElement
+                    type="text"
+                    label="Select role  (Please separate with (,)"
+                    placeholder="Enter role"
+                    value={seletctedSiteRoles}
+                    onChange={(e) => setSelectedSiteRoles(e.target.value)}
+                    name="roles"
+                    required={true}
+                  />
+                  {/***
                   <FilterPeopleByPosition
                     label="Search CEO"
                     options={mineralOptions}
@@ -887,6 +919,7 @@ const MiningSiteWrapper: React.FC = () => {
                     //acquireValue={acquireValue}
                     setShowOverlay={setShowOverlay}
                   />
+                  */}
                 </>
               )}
             </div>
