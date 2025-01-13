@@ -17,6 +17,7 @@ import CompanyInlineCreate from "./components/CompanyInlineCreate";
 import MineralInlineCreate from "./components/mineralinlineCreate";
 import PeopleInlineCreate from "./components/propleInlineCreate";
 import PreviewPage from "./previewPage";
+import CompanyRole from "../panel/components/CompanyRoleComponent";
 
 interface StepperProps {
   steps: string[];
@@ -135,6 +136,7 @@ const StepperWithForms: React.FC = () => {
   const [searchMineralQuerycfo, setSearchMineralQuerycfo] = useState("");
   const [searchMineralQuerycto, setSearchMineralQuerycto] = useState("");
   const [searchMineralQueryceo, setSearchMineralQueryceo] = useState("");
+  const [selectedCompanyRoles, setSelectedCompanyRoles] = useState<any>([]);
 
   const [ceo, setCEO] = useState<{ id: string; name: string } | any>("");
   const [cfo, setCFO] = useState<{ id: string; name: string } | any>("");
@@ -498,6 +500,8 @@ const StepperWithForms: React.FC = () => {
       formData.append(`country[${index}]`, country);
     });
     formData.append("other_data", other_data);
+
+    /***
     if (ceo) {
       formData.append(`ceo_id`, ceo.id.toString());
     }
@@ -507,9 +511,18 @@ const StepperWithForms: React.FC = () => {
     if (cto) {
       formData.append(`cto_id`, cto.id.toString());
     }
+      */
 
-    selectedValuesParent.forEach((people: any, index) => {
+    selectedValuesPeople.forEach((people: any, index) => {
       formData.append(`parent_id`, people.id.toString());
+    });
+
+    selectedValuesPeople.forEach((people: any, index: any) => {
+      formData.append(`people[${index}][id]`, people.id.toString());
+
+      if (selectedCompanyRoles[index]) {
+        formData.append(`people[${index}][role]`, selectedCompanyRoles[index]);
+      }
     });
     if (image) {
       formData.append("image", image, image.name);
@@ -916,19 +929,27 @@ const StepperWithForms: React.FC = () => {
             </h2>
             <div className="flex flex-col gap-[24px] pt-4">
               {isaddNewPeople === false && (
-                /***
-                <MineralSearchDrop
-                  label="Select people"
-                  options={mineralOptions}
-                  values={selectedValuesPeople}
-                  onChange={(values: any) => setSelectedValuesPeople(values)}
-                  searchQuery={searchMineralQuery}
-                  setSearchQuery={setSearchMineralQuery}
-                  type={3}
-                  setisAddnewpeople={setisaddNewPeople}
-                />
- */
                 <>
+                  <MineralSearchDrop
+                    label="Select people"
+                    options={mineralOptions}
+                    values={selectedValuesPeople}
+                    onChange={(values: any) => setSelectedValuesPeople(values)}
+                    searchQuery={searchMineralQuery}
+                    setSearchQuery={setSearchMineralQuery}
+                    type={3}
+                    setisAddnewpeople={setisaddNewPeople}
+                  />
+
+                  <CompanyRole
+                    label="Select role"
+                    values={selectedCompanyRoles}
+                    onChange={setSelectedCompanyRoles}
+                    expectedCount={selectedValuesPeople.length || 0}
+                  />
+                </>
+
+                /***
                   <FilterPeopleByPosition
                     label="Search CEO"
                     options={mineralOptions}
@@ -968,7 +989,7 @@ const StepperWithForms: React.FC = () => {
 
                     positionFilter="CFO" // Filter only for CEOs
                   />
-                </>
+                  */
               )}
               {isaddNewPeople && (
                 <>
