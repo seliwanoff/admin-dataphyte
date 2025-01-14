@@ -144,6 +144,16 @@ const StepperWithForms: React.FC = () => {
 
   const [showOverlay, setShowOverlay] = useState(false);
 
+  const [sections, setSections] = useState([0]); // Array to track sections
+
+  const addNewSection = () => {
+    setSections((prevSections) => [...prevSections, prevSections.length]);
+  };
+
+  const removeSection = (index: number) => {
+    setSections((prevSections) => prevSections.filter((_, i) => i !== index));
+  };
+
   // console.log(files);
   // console.log(ceo);
 
@@ -512,18 +522,26 @@ const StepperWithForms: React.FC = () => {
       formData.append(`cto_id`, cto.id.toString());
     }
       */
+    selectedValuesPeople.forEach((person: any, index: number) => {
+      // Check if `person` is an array or nested structure
+      const actualPerson = Array.isArray(person) ? person[0] : person;
 
-    selectedValuesPeople.forEach((people: any, index) => {
-      formData.append(`parent_id`, people.id.toString());
-    });
+      // Append the person's ID
+      console.log("Processed person:", actualPerson);
+      formData.append(
+        `people[${index}][id]`,
+        actualPerson?.id?.toString() || ""
+      );
 
-    selectedValuesPeople.forEach((people: any, index: any) => {
-      formData.append(`people[${index}][id]`, people.id.toString());
-
+      // Append the role if it exists for the current index
       if (selectedCompanyRoles[index]) {
-        formData.append(`people[${index}][role]`, selectedCompanyRoles[index]);
+        formData.append(
+          `people[${index}][role]`,
+          selectedCompanyRoles[index]?.toString() || ""
+        );
       }
     });
+
     if (image) {
       formData.append("image", image, image.name);
     }
@@ -640,7 +658,7 @@ const StepperWithForms: React.FC = () => {
       setIsloading(false);
     }
   };
-  //  console.log(selectedValuesParent);
+  console.log(selectedValuesPeople);
   return (
     <div className="p-4">
       {showOverlay && currentStep === 0 && (
@@ -928,181 +946,53 @@ const StepperWithForms: React.FC = () => {
               {isaddNewPeople ? "Add People" : "Select People"}
             </h2>
             <div className="flex flex-col gap-[24px] pt-4">
-              {isaddNewPeople === false && (
-                <>
+              {sections.map((section, index) => (
+                <div
+                  key={index}
+                  className="border p-4 rounded-md bg-gray-50 flex flex-col gap-[24px]"
+                >
                   <MineralSearchDrop
-                    label="Select people"
+                    label={`Select people`}
                     options={mineralOptions}
-                    values={selectedValuesPeople}
-                    onChange={(values: any) => setSelectedValuesPeople(values)}
+                    values={selectedValuesPeople[index] || []}
+                    onChange={(values: any) => {
+                      const updatedValues = [...selectedValuesPeople];
+                      updatedValues[index] = values;
+                      setSelectedValuesPeople(updatedValues);
+                    }}
                     searchQuery={searchMineralQuery}
                     setSearchQuery={setSearchMineralQuery}
                     type={3}
-                    setisAddnewpeople={setisaddNewPeople}
                   />
 
                   <CompanyRole
                     label="Select role"
-                    values={selectedCompanyRoles}
-                    onChange={setSelectedCompanyRoles}
-                    expectedCount={selectedValuesPeople.length || 0}
-                  />
-                </>
-
-                /***
-                  <FilterPeopleByPosition
-                    label="Search CEO"
-                    options={mineralOptions}
-                    value={ceo}
-                    onChange={(values: any) => setCEO(values)}
-                    searchQuery={searchMineralQueryceo}
-                    setSearchQuery={setSearchMineralQueryceo}
-                    type={2}
-                    setShowOverlay={setShowOverlay}
-                    //setisAddnewpeople={setisAddnewminera}
-
-                    positionFilter="CEO" // Filter only for CEOs
-                  />
-                  <FilterPeopleByPosition
-                    label="Search CTO"
-                    options={mineralOptions}
-                    value={cto}
-                    onChange={(values: any) => setCTO(values)}
-                    searchQuery={searchMineralQuerycto}
-                    setSearchQuery={setSearchMineralQuerycto}
-                    type={2}
-                    setShowOverlay={setShowOverlay}
-                    //setisAddnewpeople={setisAddnewminera}
-
-                    positionFilter="CTO" // Filter only for CEOs
-                  />
-                  <FilterPeopleByPosition
-                    label="Search CFO"
-                    options={mineralOptions}
-                    value={cfo}
-                    onChange={(values: any) => setCFO(values)}
-                    searchQuery={searchMineralQuerycfo}
-                    setSearchQuery={setSearchMineralQuerycfo}
-                    type={2}
-                    setShowOverlay={setShowOverlay}
-                    //setisAddnewpeople={setisAddnewminera}
-
-                    positionFilter="CFO" // Filter only for CEOs
-                  />
-                  */
-              )}
-              {isaddNewPeople && (
-                <>
-                  <InputElement
-                    type="text"
-                    label="FIrst Name"
-                    placeholder="Enter First name"
-                    value={first_name}
-                    onChange={(e) => setFirstname(e.target.value)}
-                    name="name"
-                    required={false}
-                    //className="additional-styles"
-                  />
-                  <InputElement
-                    type="text"
-                    label="Last Name"
-                    placeholder="Enter First name"
-                    value={last_name}
-                    onChange={(e) => setLastname(e.target.value)}
-                    name="name"
-                    required={false}
-                    //className="additional-styles"
-                  />
-                  <InputElement
-                    type="text"
-                    label="Other Name"
-                    placeholder="Enter other name"
-                    value={other_name}
-                    onChange={(e) => setOtherName(e.target.value)}
-                    name="name"
-                    required={false}
-                    //className="additional-styles"
-                  />
-                  <CountrySelect
-                    label="Select Countries"
-                    values={selectedCountries}
-                    onChange={(countries) => setSelectedCountries(countries)}
-                  />
-                  <RoleSelect
-                    label="Select Roles"
-                    values={selectedRoles}
-                    onChange={(roles: any) => setSelectedRoles(roles)}
-                  />
-                  <InputElement
-                    type="text"
-                    label="Title"
-                    placeholder="Enter title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    name="name"
-                    required={false}
-                    //className="additional-styles"
+                    values={selectedCompanyRoles[index] || []}
+                    onChange={(values) => {
+                      const updatedRoles = [...selectedCompanyRoles];
+                      updatedRoles[index] = values;
+                      setSelectedCompanyRoles(updatedRoles);
+                    }}
+                    expectedCount={selectedValuesPeople[index]?.length || 0}
                   />
 
-                  <SearchableSelect
-                    label="Location"
-                    placeholder="Select address"
-                    value={peopleCountry}
-                    onChange={handleOptionChange}
-                    name="mineraladdress"
-                    required={true}
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    options={options}
-                    setPlacedId={setPlacedId}
-                  />
-                  <InputElement
-                    type="text"
-                    label="Tag(Please separate with (,))"
-                    placeholder="Enter Tag"
-                    value={peopleTag}
-                    onChange={(e) => setPeopleTag(e.target.value)}
-                    name="tag"
-                    required={false}
-                  />
-
-                  <TextAreaElement
-                    type="text"
-                    label="Other Info"
-                    placeholder="Other Info"
-                    value={peopleOtherData}
-                    onChange={(e: any) => setPeopleOtherData(e.target.value)}
-                    name="tag"
-                    required={false}
-                  />
-
-                  <UploadEl
-                    placeholder="Gold, Ore etc..."
-                    helperText=""
-                    label="People display Picture"
-                    value={peopleImage}
-                    setForm={setPeopleImage}
-                    name="display_picture"
-                    multipe={false}
-                    accept="image/*"
-                    instruction="SVG, PNG, JPG or GIF (max. 800x400px)"
-                  />
-
-                  <LoginButton
-                    onClick={handleSubmitPeople}
+                  <button
                     type="button"
-                    disable={isLoading}
+                    className="text-red-500 mt-2 font-polySans font-medium "
+                    onClick={() => removeSection(index)}
                   >
-                    {isLoading ? "Adding..." : "Add people"}
-                  </LoginButton>
-                  <span
-                    className="cursor-pointer text-[#202020] font-polySans text-[14px] text-center underline"
-                    onClick={() => setisaddNewPeople(false)}
-                  >
-                    Go to search
-                  </span>
-                </>
-              )}
+                    Remove Section
+                  </button>
+                </div>
+              ))}
+
+              <button
+                type="button"
+                className="bg-none text-primary text-right font-polySans font-semibold px-4 py-2 rounded mt-4 float-right  "
+                onClick={addNewSection}
+              >
+                Add Section
+              </button>
             </div>
           </div>
         )}
