@@ -89,7 +89,6 @@ const MiningSiteWrapper: React.FC = () => {
   const [selectedValuesMineral, setSelectedValuesMineral] = useState<string[]>(
     []
   );
-  const [seletctedSiteRoles, setSelectedSiteRoles] = useState<string>("");
 
   const [showOverlay, setShowOverlay] = useState(false);
 
@@ -166,6 +165,9 @@ const MiningSiteWrapper: React.FC = () => {
   const [selectedValuesParent, setSelectedValuesParent] = useState<string[]>(
     []
   );
+  const [selectedSiteRoles, setSelectedSiteRoles] = useState<string[]>([]);
+
+  const [siteSections, setSiteSections] = useState([0]);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
@@ -174,7 +176,15 @@ const MiningSiteWrapper: React.FC = () => {
 
   const [lgas, setLgas] = useState([]);
   const [searchMineralQueryceo, setSearchMineralQueryceo] = useState("");
+  const addNewSiteSection = () => {
+    setSiteSections((prev) => [...prev, prev.length]);
+  };
 
+  const removeSiteSection = (index: number) => {
+    setSiteSections((prev) => prev.filter((_, i) => i !== index));
+    setSelectedValuesSite((prev) => prev.filter((_, i) => i !== index));
+    setSelectedSiteRoles((prev) => prev.filter((_, i) => i !== index));
+  };
   const handleSetForm = (name: string, files: File[]) => {
     setFiles(files);
   };
@@ -524,26 +534,30 @@ const MiningSiteWrapper: React.FC = () => {
     selectedCompanyCountries.forEach((country: any, index: any) => {
       formData.append(`country[${index}]`, country);
     });
-
+    {
+      /**
     selectedValuesPeople.forEach((people: any, index) => {
       formData.append(`people[${index}]`, people.id.toString());
     });
     selectedValuesPeople.forEach((people: any, index) => {
       formData.append(`people[${index}][id]`, people.id.toString());
     });
+     */
+    }
 
-    const siteArray = seletctedSiteRoles.split(",").map((t) => t.trim());
-    const expectedNumber = selectedValuesPeople.length;
-    const chunkedTags = splitByNumber(siteArray, expectedNumber);
+    selectedValuesPeople.forEach((people: any, index: number) => {
+      const actualSite = Array.isArray(people) ? people[0] : people;
 
-    //console.log(expectedNumber, chunkedTags);
-    selectedValuesPeople.forEach((site: any, index: any) => {
-      const roles = chunkedTags[index] || [];
+      formData.append(`people[${index}][id]`, actualSite?.id?.toString() || "");
 
-      roles.forEach((role: any, roleIndex: any) => {
-        formData.append(`people[${roleIndex}][role]`, role);
-      });
+      if (selectedSiteRoles[index]) {
+        formData.append(
+          `people[${index}][role]`,
+          selectedSiteRoles[index]?.toString() || ""
+        );
+      }
     });
+
     /***
     if (ceo) {
       formData.append(`ceo_id`, ceo.id.toString());
@@ -851,6 +865,64 @@ const MiningSiteWrapper: React.FC = () => {
               {isaddNewPeople ? "Add People" : "Select People"}
             </h2>
             <div className="flex flex-col gap-[24px] pt-4">
+              {siteSections.map((section, index) => (
+                <div
+                  key={index}
+                  className="border p-4 rounded-md bg-gray-50 flex flex-col gap-[24px]"
+                >
+                  <MineralSearchDrop
+                    label={`Select people`}
+                    options={mineralOptions}
+                    values={selectedValuesPeople[index] || []}
+                    onChange={(values: any) => {
+                      const updatedValues = [...selectedValuesPeople];
+                      updatedValues[index] = values;
+                      setSelectedValuesPeople(updatedValues);
+                    }}
+                    searchQuery={searchMineralQuery}
+                    setSearchQuery={setSearchMineralQuery}
+                    type={3}
+                    setisAddnewpeople={setShowOverlay}
+                    setShowOverlay={setShowOverlay}
+                  />
+
+                  <InputElement
+                    type="text"
+                    label="Site role"
+                    placeholder="Enter role"
+                    value={selectedSiteRoles[index] || ""}
+                    onChange={(e) => {
+                      const updatedRoles = [...selectedSiteRoles];
+                      updatedRoles[index] = e.target.value;
+                      setSelectedSiteRoles(updatedRoles);
+                    }}
+                    name={`roles[${index}]`}
+                    required={true}
+                  />
+
+                  <button
+                    type="button"
+                    className="text-red-500 mt-2 font-polySans font-medium text-center w-full"
+                    onClick={() => removeSiteSection(index)}
+                  >
+                    Remove Section
+                  </button>
+                </div>
+              ))}
+
+              <button
+                type="button"
+                className="bg-none text-primary text-right font-polySans font-semibold px-4 py-2 rounded mt-4 float-right "
+                onClick={addNewSiteSection}
+              >
+                Add new section
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/***
+            <div className="flex flex-col gap-[24px] pt-4">
               {isaddNewPeople === false && (
                 <>
                   <MineralSearchDrop
@@ -870,61 +942,18 @@ const MiningSiteWrapper: React.FC = () => {
                     type="text"
                     label="Select role  (Please separate with (,)"
                     placeholder="Enter role"
-                    value={seletctedSiteRoles}
+                    value={selectedSiteRoles}
                     onChange={(e) => setSelectedSiteRoles(e.target.value)}
                     name="roles"
                     required={true}
                   />
-                  {/***
-                  <FilterPeopleByPosition
-                    label="Search CEO"
-                    options={mineralOptions}
-                    value={ceo}
-                    onChange={(values: any) => setCEO(values)}
-                    searchQuery={searchMineralQueryceo}
-                    setSearchQuery={setSearchMineralQueryceo}
-                    type={2}
-                    //setisAddnewpeople={setisAddnewminera}
-                    setIsSelectedPosition={setIsSelectedPosition}
-                    positionFilter="CEO" // Filter only for CEOs
-                    //acquireValue={acquireValue}
-                    setShowOverlay={setShowOverlay}
-                  />
-                  <FilterPeopleByPosition
-                    label="Search CTO"
-                    options={mineralOptions}
-                    value={cto}
-                    onChange={(values: any) => setCTO(values)}
-                    searchQuery={searchMineralQuerycto}
-                    setSearchQuery={setSearchMineralQuerycto}
-                    type={2}
-                    setIsSelectedPosition={setIsSelectedPosition}
-                    //setisAddnewpeople={setisAddnewminera}
-                    //acquireValue={acquireValue}
-                    positionFilter="CTO"
-                    setShowOverlay={setShowOverlay}
-                    // Filter only for CEOs
-                  />
-                  <FilterPeopleByPosition
-                    label="Search CFO"
-                    options={mineralOptions}
-                    value={cfo}
-                    onChange={(values: any) => setCFO(values)}
-                    searchQuery={searchMineralQuerycfo}
-                    setSearchQuery={setSearchMineralQuerycfo}
-                    type={2}
-                    //setisAddnewpeople={setisAddnewminera}
-                    setIsSelectedPosition={setIsSelectedPosition}
-                    positionFilter="CFO" // Filter only for CEOs
-                    //acquireValue={acquireValue}
-                    setShowOverlay={setShowOverlay}
-                  />
-                  */}
+
                 </>
               )}
             </div>
           </div>
         )}
+          */}
         {currentStep === 3 && (
           <div className="py-1 px-5">
             <h2 className="font-polySans text-[#202020] text-xl leading-6 font-semibold mb-3">
