@@ -523,17 +523,14 @@ const StepperWithForms: React.FC = () => {
     }
       */
     selectedValuesPeople.forEach((person: any, index: number) => {
-      // Check if `person` is an array or nested structure
       const actualPerson = Array.isArray(person) ? person[0] : person;
 
-      // Append the person's ID
       console.log("Processed person:", actualPerson);
       formData.append(
         `people[${index}][id]`,
         actualPerson?.id?.toString() || ""
       );
 
-      // Append the role if it exists for the current index
       if (selectedCompanyRoles[index]) {
         formData.append(
           `people[${index}][role]`,

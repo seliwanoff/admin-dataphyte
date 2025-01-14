@@ -85,7 +85,9 @@ const PeopleWrapper: React.FC = () => {
   const [selectedValuesCompany, setSelectedValuesCompany] = useState<string[]>(
     []
   );
-  const [seletctedSiteRoles, setSelectedSiteRoles] = useState<string>("");
+  const [selectedSiteRoles, setSelectedSiteRoles] = useState<string[]>([]);
+
+  const [siteSections, setSiteSections] = useState([0]); // Tracks all site sections
   const [selectedValuesDoc, setSelectedValuesDoc] = useState<string[]>([]);
 
   const [selectedCompanyCountries, setSelectedCompanyCountries] = useState<any>(
@@ -151,6 +153,27 @@ const PeopleWrapper: React.FC = () => {
   const handleSetForm = (name: string, files: File[]) => {
     setFiles(files);
   };
+
+  const [sections, setSections] = useState([0]); // Array to track sections
+
+  const addNewSection = () => {
+    setSections((prevSections) => [...prevSections, prevSections.length]);
+  };
+
+  const removeSection = (index: number) => {
+    setSections((prevSections) => prevSections.filter((_, i) => i !== index));
+  };
+
+  const addNewSiteSection = () => {
+    setSiteSections((prev) => [...prev, prev.length]);
+  };
+
+  const removeSiteSection = (index: number) => {
+    setSiteSections((prev) => prev.filter((_, i) => i !== index));
+    setSelectedValuesSite((prev) => prev.filter((_, i) => i !== index));
+    setSelectedSiteRoles((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const fetchOptions = async (query: string) => {
     try {
       const response = await fetch(`${baseUrl}utility/search?q=${query}`);
@@ -387,12 +410,30 @@ const PeopleWrapper: React.FC = () => {
     selectedCompanyCountries.forEach((country: any, index: any) => {
       formData.append(`country[${index}]`, country);
     });
-
+    /**
     selectedValuesPeople.forEach((company: any, index: any) => {
       formData.append(`company[${index}][id]`, company.id.toString());
 
       if (selectedCompanyRoles[index]) {
         formData.append(`company[${index}][role]`, selectedCompanyRoles[index]);
+      }
+    });
+    */
+
+    selectedValuesPeople.forEach((person: any, index: number) => {
+      const actualPerson = Array.isArray(person) ? person[0] : person;
+
+      //  console.log("Processed person:", actualPerson);
+      formData.append(
+        `company[${index}][id]`,
+        actualPerson?.id?.toString() || ""
+      );
+
+      if (selectedCompanyRoles[index]) {
+        formData.append(
+          `company[${index}][role]`,
+          selectedCompanyRoles[index]?.toString() || ""
+        );
       }
     });
 
@@ -408,14 +449,7 @@ const PeopleWrapper: React.FC = () => {
     });
      */
 
-    selectedValuesSite.forEach((site: any, index: any) => {
-      formData.append(`site[${index}][id]`, site.id.toString());
-    });
-
-    const siteArray = seletctedSiteRoles.split(",").map((t) => t.trim());
-    const expectedNumber = selectedValuesSite.length;
-    const chunkedTags = splitByNumber(siteArray, expectedNumber);
-
+    /**
     //console.log(expectedNumber, chunkedTags);
     selectedValuesSite.forEach((site: any, index: any) => {
       // Get the roles for the current site
@@ -424,6 +458,20 @@ const PeopleWrapper: React.FC = () => {
       roles.forEach((role, roleIndex) => {
         formData.append(`site[${roleIndex}][role]`, role);
       });
+    });
+    */
+
+    selectedValuesSite.forEach((site: any, index: number) => {
+      const actualSite = Array.isArray(site) ? site[0] : site;
+
+      formData.append(`site[${index}][id]`, actualSite?.id?.toString() || "");
+
+      if (selectedSiteRoles[index]) {
+        formData.append(
+          `site[${index}][role]`,
+          selectedSiteRoles[index]?.toString() || ""
+        );
+      }
     });
 
     formData.append("other_data", other_data);
@@ -689,28 +737,53 @@ const PeopleWrapper: React.FC = () => {
               {isaddNewPeople ? "Add Company" : "Select Company"}
             </h2>
             <div className="flex flex-col gap-[24px] pt-4">
-              {isaddNewPeople === false && (
-                <MineralSearchDrop
-                  label="Select company"
-                  options={mineralOptions}
-                  values={selectedValuesPeople}
-                  onChange={(values: any) => setSelectedValuesPeople(values)}
-                  searchQuery={searchMineralQuery}
-                  setSearchQuery={setSearchMineralQuery}
-                  type={2}
-                  setisAddnewpeople={setisaddNewPeople}
-                  setShowOverlay={setShowOverlay}
-                  acquireValue={acquireValue}
-                />
-              )}
-              {
-                <CompanyRole
-                  label="Select role"
-                  values={selectedCompanyRoles}
-                  onChange={setSelectedCompanyRoles}
-                  expectedCount={selectedValuesPeople.length || 0}
-                />
-              }
+              {sections.map((section, index) => (
+                <div
+                  key={index}
+                  className="border p-4 rounded-md bg-gray-50 flex flex-col gap-[24px]"
+                >
+                  <MineralSearchDrop
+                    label={`Select company`}
+                    options={mineralOptions}
+                    values={selectedValuesPeople[index] || []}
+                    onChange={(values: any) => {
+                      const updatedValues = [...selectedValuesPeople];
+                      updatedValues[index] = values;
+                      setSelectedValuesPeople(updatedValues);
+                    }}
+                    searchQuery={searchMineralQuery}
+                    setSearchQuery={setSearchMineralQuery}
+                    type={2}
+                  />
+
+                  <CompanyRole
+                    label="Select role"
+                    values={selectedCompanyRoles[index] || []}
+                    onChange={(values) => {
+                      const updatedRoles = [...selectedCompanyRoles];
+                      updatedRoles[index] = values;
+                      setSelectedCompanyRoles(updatedRoles);
+                    }}
+                    expectedCount={selectedValuesPeople[index]?.length || 0}
+                  />
+
+                  <button
+                    type="button"
+                    className="text-red-500 mt-2 font-polySans font-medium "
+                    onClick={() => removeSection(index)}
+                  >
+                    Remove Section
+                  </button>
+                </div>
+              ))}
+
+              <button
+                type="button"
+                className="bg-none text-primary text-right font-polySans font-semibold px-4 py-2 rounded mt-4 float-right  "
+                onClick={addNewSection}
+              >
+                Add Section
+              </button>
             </div>
           </div>
         )}
@@ -720,30 +793,58 @@ const PeopleWrapper: React.FC = () => {
               {isaddNewSite ? "Add Mining site" : "Select Mining site"}
             </h2>
             <div className="flex flex-col gap-[24px] pt-4">
-              {isaddNewSite === false && (
-                <>
+              {siteSections.map((section, index) => (
+                <div
+                  key={index}
+                  className="border p-4 rounded-md bg-gray-50 flex flex-col gap-[24px]"
+                >
                   <MineralSearchDrop
-                    label="Select Mining site"
+                    label={`Select Mining Site `}
                     options={mineralOptions}
-                    values={selectedValuesSite}
-                    onChange={(values: any) => setSelectedValuesSite(values)}
+                    values={selectedValuesSite[index] || []}
+                    onChange={(values: any) => {
+                      const updatedValues = [...selectedValuesSite];
+                      updatedValues[index] = values;
+                      setSelectedValuesSite(updatedValues);
+                    }}
                     searchQuery={searchMineralQuery}
                     setSearchQuery={setSearchMineralQuery}
                     type={4}
-                    setisAddnewpeople={setisAddnewSite}
+                    setisAddnewpeople={setShowOverlay}
                     setShowOverlay={setShowOverlay}
                   />
+
                   <InputElement
                     type="text"
-                    label="Site role  (Please separate with (,)"
+                    label="Site role"
                     placeholder="Enter role"
-                    value={seletctedSiteRoles}
-                    onChange={(e) => setSelectedSiteRoles(e.target.value)}
-                    name="roles"
+                    value={selectedSiteRoles[index] || ""}
+                    onChange={(e) => {
+                      const updatedRoles = [...selectedSiteRoles];
+                      updatedRoles[index] = e.target.value;
+                      setSelectedSiteRoles(updatedRoles);
+                    }}
+                    name={`roles[${index}]`}
                     required={true}
                   />
-                </>
-              )}
+
+                  <button
+                    type="button"
+                    className="text-red-500 mt-2 font-polySans font-medium text-center w-full"
+                    onClick={() => removeSiteSection(index)}
+                  >
+                    Remove Section
+                  </button>
+                </div>
+              ))}
+
+              <button
+                type="button"
+                className="bg-none text-primary text-right font-polySans font-semibold px-4 py-2 rounded mt-4 float-right "
+                onClick={addNewSiteSection}
+              >
+                Add new section
+              </button>
             </div>
           </div>
         )}
