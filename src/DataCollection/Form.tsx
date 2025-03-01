@@ -497,6 +497,8 @@ const StepperWithForms: React.FC = () => {
     formData.append("name", name);
     formData.append("address", companyAddress);
     formData.append("rc_number", rc_number);
+    //@ts-ignore
+    formData.append("parent_id", selectedValuesParent[0]?.id || "");
     formData.append("other_name", other_name);
     formData.append("rich_text", content);
     tagArray.forEach((tag: any, index: any) => {
